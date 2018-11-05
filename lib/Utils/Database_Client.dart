@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/Model/ControllerItems.dart';
+import 'package:autoaqua/Model/FoggerModel.dart';
+import 'package:autoaqua/Model/MobNoModel.dart';
 import 'package:autoaqua/Model/ProgramModel.dart';
+import 'package:autoaqua/Model/TimerModel.dart';
 import 'package:autoaqua/Model/ValvesModel.dart';
 import 'package:path/path.dart';
 import 'dart:async';
@@ -54,21 +57,21 @@ class DataBaseHelper {
   final String valves_controllerIdCol = "valves_controller_id";
   final String valvesProgramNoCol = "valves_ProgramNo";
   final String valvesSeqNoCol = "valves_SeqNo";
-  final String valves_fieldNoLtrCol = "valves_fieldNo_for_Ltrs";
-  final String valves_field_for_LitersCol = "valves_field_Ltrs";
-  final String valves_fieldNoMinsCol = "valves_fieldNo_for_Mins";
-  final String valves_field_for_MinsCol = "valves_field_Mins";
-  final String valves_tank1_Ltr_Col = "valves_tank1_Ltr";
-  final String valves_tank1_Min_Col = "valves_tank1_Min";
-  final String valves_tank2_Ltr_Col = "valves_tank2_Ltr";
-  final String valves_tank2_Min_Col = "valves_tank2_Min";
-  final String valves_tank3_Ltr_Col = "valves_tank3_Ltr";
-  final String valves_tank3_Min_Col = "valves_tank3_Min";
-  final String valves_tank4_Ltr_Col = "valves_tank4_Ltr";
-  final String valves_tank4_Min_Col = "valves_tank4_Min";
-  final String valves_FertlizerType_Col = "valves_FertlizerType";
-  final String valves_FertlizerDelay_Litr_Col = "valves_FertlizerDelay_Litr";
-  final String valves_FertlizerDelay_Min_Col = "valves_FertlizerDelay_Min";
+  final String valvesUniteTypeCol = "valves_UniteType";
+  final String valves_fieldNo1Col = "valves_fieldNo_1";
+  final String valves_fieldNo2Col = "valves_fieldNo_2";
+  final String valves_fieldNo3Col = "valves_fieldNo_3";
+  final String valves_fieldNo4Col = "valves_fieldNo_4";
+  final String valves_fieldNo1_Crop_Col = "valves_field1_Crop";
+  final String valves_fieldNo2_Crop_Col = "valves_field2_Crop";
+  final String valves_fieldNo3_Crop_Col = "valves_field3_Crop";
+  final String valves_fieldNo4_Crop_Col = "valves_field4_Crop";
+  final String valves_tank1_Col = "valves_tank_1";
+  final String valves_tank2_Col = "valves_tank_2";
+  final String valves_tank3_Col = "valves_tank_3";
+  final String valves_tank4_Col = "valves_tank_4";
+  final String valves_FertlizerProgramming_Col = "valves_FertlizerProgramming";
+  final String valves_FertlizerDelay_Col = "valves_FertlizerDelay";
   final String valves_ECSetp_Col = "valves_ECSetp";
   final String valves_PHSetp_Col = "valves_PHSetp";
   final String valves_DateCreatedCol = "valves_DateCreated";
@@ -81,12 +84,12 @@ class DataBaseHelper {
   final String timer_StartTimeHrs_Col = "timer_StartTimer_Hrs";
   final String timer_StartTimeMin_Col = "timer_StartTimer_Min";
   final String timer_IntegrationDay_Mon_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Tues_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Wed_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Thurs_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Fri_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Sat_Col = "timer_IntegrationDay_Mon";
-  final String timer_IntegrationDay_Sun_Col = "timer_IntegrationDay_Mon";
+  final String timer_IntegrationDay_Tues_Col = "timer_IntegrationDay_Tue";
+  final String timer_IntegrationDay_Wed_Col = "timer_IntegrationDay_Wed";
+  final String timer_IntegrationDay_Thurs_Col = "timer_IntegrationDay_Thur";
+  final String timer_IntegrationDay_Fri_Col = "timer_IntegrationDay_Fri";
+  final String timer_IntegrationDay_Sat_Col = "timer_IntegrationDay_Sat";
+  final String timer_IntegrationDay_Sun_Col = "timer_IntegrationDay_Sun";
   final String timer_FertDay_Mon_Col = "timer_FertDay_Mon";
   final String timer_FertDay_Tue_Col = "timer_FertDay_Tue";
   final String timer_FertDay_Wed_Col = "timer_FertDay_Wed";
@@ -94,6 +97,24 @@ class DataBaseHelper {
   final String timer_FertDay_Fri_Col = "timer_FertDay_Fri";
   final String timer_FertDay_Sat_Col = "timer_FertDay_Sat";
   final String timer_FertDay_Sun_Col = "timer_FertDay_Sun";
+  final String timer_DateCreatedCol = "timer_DateCreated";
+
+  //Phone No Variables
+  final String tableMobNo = "MobNo_Table";
+  final String mobNoIdCol = "mobNoId";
+  final String mobNo_controllerIdCol = "mobNo_controllerId";
+  final String mobNoCol = "mobNo";
+  final String mobNo_DateCreatedCol = "mobNo_DateCreated";
+
+  //Fogger Variables
+  final String tableFogger = "Fogger_Table";
+  static String foggerIdCol = "foggerId";
+  static String fogger_controllerCol = "fogger_controllerId";
+  static String fogger_FieldCol = "fogger_Field";
+  static String fogger_onSecCol = "fogger_onSec";
+  static String fogger_tempDegreeCol = "fogger_tempDegree";
+  static String fogger_humCol = "fogger_hum";
+  static String fogger_dateCreated = "fogger_DateCreated";
 
   static Database _db;
 
@@ -170,21 +191,21 @@ class DataBaseHelper {
        $valves_controllerIdCol INTEGER NOT NULL,
        $valvesProgramNoCol INTEGER NOT NULL,
        $valvesSeqNoCol INTEGER NOT NULL,
-       $valves_fieldNoLtrCol TEXT,
-       $valves_field_for_LitersCol TEXT,
-       $valves_fieldNoMinsCol TEXT,
-       $valves_field_for_MinsCol TEXT,
-       $valves_tank1_Ltr_Col TEXT,
-       $valves_tank1_Min_Col TEXT,
-       $valves_tank2_Ltr_Col TEXT,
-       $valves_tank2_Min_Col TEXT,
-       $valves_tank3_Ltr_Col TEXT,
-       $valves_tank3_Min_Col TEXT,
-       $valves_tank4_Ltr_Col TEXT,
-       $valves_tank4_Min_Col TEXT,
-       $valves_FertlizerType_Col TEXT,
-       $valves_FertlizerDelay_Litr_Col TEXT,
-       $valves_FertlizerDelay_Min_Col TEXT,
+       $valvesUniteTypeCol TEXT,
+       $valves_fieldNo1Col TEXT,
+       $valves_fieldNo2Col TEXT,
+       $valves_fieldNo3Col TEXT,
+       $valves_fieldNo4Col TEXT,
+       $valves_fieldNo1_Crop_Col TEXT,
+       $valves_fieldNo2_Crop_Col TEXT,
+       $valves_fieldNo3_Crop_Col TEXT,
+       $valves_fieldNo4_Crop_Col TEXT,
+       $valves_tank1_Col TEXT,
+       $valves_tank2_Col TEXT,
+       $valves_tank3_Col TEXT,
+       $valves_tank4_Col TEXT,
+       $valves_FertlizerProgramming_Col TEXT,
+       $valves_FertlizerDelay_Col TEXT,
        $valves_ECSetp_Col TEXT,
        $valves_PHSetp_Col TEXT,
        $valves_DateCreatedCol TEXT,
@@ -192,31 +213,58 @@ class DataBaseHelper {
       """);
 
     //Timer Table
-   /* await db.execute(
+    await db.execute(
       """
       CREATE TABLE $tableTimer(
       $timerIdCol INTEGER PRIMARY KEY,
-      $timer_ControllerIdCol INTEGER NOT NULL;
-      $timer_programNo_Col INTEGER NOT NULL;
-      $timer_StartTimeHrs_Col TEXT;
-      $timer_StartTimeMin_Col TEXT;
-      $timer_IntegrationDay_Mon_Col TEXT;
-      $timer_IntegrationDay_Tues_Col TEXT;
-      $timer_IntegrationDay_Wed_Col TEXT;
-      $timer_IntegrationDay_Thurs_Col TEXT;
-      $timer_IntegrationDay_Fri_Col TEXT;
-      $timer_IntegrationDay_Sat_Col TEXT;
-      $timer_IntegrationDay_Sun_Col TEXT;
-      $timer_FertDay_Mon_Col TEXT;
-      $timer_FertDay_Tue_Col TEXT;
-      $timer_FertDay_Wed_Col TEXT;
-      $timer_FertDay_Thurs_Col TEXT;
-      $timer_FertDay_Fri_Col TEXT;
-      $timer_FertDay_Sat_Col TEXT;
-      $timer_FertDay_Sun_Col TEXT;
-      )
+      $timer_ControllerIdCol INTEGER NOT NULL,
+      $timer_programNo_Col INTEGER NOT NULL,
+      $timer_StartTimeHrs_Col TEXT,
+      $timer_StartTimeMin_Col TEXT,
+      $timer_IntegrationDay_Mon_Col TEXT,
+      $timer_IntegrationDay_Tues_Col TEXT,
+      $timer_IntegrationDay_Wed_Col TEXT,
+      $timer_IntegrationDay_Thurs_Col TEXT,
+      $timer_IntegrationDay_Fri_Col TEXT,
+      $timer_IntegrationDay_Sat_Col TEXT,
+      $timer_IntegrationDay_Sun_Col TEXT,
+      $timer_FertDay_Mon_Col TEXT,
+      $timer_FertDay_Tue_Col TEXT,
+      $timer_FertDay_Wed_Col TEXT,
+      $timer_FertDay_Thurs_Col TEXT,
+      $timer_FertDay_Fri_Col TEXT,
+      $timer_FertDay_Sat_Col TEXT,
+      $timer_FertDay_Sun_Col TEXT,
+      $timer_DateCreatedCol TEXT,
+      FOREIGN KEY ($timer_ControllerIdCol) REFERENCES $tableName(id))
       """
-    );*/
+    );
+
+    await db.execute(
+      """
+      CREATE TABLE $tableFogger(
+      $foggerIdCol INTEGER PRIMARY KEY,
+      $fogger_controllerCol INTEGER NOT NULL,
+      $fogger_FieldCol TEXT,
+      $fogger_onSecCol TEXT,
+      $fogger_tempDegreeCol TEXT,
+      $fogger_humCol TEXT,
+      $fogger_dateCreated TEXT,
+      FOREIGN KEY ($fogger_controllerCol) REFERENCES $tableName(id))
+      """
+    );
+
+    //MobNo Table
+    await db.execute(
+        """
+        CREATE TABLE $tableMobNo(
+        $mobNoIdCol INTEGER PRIMARY KEY,
+        $mobNo_controllerIdCol INTEGER NOT NULL,
+        $mobNoCol TEXT,
+        $mobNo_DateCreatedCol TEXT,
+        FOREIGN KEY ($mobNo_controllerIdCol) REFERENCES $tableName(id))
+        """
+        );
   }
 
   // Insertion into Controller
@@ -269,11 +317,56 @@ class DataBaseHelper {
   // Insertion into Valves Table
   Future<int> saveValvesData(ValvesModel item) async {
     var dbClient = await db;
-    print("Valves Items");
+    print("Valves Data from database");
     print(item.toMap_Valves());
-    int res_progrm = await dbClient.insert("$tableValves", item.toMap_Valves());
-    print("Valves table id $res_progrm");
-    return res_progrm;
+    return (await db).insert("$tableValves", item.toMap_Valves());
+  }
+
+  //Update Valves Data
+  Future<int> updateValvesData(ValvesModel modelValve)async{
+    return (await db).update("$tableValves", modelValve.toMap_Valves(),
+        where: "$valvesIdCol = ?", whereArgs: [modelValve.valvesId]);
+  }
+
+  //Insertion into timer table
+  Future<int> saveTimerData(TimerModel modelTimer) async{
+    print("save timer data is ${modelTimer.toMap_Timer()}");
+    return (await db).insert('$tableTimer', modelTimer.toMap_Timer());
+  }
+
+  //Update Timer Data
+  Future<int> updateTimerData(TimerModel modelTimer)async {
+    return (await db).update('$tableTimer', modelTimer.toMap_Timer(),
+                where: "$timerIdCol = ?", whereArgs: [modelTimer.timerId]);
+  }
+
+  //Insertion into mobNo table
+  Future<int> saveMobNo(mobNoModel ModelmobNo)async{
+    print("save mobno data is ${ModelmobNo.toMap_mobNo()}");
+    return (await db).insert('$tableMobNo', ModelmobNo.toMap_mobNo());
+  }
+
+  //Update MobNo
+  Future<int> updateMobNo(mobNoModel ModelmobNo)async{
+    return (await db).update('$tableMobNo', ModelmobNo.toMap_mobNo(),
+                    where: "$timerIdCol = ?", whereArgs: [ModelmobNo.mobNoId]);
+  }
+
+  //Insertion into Fogger Table
+  Future<int> saveFoggerData(FoggerModel foggerModel)async{
+    print("saved fogger data is ${foggerModel.tomap_Fogger()}");
+    if(foggerModel.foggerId != null) {
+      return (await db).update('$tableFogger', foggerModel.tomap_Fogger(),
+          where: "$foggerIdCol = ?", whereArgs: [foggerModel.foggerId]);
+    }else{
+      return (await db).insert("$tableFogger", foggerModel.tomap_Fogger());
+    }
+  }
+
+  Future<bool> deleteFoggerData(int id) async {
+    int result = await (await db).delete('$tableFogger',
+        where: '$foggerIdCol = ?', whereArgs: [id]);
+    return result != 0;
   }
 
 //Get data for Controller
@@ -351,6 +444,57 @@ class DataBaseHelper {
     print(result.length);
     print(result.first);
     return ProgramModel.fromMap_program(result[programId]);
+  }
+
+  //Get Valves Data
+  Future<ValvesModel> getValvesData(int controllerId, int valvesId, int seqNo) async{
+    var dbClient = await db;
+    var valvesResult = await dbClient.rawQuery(
+        "SELECT * FROM $tableValves WHERE $valves_controllerIdCol = $controllerId");
+    if(valvesResult.length == 0 || seqNo+1 > valvesResult.length){
+      return null;
+    };
+    print("Valves data is $valvesResult");
+    return ValvesModel.fromMap_Valves(valvesResult[seqNo]);
+  }
+
+  //Get Timer Data
+  Future<TimerModel> getTimerData(int controllerId, int timerId)async{
+    var dbClient = await db;
+    var timerResult = await dbClient.rawQuery(
+      "SELECT * FROM $tableTimer WHERE $timer_ControllerIdCol = $controllerId"
+    );
+    if(timerResult.length == 0 || timerId + 1 > timerResult.length){
+      return null;
+    }
+    print("Timer data is $timerResult");
+    return TimerModel.fromMap_timer(timerResult[timerId]);
+  }
+
+  //Get Mob No
+  Future<mobNoModel> getMobNo(int controllerId)async{
+    var dbClient = await db;
+    var mobNoResult = await dbClient.rawQuery(
+        "SELECT * FROM $tableMobNo WHERE $mobNo_controllerIdCol = $controllerId"
+    );
+    if(mobNoResult.length == 0){
+      return null;
+    }
+    return mobNoModel.fromMap_mobNo(mobNoResult.first);
+  }
+
+  //Get Fogger Data
+  Future<List<FoggerModel>> getFoggerData(int controllerId)async{
+    var dbClient = await db;
+    var foggerResult = await dbClient.rawQuery(
+        "SELECT * FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
+    );
+    if(foggerResult.length == 0){
+      return null;
+    }
+    return foggerResult
+        .map((data) => FoggerModel.fromMap_Fogger(data))
+        .toList(growable: false);
   }
 
   //Delete Items

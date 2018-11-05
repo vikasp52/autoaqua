@@ -265,7 +265,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
                 Row(
                   children: <Widget>[
                     new Radio(
-                      key:ValueKey<String>("Radio1 ${widget.programIndex + 1}"),
                       value: 1,
                       groupValue: _radioValueforMode,
                       onChanged: _handleRadioValueChange,
@@ -275,7 +274,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
                       size: Size(20.0, 0.0),
                     ),
                     new Radio(
-                      key:ValueKey<String>("Radio2 ${widget.programIndex + 1}"),
                       value: 2,
                       groupValue: _radioValueforMode,
                       onChanged: _handleRadioValueChange,
@@ -285,7 +283,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
                       size: Size(20.0, 0.0),
                     ),
                     new Radio(
-                      key:ValueKey<String>("Radio3 ${widget.programIndex + 1}"),
                       value: 4,
                       groupValue: _radioValueforMode,
                       onChanged: _handleRadioValueChange,

@@ -6,6 +6,9 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  var _cropList = ['Wheat', 'Barley','Oat','RyeTriticale','Maize','Corn','Broomcorn'];
+  var _currentCropSlected;
+
   @override
   Widget build(BuildContext context) {
     return

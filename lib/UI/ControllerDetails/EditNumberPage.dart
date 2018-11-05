@@ -1,4 +1,7 @@
+import 'package:autoaqua/Model/MobNoModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/Database_Client.dart';
+import 'package:autoaqua/Utils/DateFormatter.dart';
 import 'package:flutter/material.dart';
 
 class EditNumberPage extends StatefulWidget {
@@ -24,6 +27,48 @@ class EditNumberPage extends StatefulWidget {
 }
 
 class _EditNumberPageState extends State<EditNumberPage> {
+
+  TextEditingController _mobNoController = new TextEditingController();
+
+  mobNoModel _oldnoModel;
+  DataBaseHelper db = new DataBaseHelper();
+  Future _loading;
+
+  @override
+  void initState() {
+    super.initState();
+    _loading = db.getMobNo(widget.controllerId).then((mobNo) {
+      _oldnoModel = mobNo;
+      print(mobNo);
+      if(mobNo != null) {
+        setState(() {
+          _mobNoController.value = TextEditingValue(text: mobNo.mobNo);
+        });
+      }
+    });
+  }
+
+
+  Future<void> _saveMobNo() async{
+    if(_oldnoModel == null){
+      mobNoModel saveMobNo = new mobNoModel(
+          widget.controllerId,
+          _mobNoController.text,
+          dateFormatted()
+      );
+      db.saveMobNo(saveMobNo);
+      db.getMobNo(widget.controllerId);
+    }else{
+      mobNoModel updateMobNo = new mobNoModel(
+        widget.controllerId,
+        _mobNoController.text,
+          dateFormatted()
+      );
+      db.updateMobNo(updateMobNo);
+      db.getMobNo(widget.controllerId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
@@ -32,6 +77,7 @@ class _EditNumberPageState extends State<EditNumberPage> {
         child:Column(
           children: <Widget>[
             TextFormField(
+              controller: _mobNoController,
               decoration: InputDecoration(
                   labelText: "Enter the number"
               ),
@@ -42,6 +88,7 @@ class _EditNumberPageState extends State<EditNumberPage> {
             ),
             RawMaterialButton(
               onPressed: () {
+                _saveMobNo();
                 ControllerDetails.navigateToNext(context);
               },
               fillColor: Colors.indigo,
@@ -50,7 +97,7 @@ class _EditNumberPageState extends State<EditNumberPage> {
                 padding: EdgeInsets.symmetric(
                     horizontal: 15.0),
                 child: Text(
-                  "SAVE",
+                  _oldnoModel != null? "Update": "Save",
                   style: TextStyle(
                       color: Colors.white),
                 ),

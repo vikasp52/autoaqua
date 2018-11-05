@@ -1,139 +1,152 @@
-class ValvesModel{
-
+class ValvesModel {
   int _valvesId;
   int valves_controllerId;
   int _valvesProgramNo;
   int _valvesSeqNo;
-  String _valves_fieldNoLtr;
-  String _valves_field_for_Liters;
-  String _valves_fieldNoMins;
-  String _valves_field_for_Mins;
-  String _valves_tank1_Ltr;
-  String _valves_tank1_Min;
-  String _valves_tank2_Ltr;
-  String _valves_tank2_Min;
-  String _valves_tank3_Ltr;
-  String _valves_tank3_Min;
-  String _valves_tank4_Ltr;
-  String _valves_tank4_Min;
-  String _valves_FertlizerType;
-  String _valves_FertlizerDelay_Ltr;
-  String _valves_FertlizerDelay_Min;
+  String _valves_UniteType;
+  String _valves_fieldNo_1;
+  String _valves_fieldNo_2;
+  String _valves_fieldNo_3;
+  String _valves_fieldNo_4;
+  String _valves_field1_Crop;
+  String _valves_field2_Crop;
+  String _valves_field3_Crop;
+  String _valves_field4_Crop;
+  String _valves_tank_1;
+  String _valves_tank_2;
+  String _valves_tank_3;
+  String _valves_tank_4;
+  String _valves_FertlizerProgramming;
+  String _valves_FertlizerDelay;
   String _valves_ECSetp;
   String _valves_PHSetp;
   String _valves_DateCreated;
 
-  ValvesModel(this.valves_controllerId, this._valvesProgramNo,
-      this._valvesSeqNo, this._valves_fieldNoLtr, this._valves_field_for_Liters,
-      this._valves_fieldNoMins, this._valves_field_for_Mins,
-      this._valves_tank1_Ltr, this._valves_tank1_Min, this._valves_tank2_Ltr,
-      this._valves_tank2_Min, this._valves_tank3_Ltr, this._valves_tank3_Min,
-      this._valves_tank4_Ltr, this._valves_tank4_Min,
-      this._valves_FertlizerType, this._valves_FertlizerDelay_Ltr,
-      this._valves_FertlizerDelay_Min, this._valves_ECSetp,
-      this._valves_PHSetp, this._valves_DateCreated);
+  ValvesModel(
+      this.valves_controllerId,
+      this._valvesProgramNo,
+      this._valvesSeqNo,
+      this._valves_UniteType,
+      this._valves_fieldNo_1,
+      this._valves_fieldNo_2,
+      this._valves_fieldNo_3,
+      this._valves_fieldNo_4,
+      this._valves_field1_Crop,
+      this._valves_field2_Crop,
+      this._valves_field3_Crop,
+      this._valves_field4_Crop,
+      this._valves_tank_1,
+      this._valves_tank_2,
+      this._valves_tank_3,
+      this._valves_tank_4,
+      this._valves_FertlizerProgramming,
+      this._valves_FertlizerDelay,
+      this._valves_ECSetp,
+      this._valves_PHSetp,
+      this._valves_DateCreated);
 
-  ValvesModel.map(dynamic obj){
+  ValvesModel.map(dynamic obj) {
     this._valvesId = obj["valvesId"];
     this.valves_controllerId = obj["valves_controller_id"];
     this._valvesProgramNo = obj["valves_ProgramNo"];
     this._valvesSeqNo = obj["valves_SeqNo"];
-    this._valves_fieldNoLtr = obj["valves_fieldNo_for_Ltrs"];
-    this._valves_field_for_Liters = obj["valves_field_Ltrs"];
-    this._valves_fieldNoMins = obj["valves_fieldNo_for_Mins"];
-    this._valves_field_for_Mins = obj["valves_field_Mins"];
-    this._valves_tank1_Ltr = obj["valves_tank1_Ltr"];
-    this._valves_tank1_Min = obj["valves_tank1_Min"];
-    this._valves_tank2_Ltr = obj["valves_tank2_Ltr"];
-    this._valves_tank2_Min = obj["valves_tank2_Min"];
-    this._valves_tank3_Ltr = obj["valves_tank3_Ltr"];
-    this._valves_tank3_Min = obj["valves_tank3_Min"];
-    this._valves_tank4_Ltr = obj["valves_tank4_Ltr"];
-    this._valves_tank4_Min = obj["valves_tank4_Min"];
-    this._valves_FertlizerType = obj["valves_FertlizerType"];
-    this._valves_FertlizerDelay_Ltr = obj["valves_FertlizerDelay_Litr"];
-    this._valves_FertlizerDelay_Min = obj["valves_FertlizerDelay_Min"];
+    this._valves_UniteType = obj["valves_UniteType"];
+    this._valves_fieldNo_1 = obj["valves_fieldNo_1"];
+    this._valves_fieldNo_2 = obj["valves_fieldNo_2"];
+    this._valves_fieldNo_3 = obj["valves_fieldNo_3"];
+    this._valves_fieldNo_4 = obj["valves_fieldNo_4"];
+    this._valves_field1_Crop = obj["valves_field1_Crop"];
+    this._valves_field2_Crop = obj["valves_field2_Crop"];
+    this._valves_field3_Crop = obj["valves_field3_Crop"];
+    this._valves_field4_Crop = obj["valves_field4_Crop"];
+    this._valves_tank_1 = obj["valves_tank_1"];
+    this._valves_tank_2 = obj["valves_tank_2"];
+    this._valves_tank_3 = obj["valves_tank_3"];
+    this._valves_tank_4 = obj["valves_tank_4"];
+    this._valves_FertlizerProgramming = obj["valves_FertlizerProgramming"];
+    this._valves_FertlizerDelay = obj["valves_FertlizerDelay"];
     this._valves_ECSetp = obj["valves_ECSetp"];
     this._valves_PHSetp = obj["valves_PHSetp"];
     this._valves_DateCreated = obj["valves_DateCreated"];
   }
 
+  set valvesId(int value) => _valvesId = value;
+
   int get valvesId => _valvesId;
   int get valves_controller_id => valves_controllerId;
   int get valves_ProgramNo => _valvesProgramNo;
   int get valves_SeqNo => _valvesSeqNo;
-  String get valves_fieldNo_for_Ltrs => _valves_fieldNoLtr;
-  String get valves_field_Ltrs => _valves_field_for_Liters;
-  String get valves_fieldNo_for_Mins => _valves_fieldNoMins;
-  String get valves_field_Mins => _valves_field_for_Mins;
-  String get valves_tank1_Ltr => _valves_tank1_Ltr;
-  String get valves_tank1_Min => _valves_tank1_Min;
-  String get valves_tank2_Ltr => _valves_tank2_Ltr;
-  String get valves_tank2_Min => _valves_tank2_Min;
-  String get valves_tank3_Ltr => _valves_tank3_Ltr;
-  String get valves_tank3_Min => _valves_tank3_Min;
-  String get valves_tank4_Ltr => _valves_tank4_Ltr;
-  String get valves_tank4_Min => _valves_tank4_Min;
-  String get valves_FertlizerType => _valves_FertlizerType;
-  String get valves_FertlizerDelay_Litr => _valves_FertlizerDelay_Ltr;
-  String get valves_FertlizerDelay_Min => _valves_FertlizerDelay_Min;
+  String get valves_UniteType => _valves_UniteType;
+  String get valves_fieldNo_1 => _valves_fieldNo_1;
+  String get valves_fieldNo_2 => _valves_fieldNo_2;
+  String get valves_fieldNo_3 => _valves_fieldNo_3;
+  String get valves_fieldNo_4 => _valves_fieldNo_4;
+  String get valves_field1_Crop => _valves_field1_Crop;
+  String get valves_field2_Crop => _valves_field2_Crop;
+  String get valves_field3_Crop => _valves_field3_Crop;
+  String get valves_field4_Crop => _valves_field4_Crop;
+  String get valves_tank_1 => _valves_tank_1;
+  String get valves_tank_2 => _valves_tank_2;
+  String get valves_tank_3 => _valves_tank_3;
+  String get valves_tank_4 => _valves_tank_4;
+  String get valves_FertlizerProgramming => _valves_FertlizerProgramming;
+  String get valves_FertlizerDelay => _valves_FertlizerDelay;
   String get valves_ECSetp => _valves_ECSetp;
   String get valves_PHSetp => _valves_PHSetp;
   String get valves_DateCreated => _valves_DateCreated;
 
-  Map<String, dynamic> toMap_Valves(){
+  Map<String, dynamic> toMap_Valves() {
     var map_Valves = new Map<String, dynamic>();
     map_Valves["valves_controller_id"] = valves_controllerId;
     map_Valves["valves_ProgramNo"] = _valvesProgramNo;
     map_Valves["valves_SeqNo"] = _valvesSeqNo;
-    map_Valves["valves_fieldNo_for_Ltrs"] = _valves_fieldNoLtr;
-    map_Valves["valves_field_Ltrs"] = _valves_field_for_Liters;
-    map_Valves["valves_fieldNo_for_Mins"] = _valves_fieldNoMins;
-    map_Valves["valves_field_Mins"] = _valves_field_for_Mins;
-    map_Valves["valves_tank1_Ltr"] = _valves_tank1_Ltr;
-    map_Valves["valves_tank1_Min"] = _valves_tank1_Min;
-    map_Valves["valves_tank2_Ltr"] = _valves_tank2_Ltr;
-    map_Valves["valves_tank2_Min"] = _valves_tank2_Min;
-    map_Valves["valves_tank3_Ltr"] = _valves_tank3_Ltr;
-    map_Valves["valves_tank3_Min"] = _valves_tank3_Min;
-    map_Valves["valves_tank4_Ltr"] = _valves_tank4_Ltr;
-    map_Valves["valves_tank4_Min"] = _valves_tank4_Min;
-    map_Valves["valves_FertlizerType"] = _valves_FertlizerType;
-    map_Valves["valves_FertlizerDelay_Litr"] = _valves_FertlizerDelay_Ltr;
-    map_Valves["valves_FertlizerDelay_Min"] = _valves_FertlizerDelay_Min;
+    map_Valves["valves_UniteType"] = _valves_UniteType;
+    map_Valves["valves_fieldNo_1"] = _valves_fieldNo_1;
+    map_Valves["valves_fieldNo_2"] = _valves_fieldNo_2;
+    map_Valves["valves_fieldNo_3"] = _valves_fieldNo_3;
+    map_Valves["valves_fieldNo_4"] = _valves_fieldNo_4;
+    map_Valves["valves_field1_Crop"] = _valves_field1_Crop;
+    map_Valves["valves_field2_Crop"] = _valves_field2_Crop;
+    map_Valves["valves_field3_Crop"] = _valves_field3_Crop;
+    map_Valves["valves_field4_Crop"] = _valves_field4_Crop;
+    map_Valves["valves_tank_1"] = _valves_tank_1;
+    map_Valves["valves_tank_2"] = _valves_tank_2;
+    map_Valves["valves_tank_3"] = _valves_tank_3;
+    map_Valves["valves_tank_4"] = _valves_tank_4;
+    map_Valves["valves_FertlizerProgramming"] = _valves_FertlizerProgramming;
+    map_Valves["valves_FertlizerDelay"] = _valves_FertlizerDelay;
     map_Valves["valves_ECSetp"] = _valves_ECSetp;
     map_Valves["valves_PHSetp"] = _valves_PHSetp;
     map_Valves["valves_DateCreated"] = _valves_DateCreated;
 
-    if(_valvesId != null){
+    if (_valvesId != null) {
       map_Valves["valvesId"] = _valvesId;
     }
     return map_Valves;
   }
 
-  ValvesModel.fromMap_Valves(Map<String, dynamic> map){
+  ValvesModel.fromMap_Valves(Map<String, dynamic> map) {
     this._valvesId = map["valvesId"];
     this.valves_controllerId = map["valves_controller_id"];
     this._valvesProgramNo = map["valves_ProgramNo"];
     this._valvesSeqNo = map["valves_SeqNo"];
-    this._valves_fieldNoLtr = map["valves_fieldNo_for_Ltrs"];
-    this._valves_field_for_Liters = map["valves_field_Ltrs"];
-    this._valves_fieldNoMins = map["valves_fieldNo_for_Mins"];
-    this._valves_field_for_Mins = map["valves_field_Mins"];
-    this._valves_tank1_Ltr = map["valves_tank1_Ltr"];
-    this._valves_tank1_Min = map["valves_tank1_Min"];
-    this._valves_tank2_Ltr = map["valves_tank2_Ltr"];
-    this._valves_tank2_Min = map["valves_tank2_Min"];
-    this._valves_tank3_Ltr = map["valves_tank3_Ltr"];
-    this._valves_tank3_Min = map["valves_tank3_Min"];
-    this._valves_tank4_Ltr = map["valves_tank4_Ltr"];
-    this._valves_tank4_Min = map["valves_tank4_Min"];
-    this._valves_FertlizerType = map["valves_FertlizerType"];
-    this._valves_FertlizerDelay_Ltr = map["valves_FertlizerDelay_Litr"];
-    this._valves_FertlizerDelay_Min = map["valves_FertlizerDelay_Min"];
+    this._valves_UniteType = map["valves_UniteType"];
+    this._valves_fieldNo_1 = map["valves_fieldNo_1"];
+    this._valves_fieldNo_2 = map["valves_fieldNo_2"];
+    this._valves_fieldNo_3 = map["valves_fieldNo_3"];
+    this._valves_fieldNo_4 = map["valves_fieldNo_4"];
+    this._valves_field1_Crop = map["valves_field1_Crop"];
+    this._valves_field2_Crop = map["valves_field2_Crop"];
+    this._valves_field3_Crop = map["valves_field3_Crop"];
+    this._valves_field4_Crop = map["valves_field4_Crop"];
+    this._valves_tank_1 = map["valves_tank_1"];
+    this._valves_tank_2 = map["valves_tank_2"];
+    this._valves_tank_3 = map["valves_tank_3"];
+    this._valves_tank_4 = map["valves_tank_4"];
+    this._valves_FertlizerProgramming = map["valves_FertlizerProgramming"];
+    this._valves_FertlizerDelay = map["valves_FertlizerDelay"];
     this._valves_ECSetp = map["valves_ECSetp"];
     this._valves_PHSetp = map["valves_PHSetp"];
     this._valves_DateCreated = map["valves_DateCreated"];
   }
-
 }
