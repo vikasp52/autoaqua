@@ -54,6 +54,16 @@ flutter:
      - Images/ltr.png
      - Images/minutes.png
      - Images/tankicon.png
+     - Images/crops.png
+     - Images/settings.png
+     - Images/changenumber_icon.png
+     - Images/fogger_icon.png
+     - Images/irrstop.png
+     - Images/menu.png
+     - Images/scheduler_icon.png
+     - Images/setclock.png
+     - Images/recycle.png
+     - Images/flag.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

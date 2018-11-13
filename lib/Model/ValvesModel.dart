@@ -4,6 +4,10 @@ class ValvesModel {
   int _valvesProgramNo;
   int _valvesSeqNo;
   String _valves_UniteType;
+  String _valves_VolveNo1;
+  String _valves_VolveNo2;
+  String _valves_VolveNo3;
+  String _valves_VolveNo4;
   String _valves_fieldNo_1;
   String _valves_fieldNo_2;
   String _valves_fieldNo_3;
@@ -27,6 +31,10 @@ class ValvesModel {
       this._valvesProgramNo,
       this._valvesSeqNo,
       this._valves_UniteType,
+      this._valves_VolveNo1,
+      this._valves_VolveNo2,
+      this._valves_VolveNo3,
+      this._valves_VolveNo4,
       this._valves_fieldNo_1,
       this._valves_fieldNo_2,
       this._valves_fieldNo_3,
@@ -51,6 +59,10 @@ class ValvesModel {
     this._valvesProgramNo = obj["valves_ProgramNo"];
     this._valvesSeqNo = obj["valves_SeqNo"];
     this._valves_UniteType = obj["valves_UniteType"];
+    this._valves_VolveNo1 = obj["valves_VolveNo1"];
+    this._valves_VolveNo2 = obj["valves_VolveNo2"];
+    this._valves_VolveNo3 = obj["valves_VolveNo3"];
+    this._valves_VolveNo4 = obj["valves_VolveNo4"];
     this._valves_fieldNo_1 = obj["valves_fieldNo_1"];
     this._valves_fieldNo_2 = obj["valves_fieldNo_2"];
     this._valves_fieldNo_3 = obj["valves_fieldNo_3"];
@@ -77,6 +89,10 @@ class ValvesModel {
   int get valves_ProgramNo => _valvesProgramNo;
   int get valves_SeqNo => _valvesSeqNo;
   String get valves_UniteType => _valves_UniteType;
+  String get valves_VolveNo1 => _valves_VolveNo1;
+  String get valves_VolveNo2 => _valves_VolveNo2;
+  String get valves_VolveNo3 => _valves_VolveNo3;
+  String get valves_VolveNo4 => _valves_VolveNo4;
   String get valves_fieldNo_1 => _valves_fieldNo_1;
   String get valves_fieldNo_2 => _valves_fieldNo_2;
   String get valves_fieldNo_3 => _valves_fieldNo_3;
@@ -101,6 +117,10 @@ class ValvesModel {
     map_Valves["valves_ProgramNo"] = _valvesProgramNo;
     map_Valves["valves_SeqNo"] = _valvesSeqNo;
     map_Valves["valves_UniteType"] = _valves_UniteType;
+    map_Valves["valves_VolveNo1"] = _valves_VolveNo1;
+    map_Valves["valves_VolveNo2"] = _valves_VolveNo2;
+    map_Valves["valves_VolveNo3"] = _valves_VolveNo3;
+    map_Valves["valves_VolveNo4"] = _valves_VolveNo4;
     map_Valves["valves_fieldNo_1"] = _valves_fieldNo_1;
     map_Valves["valves_fieldNo_2"] = _valves_fieldNo_2;
     map_Valves["valves_fieldNo_3"] = _valves_fieldNo_3;
@@ -131,6 +151,10 @@ class ValvesModel {
     this._valvesProgramNo = map["valves_ProgramNo"];
     this._valvesSeqNo = map["valves_SeqNo"];
     this._valves_UniteType = map["valves_UniteType"];
+    this._valves_VolveNo1 = map["valves_VolveNo1"];
+    this._valves_VolveNo2 = map["valves_VolveNo2"];
+    this._valves_VolveNo3 = map["valves_VolveNo3"];
+    this._valves_VolveNo4 = map["valves_VolveNo4"];
     this._valves_fieldNo_1 = map["valves_fieldNo_1"];
     this._valves_fieldNo_2 = map["valves_fieldNo_2"];
     this._valves_fieldNo_3 = map["valves_fieldNo_3"];

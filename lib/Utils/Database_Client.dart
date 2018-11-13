@@ -28,7 +28,9 @@ class DataBaseHelper {
   final String configId = "configid";
   final String configMaxProg = "configMaxProg";
   final String configMaxOut = "configMaxOutput";
-  final String configMobNo = "configMobNo";
+  final String configEcpHStatusCol = "configEcpHStatus";
+  final String configMaxRTUOnOffCol = "configMaxRTUOnOff";
+  final String configMaxRTU = "configMaxRTU";
   final String configNoOfSlaves = "configNoOfSlaves";
   final String configSlaveMobNos = "configSlaveMobNos";
   final String ConfigDateCreated = "ConfigDateCreated";
@@ -45,10 +47,12 @@ class DataBaseHelper {
   final String programIDCol = "programID";
   final String program_controllerIdCol = "program_controller_id";
   final String program_modelCol = "program_mode";
+  final String program_flushModeCol = "program_flushMode";
   final String program_flushtypeCol = "program_flushtype";
   final String program_intervalCol = "program_interval";
   final String program_flushonCol = "program_flushon";
-  final String program_integrationtypeCol = "program_integrationtype";
+  final String program_irrigationtypeCol = "program_irrigationtype";
+  final String program_fertilizationtypeCol = "program_fertilizationtype";
   final String program_DateCreatedCol = "program_DateCreated";
 
   //VALVES Variable
@@ -58,6 +62,10 @@ class DataBaseHelper {
   final String valvesProgramNoCol = "valves_ProgramNo";
   final String valvesSeqNoCol = "valves_SeqNo";
   final String valvesUniteTypeCol = "valves_UniteType";
+  final String valves_VolveNo1Col = "valves_VolveNo1";
+  final String valves_VolveNo2Col = "valves_VolveNo2";
+  final String valves_VolveNo3Col = "valves_VolveNo3";
+  final String valves_VolveNo4Col = "valves_VolveNo4";
   final String valves_fieldNo1Col = "valves_fieldNo_1";
   final String valves_fieldNo2Col = "valves_fieldNo_2";
   final String valves_fieldNo3Col = "valves_fieldNo_3";
@@ -110,6 +118,8 @@ class DataBaseHelper {
   final String tableFogger = "Fogger_Table";
   static String foggerIdCol = "foggerId";
   static String fogger_controllerCol = "fogger_controllerId";
+  static String fogger_maxRTUCol = "fogger_maxRTU";
+  static String fogger_foggerDelayCol = "fogger_foggerDelay";
   static String fogger_FieldCol = "fogger_Field";
   static String fogger_onSecCol = "fogger_onSec";
   static String fogger_tempDegreeCol = "fogger_tempDegree";
@@ -150,7 +160,9 @@ class DataBaseHelper {
         controllerId INTEGER NOT NULL,
         $configMaxProg TEXT, 
         $configMaxOut TEXT, 
-        $configMobNo TEXT, 
+        $configEcpHStatusCol TEXT,
+        $configMaxRTUOnOffCol TEXT,
+        $configMaxRTU TEXT, 
         $configSlaveMobNos TEXT,
         $configNoOfSlaves TEXT, 
         $ConfigDateCreated TEXT,
@@ -175,10 +187,12 @@ class DataBaseHelper {
         $programIDCol INTEGER PRIMARY KEY AUTOINCREMENT,
         $program_controllerIdCol INTEGER NOT NULL,
         $program_modelCol TEXT,
+        $program_flushModeCol TEXT,
         $program_flushtypeCol TEXT,
         $program_intervalCol TEXT,
         $program_flushonCol TEXT,
-        $program_integrationtypeCol TEXT,
+        $program_irrigationtypeCol TEXT,
+        $program_fertilizationtypeCol TEXT,
         $program_DateCreatedCol TEXT,
         FOREIGN KEY ($program_controllerIdCol) REFERENCES $tableName(id))
         """);
@@ -192,6 +206,10 @@ class DataBaseHelper {
        $valvesProgramNoCol INTEGER NOT NULL,
        $valvesSeqNoCol INTEGER NOT NULL,
        $valvesUniteTypeCol TEXT,
+       $valves_VolveNo1Col TEXT,
+       $valves_VolveNo2Col TEXT,
+       $valves_VolveNo3Col TEXT,
+       $valves_VolveNo4Col TEXT,
        $valves_fieldNo1Col TEXT,
        $valves_fieldNo2Col TEXT,
        $valves_fieldNo3Col TEXT,
@@ -240,11 +258,14 @@ class DataBaseHelper {
       """
     );
 
+    //Table Fogger
     await db.execute(
       """
       CREATE TABLE $tableFogger(
       $foggerIdCol INTEGER PRIMARY KEY,
       $fogger_controllerCol INTEGER NOT NULL,
+      $fogger_maxRTUCol TEXT,
+      $fogger_foggerDelayCol TEXT,
       $fogger_FieldCol TEXT,
       $fogger_onSecCol TEXT,
       $fogger_tempDegreeCol TEXT,
@@ -325,7 +346,7 @@ class DataBaseHelper {
   //Update Valves Data
   Future<int> updateValvesData(ValvesModel modelValve)async{
     return (await db).update("$tableValves", modelValve.toMap_Valves(),
-        where: "$valvesIdCol = ?", whereArgs: [modelValve.valvesId]);
+        where: "$valvesProgramNoCol = ? and $valvesSeqNoCol = ?", whereArgs: [modelValve.valves_ProgramNo, modelValve.valves_SeqNo]);
   }
 
   //Insertion into timer table
@@ -447,15 +468,20 @@ class DataBaseHelper {
   }
 
   //Get Valves Data
-  Future<ValvesModel> getValvesData(int controllerId, int valvesId, int seqNo) async{
+  Future<ValvesModel> getValvesData(int controllerId, int valvesProgramNo, int seqNo) async{
     var dbClient = await db;
     var valvesResult = await dbClient.rawQuery(
-        "SELECT * FROM $tableValves WHERE $valves_controllerIdCol = $controllerId");
-    if(valvesResult.length == 0 || seqNo+1 > valvesResult.length){
+        "SELECT * FROM $tableValves WHERE $valves_controllerIdCol = $controllerId AND $valvesProgramNoCol = $valvesProgramNo AND $valvesSeqNoCol = $seqNo");
+    print("Valve result ${valvesResult.length}");
+    if(valvesResult.length == 0){
+      // || seqNo > valvesResult.length || valvesProgramNo > valvesResult.length
       return null;
-    };
-    print("Valves data is $valvesResult");
-    return ValvesModel.fromMap_Valves(valvesResult[seqNo]);
+    }else{
+      print("Valves 1 data is $valvesProgramNo");
+      //print("Valves 2 data is ${ValvesModel.fromMap_Valves(valvesResult[valvesProgramNo])}");
+      return ValvesModel.fromMap_Valves(valvesResult.first);
+      print("Valves data is $valvesProgramNo");
+    }
   }
 
   //Get Timer Data

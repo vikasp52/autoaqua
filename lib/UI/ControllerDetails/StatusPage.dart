@@ -1,14 +1,14 @@
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:flutter/material.dart';
 
 class StatusPage extends StatefulWidget {
-
   static Route<dynamic> route(int controllerId) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.STATUS,
       builder: (context) => StatusPage(
-        controllerId: controllerId,
-      ),
+            controllerId: controllerId,
+          ),
     );
   }
 
@@ -24,6 +24,38 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
+  DataBaseHelper dbh = DataBaseHelper();
+  var _maxFogger = 0;
+  var _ECpHStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    print("THis is database table for Configuration ${dbh.getProgramItems}");
+
+    dbh.getConfigDataForController(widget.controllerId).then((configDetails){
+      if(configDetails != null){
+        setState(() {
+          _ECpHStatus = configDetails.configEcpHStatus;
+        });
+      }
+
+      print("ECph Status ${_ECpHStatus}");
+    });
+
+    dbh.getFoggerData(widget.controllerId).then((foggerdetails) {
+      if (foggerdetails != null) {
+        setState(() {
+          for (int i = 0; i < 1; i++) {
+            final model = foggerdetails[i];
+            _maxFogger = int.parse(model.fogger_maxRTU);
+          }
+          print("Fogger data is : $_maxFogger");
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
@@ -37,7 +69,8 @@ class _StatusPageState extends State<StatusPage> {
             RaisedButton(
               color: Colors.white,
               padding: const EdgeInsets.all(24.0),
-              child: Text("IRRIGATION STATUS",
+              child: Text(
+                "IRRIGATION STATUS",
                 style: TextStyle(fontSize: 20.0),
               ),
               onPressed: () {
@@ -45,15 +78,34 @@ class _StatusPageState extends State<StatusPage> {
               },
             ),
             SizedBox(height: 16.0),
-            RaisedButton(
+            _maxFogger > 0 && _maxFogger != null
+                ? RaisedButton(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      "WEATHER STATUS",
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () {
+                      ControllerDetails.navigateToNext(context);
+                    },
+                  )
+                : SizedBox(
+                    height: 0.0,
+                  ),
+            SizedBox(height: 16.0),
+            _ECpHStatus == "1" ?RaisedButton(
               color: Colors.white,
               padding: const EdgeInsets.all(24.0),
-              child: Text("WEATHER STATUS",
+              child: Text(
+                "EC/pH STATUS",
                 style: TextStyle(fontSize: 20.0),
               ),
               onPressed: () {
                 ControllerDetails.navigateToNext(context);
               },
+            ):SizedBox(
+              height: 0.0,
             ),
           ],
         ),

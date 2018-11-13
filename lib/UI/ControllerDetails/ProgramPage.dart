@@ -1,20 +1,16 @@
-import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/Model/ProgramModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
-import 'package:autoaqua/UI/ControllerDetails/ValvesPage.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/DateFormatter.dart';
 import 'package:flutter/material.dart';
 
-
 class ProgramPage extends StatefulWidget {
-
   static Route<dynamic> route(int controllerId) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.PROGRAM,
       builder: (context) => ProgramPage(
-        controllerId: controllerId,
-      ),
+            controllerId: controllerId,
+          ),
     );
   }
 
@@ -27,7 +23,6 @@ class ProgramPage extends StatefulWidget {
 
   @override
   _ProgramPageState createState() => _ProgramPageState();
-
 }
 
 class _ProgramPageState extends State<ProgramPage> {
@@ -43,51 +38,56 @@ class _ProgramPageState extends State<ProgramPage> {
 
     _loading = dbh.getConfigDataForController(widget.controllerId).then((config) {
       //_oldConfig = config;
-      if(config != null) {
+      if (config != null) {
         setState(() {
           maxnumber = int.parse(config.configMaxProg); //TextEditingValue(text: config.configMaxProg);
         });
-        }
-        print("Max program no is ${maxnumber}");
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
-      child: ListView.builder(
-          itemCount: maxnumber,
-          itemBuilder: (BuildContext context, int index){
-            return ListTile(
-              title: Card(
-                  color: Colors.lightBlueAccent.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text("PROGRAM ${index+1}", style: TextStyle(
-                        //fontWeight: FontWeight.bold,
-                        fontSize: 20.0
-                    ),),
-                  )
-              ),
-              onTap: () => Navigator.of(context).push(
-                _ProgramOption.route(index, maxnumber, widget.controllerId),
-              ),
-            );
-          },
-      ),
-    );
+        child: maxnumber == null || maxnumber == 0
+            ? Center(
+                child: Text(
+                  "No program is added",
+                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                ),
+              )
+            : ListView.builder(
+                itemCount: maxnumber,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Card(
+                        color: Colors.lightBlueAccent.shade100,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text(
+                            "PROGRAM ${index + 1}",
+                            style: TextStyle(
+                                //fontWeight: FontWeight.bold,
+                                fontSize: 20.0),
+                          ),
+                        )),
+                    onTap: () => Navigator.of(context).push(
+                          _ProgramOption.route(index, maxnumber, widget.controllerId),
+                        ),
+                  );
+                },
+              ));
   }
 }
 
 class _ProgramOption extends StatefulWidget {
-
   static Route<dynamic> route(int programIndex, int maxIndex, int controllerId) {
     return MaterialPageRoute(
       builder: (context) => _ProgramOption(
-        programIndex: programIndex,
-        maxIndex: maxIndex,
-        controllerId: controllerId,
-      ),
+            programIndex: programIndex,
+            maxIndex: maxIndex,
+            controllerId: controllerId,
+          ),
     );
   }
 
@@ -107,66 +107,81 @@ class _ProgramOption extends StatefulWidget {
 }
 
 class _ProgramOptionState extends State<_ProgramOption> {
-
   // state variable
   int _radioValueforMode;
   int _radioValueFlushType;
-  int _radioValueIntegration;
+  int _radioValueIrrigation;
+  int _radioValueFertilization;
+  bool _valFlushMode = false;
 
-  final TextEditingController _intervalController =
-  new TextEditingController();
-  final TextEditingController _flushOnControler=
-  new TextEditingController();
+  final TextEditingController _intervalController = new TextEditingController();
+  final TextEditingController _flushOnControler = new TextEditingController();
 
   ProgramModel _oldProgram;
   Future _loading;
   var db = new DataBaseHelper();
+
+
+  void _handleFilterFlushModeChange(bool e) {
+    setState(() {
+      if (e) {
+        _valFlushMode = true;
+      } else {
+        _valFlushMode = false;
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     print("THis is database table for Configuration ${db.getProgramItems()}");
     print('This is controller id ${widget.controllerId}');
-    print('This is list index ${widget.programIndex+1}');
+    print('This is list index ${widget.programIndex + 1}');
     _loading = db.getProgramData(widget.controllerId, widget.programIndex).then((config) {
       _oldProgram = config;
       print(config);
-      if(config != null) {
+      if (config != null) {
         setState(() {
-          _radioValueforMode = int.parse(config.program_mode);
-          _radioValueFlushType = int.parse(config.program_flushtype);
+          _radioValueforMode = config.program_mode != "null"?int.parse(config.program_mode):null;
+          _valFlushMode = config.program_flushMode == "true" ? true : false;
+            _radioValueFlushType = config.program_flushtype != "null" ?int.parse(config.program_flushtype):null;
           _intervalController.value = TextEditingValue(text: config.program_interval);
           _flushOnControler.value = TextEditingValue(text: config.program_flushon);
-          _radioValueIntegration = int.parse(config.program_integrationtype);
+          _radioValueIrrigation = config.program_irrigationtype != "null" ?int.parse(config.program_irrigationtype):null;
+          _radioValueFertilization = config.program_fertilizationtype != "null"?int.parse(config.program_fertilizationtype):null;
         });
-        }
+      }
     });
   }
 
-  Future<void > _handelProgramDataSubmit() async{
-
-    if(_oldProgram == null){
+  Future<void> _handelProgramDataSubmit() async {
+    if (_oldProgram == null) {
       ProgramModel submitProgramData = new ProgramModel(
           widget.controllerId,
           _radioValueforMode.toString(),
+          _valFlushMode.toString(),
           _radioValueFlushType.toString(),
           _intervalController.text,
           _flushOnControler.text,
-          _radioValueIntegration.toString(),
+          _radioValueIrrigation.toString(),
+          _radioValueFertilization.toString(),
           dateFormatted());
       print("saved");
       await db.saveProgramData(submitProgramData);
       await db.getProgramData(widget.controllerId, widget.programIndex);
-    }else{
+    } else {
       ProgramModel submitProgramData = new ProgramModel(
-          widget.controllerId,
-          _radioValueforMode.toString(),
-          _radioValueFlushType.toString(),
-          _intervalController.text,
-          _flushOnControler.text,
-          _radioValueIntegration.toString(),
-          dateFormatted(),
-          _oldProgram.programID,
+        widget.controllerId,
+        _radioValueforMode.toString(),
+        _valFlushMode.toString(),
+        _radioValueFlushType.toString(),
+        _intervalController.text,
+        _flushOnControler.text,
+        _radioValueIrrigation.toString(),
+          _radioValueFertilization.toString(),
+        dateFormatted(),
+        _oldProgram.programID,
       );
 
       print("updated");
@@ -208,13 +223,26 @@ class _ProgramOptionState extends State<_ProgramOption> {
     });
   }
 
-  void _handleIntegrationValueChange(int value) {
+  void _handleIrrigationValueChange(int value) {
     setState(() {
-      _radioValueIntegration = value;
+      _radioValueIrrigation = value;
 
-      switch (_radioValueIntegration) {
+      switch (_radioValueIrrigation) {
         case 0:
+          break;
+        case 1:
+          //_result = ...
+          break;
+      }
+    });
+  }
 
+  void _handleFertilizationValueChange(int value) {
+    setState(() {
+      _radioValueFertilization = value;
+
+      switch (_radioValueFertilization) {
+        case 0:
           break;
         case 1:
         //_result = ...
@@ -223,13 +251,16 @@ class _ProgramOptionState extends State<_ProgramOption> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
       title: "Program No: ${widget.programIndex + 1}",
       child: ListView(
         children: <Widget>[
-          Padding(padding: EdgeInsets.all(20.0),
+          Padding(
+            padding: EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -246,11 +277,14 @@ class _ProgramOptionState extends State<_ProgramOption> {
                             decoration: ShapeDecoration(shape: StadiumBorder(), color: Color.fromRGBO(0, 84, 179, 1.0)),
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-                              child: Text("Program No: ${widget.programIndex+1}", style: TextStyle(
+                              child: Text(
+                                "Program No: ${widget.programIndex + 1}",
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20.0,
                                   //fontWeight: FontWeight.bold
-                              ),),
+                                ),
+                              ),
                             ),
                           )
                         ],
@@ -259,7 +293,8 @@ class _ProgramOptionState extends State<_ProgramOption> {
                   ],
                 ),
                 SizedBox(height: 10.0),
-                Text("Mode:",
+                Text(
+                  "Mode:",
                   style: TextStyle(fontSize: 20.0),
                 ),
                 Row(
@@ -283,6 +318,15 @@ class _ProgramOptionState extends State<_ProgramOption> {
                       size: Size(20.0, 0.0),
                     ),
                     new Radio(
+                      value: 3,
+                      groupValue: _radioValueforMode,
+                      onChanged: _handleRadioValueChange,
+                    ),
+                    Text("3"),
+                    SizedBox.fromSize(
+                      size: Size(20.0, 0.0),
+                    ),
+                    new Radio(
                       value: 4,
                       groupValue: _radioValueforMode,
                       onChanged: _handleRadioValueChange,
@@ -290,91 +334,190 @@ class _ProgramOptionState extends State<_ProgramOption> {
                     Text("4"),
                   ],
                 ),
-                Text("Flush Type:",
-                  style: TextStyle(fontSize: 20.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Divider(
+                    height: 1.0,
+                  ),
                 ),
                 Row(
                   children: <Widget>[
-                    new Radio(
-                      value: 0,
-                      groupValue: _radioValueFlushType,
-                      onChanged: _handleFlushRadioValueChange,
+                    Text(
+                      "Filter Backflush:",
+                      style: TextStyle(fontSize: 20.0),
                     ),
-                    Text("Days"),
-                    SizedBox.fromSize(
-                      size: Size(10.0, 0.0),
-                    ),
-                    new Radio(
-                      value: 1,
-                      groupValue: _radioValueFlushType,
-                      onChanged: _handleFlushRadioValueChange,
-                    ),
-                    Text("Irr-Out"),
-                  ],
-                ),
-                TextFormField(
-                  style: TextStyle(fontSize: 20.0,
-                      color: Colors.black),
-                  decoration: InputDecoration(
-                      hintText: "day",
-                      labelText: 'Interval',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: _intervalController,
-                ),
-                TextFormField(
-                  style: TextStyle(fontSize: 20.0,
-                      color: Colors.black),
-                  decoration: InputDecoration(
-                      hintText: "min",
-                      labelText: 'Flush On',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: _flushOnControler,
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: 250.0,
-                      child: Text("Volume based integration", style: TextStyle(
-                        fontSize: 20.0,
-                      ),),
-                    ),
-                    new Radio(
-                      value: 0,
-                      groupValue: _radioValueIntegration,
-                      onChanged: _handleIntegrationValueChange,
-                    ),
+                    Switch(value: _valFlushMode, onChanged: (bool e) => _handleFilterFlushModeChange(e)),
                   ],
                 ),
 
+                _valFlushMode == true ?Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        new Radio(
+                          value: 0,
+                          groupValue: _radioValueFlushType,
+                          onChanged: _handleFlushRadioValueChange,
+                        ),
+                        Text("Days"),
+                        SizedBox.fromSize(
+                          size: Size(10.0, 0.0),
+                        ),
+                        new Radio(
+                          value: 1,
+                          groupValue: _radioValueFlushType,
+                          onChanged: _handleFlushRadioValueChange,
+                        ),
+                        Text("Irr-Out"),
+                      ],
+                    ),
+                    TextFormField(
+                      style: TextStyle(fontSize: 20.0, color: Colors.black),
+                      decoration: InputDecoration(
+                        hintText: "day",
+                        labelText: 'Filter Flush Interval',
+                      ),
+                      keyboardType: TextInputType.number,
+                      controller: _intervalController,
+                    ),
+                    TextFormField(
+                      style: TextStyle(fontSize: 20.0, color: Colors.black),
+                      decoration: InputDecoration(
+                        hintText: "min",
+                        labelText: 'Filter Flush On(mins)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      controller: _flushOnControler,
+                    ),
+                  ],
+                ):SizedBox(height: 0.0,),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Divider(
+                    height: 1.0,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(
+                      "IRRIGATION",
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    Text(
+                      "FERTIGATION",
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ],
+                ),
                 Row(
                   children: <Widget>[
                     Container(
-                      width: 250.0,
-                      child:Text("Time based integration", style: TextStyle(
-                          fontSize: 20.0
-                      ),),
+                      width: 103.0,
+                      child: Text(
+                        "Volume based",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    ),
+                    new Radio(
+                      value: 0,
+                      groupValue: _radioValueIrrigation,
+                      onChanged: _handleIrrigationValueChange,
+                    ),
+                    SizedBox(width: 0.0,),
+                    Container(
+                      height: 30.0,
+                      width: 1.0,
+                      color: Colors.black,
+                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    ),
+                    Container(
+                      width: 103.0,
+                      child: Text(
+                        "Volume based",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    ),
+                    new Radio(
+                      value: 0,
+                      groupValue: _radioValueFertilization,
+                      onChanged: _handleFertilizationValueChange,
+                    ),
+                  ],
+                ),
+                /*Row(
+                  children: <Widget>[
+                    Container(
+                      height: 30.0,
+                      width: 1.0,
+                      color: Colors.black,
+                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    ),
+                  ],
+                ),*/
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 103.0,
+                      child: Text(
+                        "Time based",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(fontSize: 15.0),
+                      ),
                     ),
                     new Radio(
                       value: 1,
-                      groupValue: _radioValueIntegration,
-                      onChanged: _handleIntegrationValueChange,
+                      groupValue: _radioValueIrrigation,
+                      onChanged: _handleIrrigationValueChange,
+                    ),
+                    SizedBox(width: 0.0,),
+                    Container(
+                      height: 30.0,
+                      width: 1.0,
+                      color: Colors.black,
+                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    ),
+                    Container(
+                      width: 103.0,
+                      child: Text(
+                        "Time based",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    ),
+                    new Radio(
+                      value: 1,
+                      groupValue: _radioValueFertilization,
+                      onChanged: _handleFertilizationValueChange,
                     ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Divider(
+                    height: 1.0,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     RawMaterialButton(
-                      onPressed: (){
+                      onPressed: () {
                         _handelProgramDataSubmit();
                         final int nextIndex = widget.programIndex + 1;
-                        if(nextIndex < widget.maxIndex){
+                        if (nextIndex < widget.maxIndex) {
                           Navigator.of(context).pushReplacement(
                             _ProgramOption.route(nextIndex, widget.maxIndex, widget.controllerId),
                           );
-                        }else{
+                        } else {
                           ControllerDetails.navigateToPage(context, ControllerDetailsPageId.PROGRAM.nextPageId);
                         }
                       },
@@ -382,7 +525,8 @@ class _ProgramOptionState extends State<_ProgramOption> {
                       splashColor: Colors.white,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(_oldProgram != null? "Update & Next": "Save & Next",
+                        child: Text(
+                          _oldProgram != null ? "Update & Next" : "Save & Next",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

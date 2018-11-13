@@ -31,25 +31,25 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
   TextEditingController _monthController = new TextEditingController();
   TextEditingController _yearController = new TextEditingController();
 
-  static var now = DateTime.now();
-
-  static var dayFormatter = new DateFormat("EEE");
-  static var monthFormatter = new DateFormat("M");
-  static var dateFormatter = new DateFormat("d");
-  static var yearFormatter = new DateFormat("yyyy");
-  static var hrsFormatter = new DateFormat("HH");
-  static var minFormatter = new DateFormat("m");
-  String dayFormate = dayFormatter.format(now);
-  String monthFormate = monthFormatter.format(now);
-  String dateFormate = dateFormatter.format(now);
-  String yearFormate = yearFormatter.format(now);
-  String hrsFormate = hrsFormatter.format(now);
-  String minFormate = minFormatter.format(now);
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    var now = DateTime.now();
+
+    var dayFormatter = new DateFormat("EEE");
+    var monthFormatter = new DateFormat("M");
+    var dateFormatter = new DateFormat("d");
+    var yearFormatter = new DateFormat("yyyy");
+    var hrsFormatter = new DateFormat("HH");
+    var minFormatter = new DateFormat("m");
+    String dayFormate = dayFormatter.format(now);
+    String monthFormate = monthFormatter.format(now);
+    String dateFormate = dateFormatter.format(now);
+    String yearFormate = yearFormatter.format(now);
+    String hrsFormate = hrsFormatter.format(now);
+    String minFormate = minFormatter.format(now);
+
     setState(() {
       _hrsController.value = TextEditingValue(text: hrsFormate);
       _minController.value = TextEditingValue(text: minFormate);
@@ -74,6 +74,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               Container(
                 width: 80.0,
                 child: TextFormField(
+                  enabled: false,
                   controller: _hrsController,
                   decoration: InputDecoration(suffixText: "Hrs", fillColor: Colors.black),
                   textAlign: TextAlign.center,
@@ -94,6 +95,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               Container(
                 width: 80.0,
                 child: TextFormField(
+                  enabled: false,
                   controller: _minController,
                   decoration: InputDecoration(suffixText: "Min", fillColor: Colors.black),
                   textAlign: TextAlign.center,
@@ -114,7 +116,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
                 child: TextFormField(
                   controller: _dayOfWeekController,
                   decoration: InputDecoration(
-                      //suffixText: "Hrs",
+                      //prefixText: "day",
                       fillColor: Colors.black),
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -132,6 +134,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               Container(
                 width: 60.0,
                 child: TextFormField(
+                  enabled: false,
                   controller: _dateController,
                   decoration: InputDecoration(fillColor: Colors.black),
                   textAlign: TextAlign.center,
@@ -148,6 +151,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               Container(
                 width: 60.0,
                 child: TextFormField(
+                  enabled: false,
                   controller: _monthController,
                   decoration: InputDecoration(fillColor: Colors.black),
                   textAlign: TextAlign.center,
@@ -164,6 +168,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               Container(
                 width: 60.0,
                 child: TextFormField(
+                  enabled: false,
                   controller: _yearController,
                   decoration: InputDecoration(fillColor: Colors.black),
                   textAlign: TextAlign.center,
@@ -176,7 +181,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               )
             ],
           ),
-          SizedBox(
+          /*SizedBox(
             height: 20.0,
           ),
           RawMaterialButton(
@@ -194,7 +199,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
               ),
             ),
             shape: const StadiumBorder(),
-          ),
+          ),*/
         ],
       )),
     );

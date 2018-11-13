@@ -69,7 +69,8 @@ class ControllerDetailsState extends State<ControllerDetails> {
         _actions = <Widget>[
           IconButton(
             onPressed: () => navigateToPage(nextPageId),
-            icon: Icon(nextPageId != null ? nextPageId.icon : Icons.arrow_forward_ios),
+            icon: Icon(Icons.arrow_forward_ios),
+            //icon: Icon(nextPageId != null ? nextPageId.icon : Icons.arrow_forward_ios),
           )
         ];
       }else{
@@ -172,13 +173,16 @@ class ControllerDetailsState extends State<ControllerDetails> {
             itemCount: ControllerDetailsPageId.ids.length,
             itemBuilder: (BuildContext context, int index) {
               final pageId = ControllerDetailsPageId.ids[index];
-              return ListTile(
-                onTap: (){
-                  Navigator.of(context).pop();
-                  navigateToPage(pageId);
-                },
-                leading: Icon(pageId.icon),
-                title: Text(pageId.name),
+              return Container(
+                color: Colors.lightBlueAccent,
+                child: ListTile(
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      navigateToPage(pageId);
+                    },
+                    leading: pageId.icon,
+                    title: Text(pageId.name),
+                  ),
               );
             },
           ),
@@ -229,11 +233,11 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
       children: <Widget>[
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 8.0),
             child: GridView.count(
               crossAxisCount: 3,
-              mainAxisSpacing: 4.0,
-              crossAxisSpacing: 4.0,
+              mainAxisSpacing: 20.0,
+              crossAxisSpacing: 5.0,
               padding: const EdgeInsets.all(4.0),
               children: ControllerDetailsPageId.ids
                   .map((pageId){
@@ -248,7 +252,7 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(56.0, 0.0, 56.0, 65.0),
+          padding: const EdgeInsets.fromLTRB(56.0, 0.0, 56.0, 40.0),
           child: MaterialButton(
             onPressed: () {
               //Navigator.of(context).pop();
@@ -271,20 +275,28 @@ class _ControllerDetailsButton extends StatelessWidget {
     @required this.onPressed,
   }) : super(key: key);
 
-  final IconData icon;
+  final ImageIcon icon;
   final String text;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      color: Colors.white,
-      shape: CircleBorder(),
+    return MaterialButton(
+      //color: Colors.lightBlueAccent,
+      //shape: CircleBorder(),
       padding: EdgeInsets.zero,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(this.icon, size: 28.0),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.blue
+            ),
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: this.icon,
+              )),
           SizedBox(height: 8.0),
           Text(
             this.text,
@@ -303,7 +315,7 @@ class ControllerDetailsPageFrame extends StatefulWidget {
     Key key,
     this.title,
     @required this.child,
-    this.hasBackground = true,
+    this.hasBackground = false,
   }) : super(key: key);
 
   final String title;
@@ -358,56 +370,56 @@ typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId
 
 class ControllerDetailsPageId {
   static const CONFIGURATION = const ControllerDetailsPageId(
-    Icons.settings,
+    ImageIcon(AssetImage('Images/settings.png'), color: Colors.white,),
     'CONFIGURATION',
     ConfigurationPage.route,
   );
 
   static const PROGRAM = const ControllerDetailsPageId(
-    Icons.apps,
+    ImageIcon(AssetImage('Images/menu.png'), color: Colors.white ),
     'PROGRAM',
     ProgramPage.route,
   );
 
   static const VALVES = const ControllerDetailsPageId(
-    Icons.pages,
+    ImageIcon(AssetImage('Images/valve_1.png'), color: Colors.white),
     'VALVES',
     ValvesPage.route,
   );
 
   static const TIMER = const ControllerDetailsPageId(
-    Icons.av_timer,
-    'TIMER',
+    ImageIcon(AssetImage('Images/recycle.png'),  color: Colors.white),
+    'SCHEDULES',
     TimerPage.route,
   );
 
   static const FOGGER = const ControllerDetailsPageId(
-    Icons.shuffle,
+    ImageIcon(AssetImage('Images/fogger_icon.png'), color: Colors.white),
     'FOGGER',
     FoggerPage.route,
   );
 
   static const STATUS = const ControllerDetailsPageId(
-    Icons.opacity,
+    ImageIcon(AssetImage('Images/flag.png'), color: Colors.white),
     'STATUS',
     StatusPage.route,
   );
 
   static const IRR_STOP = const ControllerDetailsPageId(
-    Icons.stop,
+    ImageIcon(AssetImage('Images/irrstop.png'), color: Colors.white),
     'IRR STOP',
     IRRPage.route,
   );
 
   static const SET_TIME = const ControllerDetailsPageId(
-    Icons.access_time,
+    ImageIcon(AssetImage('Images/setclock.png'), color: Colors.white),
     'SET CLOCK TIME',
     SetClockTimePage.route,
   );
 
   static const EDIT_NUMBER = const ControllerDetailsPageId(
-    Icons.edit,
-    'EDIT NUMBER',
+    ImageIcon(AssetImage('Images/changenumber_icon.png'), color: Colors.white),
+    'SET NUMBER',
     EditNumberPage.route,
   );
 
@@ -430,7 +442,7 @@ class ControllerDetailsPageId {
 
   const ControllerDetailsPageId(this.icon, this.name, this.builder);
 
-  final IconData icon;
+  final ImageIcon icon;
   final String name;
   final ControllerDetailsRouteBuilder builder;
 }
