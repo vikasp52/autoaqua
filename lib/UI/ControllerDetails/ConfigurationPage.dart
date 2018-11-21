@@ -4,7 +4,7 @@ import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
-import 'package:autoaqua/Utils/DateFormatter.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 //var etMaxProgram = TextEditingController();
@@ -34,8 +34,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   final db = new DataBaseHelper();
   final _MaxProgController = TextEditingController();
   final _MaxOutputController = TextEditingController();
+  final _phDelayController = TextEditingController();
+  final _MaxInjectorController = TextEditingController();
   final _MaxRTUController = TextEditingController();
-  final _NoOfSlavesController = TextEditingController();
   final _slaveTextControllers = <TextEditingController>[];
   bool _valECpHType = false;
   bool _valRTU = false;
@@ -73,11 +74,12 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
       if (config != null) {
         _MaxProgController.value = TextEditingValue(text: config.configMaxProg);
         _MaxOutputController.value = TextEditingValue(text: config.configMaxOutput);
+        _MaxInjectorController.value = TextEditingValue(text: config.configMaxInjector);
         _valECpHType = config.configEcpHStatus == "true" ? true : false;
         _valRTU = config.configMaxRTUOnOff == "true" ? true : false;
-        _MaxRTUController.value = TextEditingValue(text: config.configMaxRTU);
+        _phDelayController.value = TextEditingValue(text: config.configMaxRTU);
         _slaveTextControllers.length = config.slaveMobNos.length;
-        _NoOfSlavesController.value = TextEditingValue(text: config.configNoOfSlaves);
+        _MaxRTUController.value = TextEditingValue(text: config.configNoOfSlaves);
         for (int i = 0; i < _slaveTextControllers.length; i++) {
           _slaveTextControllers[i] = TextEditingController(
             text: config.slaveMobNos[i],
@@ -105,28 +107,22 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     );
   }
 
-  _AppendZero(String etController) {
-    if (etController.length < 2) {
-      return '0' + '$etController';
-    } else {
-      return etController;
-    }
-  }
-
   Future<void> _handleSave() async {
     print("id here: ${widget.controllerId}");
 
     if (_oldConfig == null) {
       ConfigurationModel newConfig = new ConfigurationModel(
         widget.controllerId,
-        _AppendZero(_MaxProgController.text),
-        _AppendZero(_MaxOutputController.text),
+        AppendZero(_MaxProgController.text),
+        AppendZero(_MaxOutputController.text),
+        _MaxInjectorController.text,
         _valECpHType.toString(),
         _valRTU.toString(),
-        _AppendZero(_MaxRTUController.text),
-        _AppendZero(_NoOfSlavesController.text),
+        AppendZero(_phDelayController.text),
+        AppendZero(_MaxRTUController.text),
         _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false),
         dateFormatted(),
+        "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxProgController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>"
         //_oldConfig.configid
       );
 
@@ -138,14 +134,16 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     } else {
       ConfigurationModel newConfig = new ConfigurationModel(
           widget.controllerId,
-          _AppendZero(_MaxProgController.text),
-          _AppendZero(_MaxOutputController.text),
+          AppendZero(_MaxProgController.text),
+          AppendZero(_MaxOutputController.text),
+          _MaxInjectorController.text,
           _valECpHType.toString(),
           _valRTU.toString(),
-          _AppendZero(_MaxRTUController.text),
-          _AppendZero(_NoOfSlavesController.text),
+          AppendZero(_phDelayController.text),
+          AppendZero(_MaxRTUController.text),
           _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false),
           dateFormatted(),
+          "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxProgController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>",
           _oldConfig.configid);
 
       int saveItemId = await db.updateConfigurationItems(newConfig);
@@ -156,52 +154,143 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     }
   }
 
+  paddingforText() {
+    return const EdgeInsets.only(bottom: 8.0);
+  }
+
+  String showSnackBar(BuildContext context, String message) {
+    var snackbar = SnackBar(
+      content: Text(message,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+      backgroundColor: Colors.white,
+      duration: Duration(seconds: 5),
+      action: SnackBarAction(label: "OK", onPressed: (){}),
+    );
+    Scaffold.of(context).showSnackBar(snackbar);
+  }
+
   Widget buildContent(BuildContext context) {
     return Form(
       key: _configurationformkey,
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(18.0),
+          padding: EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: _MaxProgController,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Please enter the Max program";
-                  }
-                },
-                autofocus: true,
-                maxLength: 2,
-                decoration: new InputDecoration(
-                  labelText: "Maximum Program",
-                  fillColor: Colors.black,
-                ),
+              Row(
+               // mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Flexible(
+                    child: Padding(
+                      padding: paddingforText(),
+                      child: Text(
+                        "Total Programs per Day: ",
+                        //textAlign: TextAlign.right,
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 40.0,
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      controller: _MaxProgController,
+                      style: TextStyle(fontSize: 20.0, color: Colors.black),
+                      validator: (value) {
+                        if (value.isEmpty || int.parse(value) < 1) {
+                          return  "";//showSnackBar(context, "Please enter the Max program");
+                        }
+                      },
+                      autofocus: true,
+                      maxLength: 2,
+                      decoration: new InputDecoration(
+                        //labelText: "Total Programs per Day",
+                        counterText: "",
+                        fillColor: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 10.0,
+              Row(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Flexible(
+                      child: Padding(
+                        padding: paddingforText(),
+                        child: Text(
+                          "Total Valves per Controller: ",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                      )),
+                  Container(
+                    width: 40.0,
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      controller: _MaxOutputController,
+                      style: TextStyle(fontSize: 20.0, color: Colors.black),
+                      maxLength: 2,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Please enter the Max output";
+                        }
+                      },
+                      decoration: new InputDecoration(
+                        counterText: "",
+                        fillColor: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: _MaxOutputController,
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black
-                ),
-                maxLength: 2,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Please enter the Max output";
-                  }
-                },
-                decoration: new InputDecoration(
-                  labelText: "Maximum Valves",
-                  fillColor: Colors.black,
+              Row(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Flexible(
+                    child: Padding(
+                      padding: paddingforText(),
+                      child: Text(
+                        "Total Injectors Controller: ",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 40.0,
+                        child: TextFormField(
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          controller: _MaxInjectorController,
+                          style: TextStyle(fontSize: 20.0, color: Colors.black),
+                          maxLength: 1,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Please enter the Max output";
+                            } else if (int.parse(value) > 4) {
+                              return "You cannot enter more then 4";
+                            }
+                          },
+                          decoration: new InputDecoration(
+                            fillColor: Colors.black,
+                            counterText: "",
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: paddingforText(),
+                        child: Text("(Max 4)"),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Divider(
+                  height: 1.0,
                 ),
               ),
               Row(
@@ -219,7 +308,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "RTU:",
+                        "RTU’s:",
                         style: TextStyle(fontSize: 20.0),
                       ),
                       Switch(value: _valRTU, onChanged: (bool _valRTU) => _handleRTUValueChange(_valRTU)),
@@ -227,45 +316,109 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10.0,
-              ),
               _valECpHType == true
-                  ? TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: _MaxRTUController,
-                      maxLength: 2,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Please enter the phDelay in mins";
-                        }
-                      },
-                      decoration: new InputDecoration(
-                        labelText: "ph Delay(mins)",
-                        fillColor: Colors.black,
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Divider(
+                        height: 1.0,
                       ),
                     )
                   : SizedBox(
                       height: 0.0,
                     ),
-              SizedBox(
-                height: 10.0,
-              ),
+              _valECpHType == true
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: paddingforText(),
+                          child: Text(
+                            "pH Delay: ",
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: paddingforText(),
+                          child: Text(
+                            "Every ",
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                        ),
+                        Container(
+                          width: 60.0,
+                          child: TextFormField(
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20.0, color: Colors.black),
+                            keyboardType: TextInputType.number,
+                            controller: _phDelayController,
+                            maxLength: 2,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "Please enter the phDelay in mins";
+                              }
+                            },
+                            decoration: new InputDecoration(
+                              counterText: "",
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: paddingforText(),
+                          child: Text(
+                            " mins",
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                        ),
+                      ],
+                    )
+                  : SizedBox(
+                      height: 0.0,
+                    ),
               _valRTU == true
-                  ? TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _NoOfSlavesController,
-                      maxLength: 2,
-                      onChanged: (str) {
-                        setState(() {
-                          _updateSlaveCount();
-                        });
-                      },
-                      decoration: new InputDecoration(
-                        labelText: "Maximum RTU",
-                        fillColor: Colors.black,
-                        //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Divider(
+                        height: 1.0,
                       ),
+                    )
+                  : SizedBox(
+                      height: 0.0,
+                    ),
+              _valRTU == true
+                  ? Row(
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Flexible(
+                            child: Padding(
+                              padding: paddingforText(),
+                              child: Text(
+                                "Total RTU’s per Controller: ",
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            )),
+                        Container(
+                          width: 40.0,
+                          child: TextField(
+                            style: TextStyle(fontSize: 20.0, color: Colors.black),
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            controller: _MaxRTUController,
+                            maxLength: 2,
+                            onChanged: (str) {
+                              setState(() {
+                                _updateSlaveCount();
+                              });
+                            },
+                            decoration: new InputDecoration(
+                              counterText: "",
+                              // fillColor: Colors.black,
+                              //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : SizedBox(
                       height: 0.0,
@@ -273,15 +426,18 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               _valRTU == true
                   ? Padding(
                       padding: const EdgeInsets.all(3.0),
-                      child: Text("RTU Details"),
+                      child: Text(
+                        "RTU Details",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
                     )
                   : SizedBox(
                       height: 0.0,
                     ),
               _valRTU == true
                   ? Container(
-                      //height: 250.0,
-                      //width: 300.0,
+                      height: 250.0,
+                      width: 250.0,
                       decoration: BoxDecoration(
                         border: Border.all(width: 1.0, color: Colors.black),
                       ),
@@ -293,8 +449,20 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   : SizedBox(
                       height: 0.0,
                     ),
-              MaterialButton(
+              SizedBox(
+                height: 10.0,
+              ),
+              RawMaterialButton(
+                textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
                 onPressed: () {
+                  if(_MaxProgController.text.isEmpty || int.parse(_MaxProgController.text) < 1){
+                    showSnackBar(context, "Enter the total no. of program");
+                  }else if(_MaxOutputController.text.isEmpty){
+                    showSnackBar(context, "Enter the out program");
+                  }
                   setState(() {
                     if (_configurationformkey.currentState.validate()) {
                       _loading = _handleSave().then((_) {
@@ -305,8 +473,15 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     }
                   });
                 },
-                child: Text(_oldConfig != null ? "Update & Next" : "Save & Next"),
-                color: Colors.lightBlue,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    _oldConfig != null ? "Update" : "Save",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                fillColor: Color.fromRGBO(0, 84, 179, 1.0),
+                shape: StadiumBorder(),
               ),
             ],
           ),
@@ -317,7 +492,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
 
   void _updateSlaveCount() {
     setState(() {
-      _slaveTextControllers.length = int.parse(_NoOfSlavesController.text);
+      _slaveTextControllers.length = int.parse(_MaxRTUController.text);
       for (int i = 0; i < _slaveTextControllers.length; i++) {
         if (_slaveTextControllers[i] == null) {
           _slaveTextControllers[i] = TextEditingController();
@@ -333,20 +508,49 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
         children: List.generate(_slaveTextControllers.length, (index) {
           return Padding(
             padding: const EdgeInsets.all(2.0),
-            child: TextFormField(
-              controller: _slaveTextControllers[index],
-              maxLength: 10,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "Please enter the mobile no for slaves";
-                }
-              },
-              decoration: new InputDecoration(
-                labelText: "Slave ${index + 1}",
-                hintText: "Enter the mobile no.",
-                fillColor: Colors.black,
-              ),
-              keyboardType: TextInputType.number,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                    child: Container(
+                  width: 70.0,
+                  //color: Colors.green,
+                  child: Padding(
+                    padding: paddingforText(),
+                    child: Text(
+                      "RTU ${index + 1}: ",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                )),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Container(
+                  width: 120.0,
+                  //color: Colors.green,
+                  child: TextFormField(
+                    style: TextStyle(fontSize: 20.0, color: Colors.black),
+                    textAlign: TextAlign.center,
+                    controller: _slaveTextControllers[index],
+                    maxLength: 10,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "Please enter the mobile no for controller";
+                      }
+                    },
+                    decoration: new InputDecoration(
+                      //labelText: "Controller ${index + 1}",
+                      //hintText: "Enter the mobile no.",
+                      counterText: "",
+                      fillColor: Colors.black,
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
             ),
           );
         }),

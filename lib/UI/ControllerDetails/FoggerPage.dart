@@ -1,7 +1,8 @@
+import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/Model/FoggerModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
-import 'package:autoaqua/Utils/DateFormatter.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class FoggerPage extends StatefulWidget {
@@ -37,6 +38,7 @@ class _FoggerPageState extends State<FoggerPage> {
   Future _loading;
   int _count = 0;
   var db = new DataBaseHelper();
+  ConfigurationModel configurationModel;
 
   @override
   void initState() {
@@ -88,6 +90,16 @@ class _FoggerPageState extends State<FoggerPage> {
   }*/
 
   Future<void> _handelFoggerDataSubmit() async {
+
+
+      ConfigurationModel newFoggerConfig = new ConfigurationModel.fogger(
+          _maxFoggerController.text,
+          _foggerDelayController.text,
+          "UPDATED123"
+      );
+      int saveItemId = await db.updateConfigurationItemsforFogger(newFoggerConfig);
+      print('Updated Config Fogger Item: $saveItemId');
+
     for (int i = 0; i < _count; i++) {
       final model = FoggerModel(
         widget.controllerId,
@@ -98,6 +110,7 @@ class _FoggerPageState extends State<FoggerPage> {
         _tempDegreeController[i].text,
         _humController[i].text,
         dateFormatted(),
+        "${AppendZero(_maxFoggerController.text) + AppendZero(_foggerDelayController.text)}"
       );
       if (i < (_oldmodelFogger?.length ?? 0)) {
         model.foggerId = _oldmodelFogger[i].foggerId;
@@ -110,6 +123,9 @@ class _FoggerPageState extends State<FoggerPage> {
       }
     }
   }
+  paddingforText(){
+    return const EdgeInsets.only(bottom: 12.0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,30 +136,70 @@ class _FoggerPageState extends State<FoggerPage> {
             padding: const EdgeInsets.all(15.0),
             child: Column(
               children: <Widget>[
-                TextField(
-                  keyboardType: TextInputType.number,
-                  controller: _maxFoggerController,
-                  maxLength: 1,
-                  onChanged: (str) {
-                    setState(() {
-                      _ensureTextControllsers(int.parse(_maxFoggerController.text));
-                    });
-                  },
-                  decoration: new InputDecoration(
-                    labelText: "Maximum Fogger",
-                    fillColor: Colors.black,
-                    //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: paddingforText(),
+                      child: Text("Maximum Fogger:  ",style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                      ),),
+                    ),
+                    Container(
+                      width: 40.0,
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        style:TextStyle(
+                          fontSize: 20.0,
+                            color: Colors.black
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: _maxFoggerController,
+                        maxLength: 1,
+                        onChanged: (str) {
+                          setState(() {
+                            _ensureTextControllsers(int.parse(_maxFoggerController.text));
+                          });
+                        },
+                        decoration: new InputDecoration(
+                          fillColor: Colors.black,
+                          counterText: ""
+                          //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-            TextField(
-              keyboardType: TextInputType.number,
-              controller: _foggerDelayController,
-              maxLength: 2,
-              decoration: new InputDecoration(
-                labelText: "Fogger Delay",
-                fillColor: Colors.black,
-                //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
-              ))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: paddingforText(),
+                  child: Text("       Fogger Delay:  ",style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                  ),),
+                ),
+                Container(
+                  width: 40.0,
+                  child: TextField(
+                      textAlign: TextAlign.center,
+                      style:TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black
+                      ),
+                    keyboardType: TextInputType.number,
+                    controller: _foggerDelayController,
+                    maxLength: 2,
+                    decoration: new InputDecoration(
+                      fillColor: Colors.black,
+                      counterText: ""
+                      //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
+                    )),
+                ),
+              ],
+            )
               ],
             ),
           ),
@@ -190,13 +246,11 @@ class _FoggerPageState extends State<FoggerPage> {
                       size: Size(10.0, 10.0),
                     ),
                     Container(
+                      height: 300.0,
                       decoration: BoxDecoration(
                         border: Border.all(width: 1.0, color: Colors.black),
                       ),
-                      child: SingleChildScrollView(child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: createFoggerList(),
-                      )),
+                      child: SingleChildScrollView(child: createFoggerList()),
                     ),
                     SizedBox.fromSize(
                       size: Size(10.0, 10.0),
@@ -227,13 +281,13 @@ class _FoggerPageState extends State<FoggerPage> {
                   _handelFoggerDataSubmit();
                   ControllerDetails.navigateToNext(context);
                 },
-                fillColor: Colors.indigo,
+                fillColor: Color.fromRGBO(0, 84, 179, 1.0),
                 splashColor: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15.0),
                   child: Text(
-                    _oldmodelFogger != null ? "Update & Next" : "Save & Next",
-                    style: TextStyle(color: Colors.white),
+                    _oldmodelFogger != null ? "Update" : "Save",
+                    style: TextStyle(color: Colors.white,fontSize: 20.0,fontWeight: FontWeight.bold),
                   ),
                 ),
                 shape: const StadiumBorder(),
@@ -257,6 +311,10 @@ class _FoggerPageState extends State<FoggerPage> {
             Container(
               width: 60.0,
               child: TextFormField(
+                maxLength: 2,
+                decoration: InputDecoration(
+                    counterText: ""
+                ),
                 textAlign: TextAlign.center,
                 controller: _FieldController[index],
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
@@ -266,6 +324,10 @@ class _FoggerPageState extends State<FoggerPage> {
             Container(
               width: 60.0,
               child: TextFormField(
+                maxLength: 2,
+                decoration: InputDecoration(
+                    counterText: ""
+                ),
                 textAlign: TextAlign.center,
                 controller: _onSecontroller[index],
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
@@ -275,6 +337,10 @@ class _FoggerPageState extends State<FoggerPage> {
             Container(
               width: 60.0,
               child: TextFormField(
+                maxLength: 2,
+                decoration: InputDecoration(
+                    counterText: ""
+                ),
                 textAlign: TextAlign.center,
                 controller: _tempDegreeController[index],
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
@@ -284,7 +350,11 @@ class _FoggerPageState extends State<FoggerPage> {
             Container(
               width: 60.0,
               child: TextFormField(
+                maxLength: 2,
                 textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  counterText: ""
+                ),
                 controller: _humController[index],
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
                 keyboardType: TextInputType.number,

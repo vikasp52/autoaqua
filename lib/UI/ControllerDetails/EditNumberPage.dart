@@ -1,7 +1,7 @@
 import 'package:autoaqua/Model/MobNoModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
-import 'package:autoaqua/Utils/DateFormatter.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class EditNumberPage extends StatefulWidget {
@@ -76,22 +76,28 @@ class _EditNumberPageState extends State<EditNumberPage> {
       child: Padding(padding: EdgeInsets.all(10.0),
         child:Column(
           children: <Widget>[
-            TextFormField(
-              controller: _mobNoController,
-              decoration: InputDecoration(
-                  labelText: "Enter the number"
-              ),
-              style: TextStyle(fontSize: 20.0,
-                  color: Colors.black),
+            Theme(
+              data: ThemeData(
 
-              keyboardType: TextInputType.number,
+              ),
+              child: TextFormField(
+                maxLength: 10,
+                controller: _mobNoController,
+                decoration: InputDecoration(
+                    labelText: "Enter the number",
+                  counterText: ""
+                ),
+                style: TextStyle(fontSize: 20.0,
+                    color: Colors.black),
+                keyboardType: TextInputType.number,
+              ),
             ),
             RawMaterialButton(
               onPressed: () {
                 _saveMobNo();
                 ControllerDetails.navigateToNext(context);
               },
-              fillColor: Colors.indigo,
+              fillColor: Color.fromRGBO(0, 84, 179, 1.0),
               splashColor: Colors.white,
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -99,6 +105,8 @@ class _EditNumberPageState extends State<EditNumberPage> {
                 child: Text(
                   _oldnoModel != null? "Update": "Save",
                   style: TextStyle(
+                    fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
               ),

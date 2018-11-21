@@ -4,7 +4,7 @@ import 'package:autoaqua/Model/ControllerItems.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:flutter/material.dart';
-import 'package:autoaqua/Utils/DateFormatter.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 
 
 
@@ -151,6 +151,10 @@ class _ControllerState extends State<Controller> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   new TextFormField(
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.black
+                    ),
                     keyboardType: TextInputType.text,
                     validator: (value) {
                       if (value.isEmpty) {
@@ -161,15 +165,16 @@ class _ControllerState extends State<Controller> {
                     autofocus: true,
                     decoration: new InputDecoration(
                       labelText: "Controller Name",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            const Radius.circular(0.0),
-                          )),),
+                      ),
                   ),
                   SizedBox.fromSize(
                     size: Size(0.0, 10.0),
                   ),
                   new TextFormField(
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black
+                    ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value.isEmpty) {
@@ -180,10 +185,7 @@ class _ControllerState extends State<Controller> {
                     autofocus: true,
                     decoration: new InputDecoration(
                       labelText: "Controller Number",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            const Radius.circular(0.0),
-                          )),),
+                    ),
                   ),
                 ],
               ),

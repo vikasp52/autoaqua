@@ -10,6 +10,8 @@ import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/SetClockTimePage.dart';
 import 'package:autoaqua/UI/ControllerDetails/StatusPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/TimerPage.dart';
+import 'package:autoaqua/Utils/Database_Client.dart';
+import 'package:autoaqua/Utils/TestMsg.dart';
 import 'package:flutter/material.dart';
 
 class ControllerDetails extends StatefulWidget {
@@ -228,6 +230,7 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -253,16 +256,40 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(56.0, 0.0, 56.0, 40.0),
-          child: MaterialButton(
+          child: RawMaterialButton(
             onPressed: () {
               //Navigator.of(context).pop();
+              //msgString.getDataforConfiguration(1);
+              getFoggerData();
+              Navigator.of(context).push(MaterialPageRoute(builder: (_)=> MyAppSMS()));
             },
-            child: Text("Submit"),
-            color: Colors.blue,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Submit",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),),
+            ),
+            fillColor: Color.fromRGBO(0, 84, 179, 1.0),
+            shape: StadiumBorder(),
           ),
         ),
       ],
     );
+  }
+  var _configuration;
+  var fmax;
+  DataBaseHelper dataBaseHelper = new DataBaseHelper();
+  void getFoggerData(){
+    dataBaseHelper.getFoggerDetailsforConfig(1).then((data){
+      fmax = data.fogger_maxRTU;
+      _configuration = data.fogger_foggerDelay;
+
+      print("MaxFogger: $fmax \n FDelay: $_configuration");
+    });
+
   }
 }
 

@@ -2,7 +2,7 @@ import 'package:autoaqua/Model/TimerModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
-import 'package:autoaqua/Utils/DateFormatter.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class TimerPage extends StatefulWidget {
@@ -249,7 +249,7 @@ class _TimerOptionState extends State<_TimerOption> {
                     child: Text(
                       "IRRIGATION START TIME",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -260,9 +260,10 @@ class _TimerOptionState extends State<_TimerOption> {
                   Container(
                     width: 50.0,
                     child: TextFormField(
+                      maxLength: 2,
                       controller: _hrsController,
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      decoration: InputDecoration(labelText: 'Hrs'),
+                      decoration: InputDecoration(labelText: 'Hrs', counterText: ""),
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -276,9 +277,10 @@ class _TimerOptionState extends State<_TimerOption> {
                   Container(
                     width: 50.0,
                     child: TextFormField(
+                      maxLength: 2,
                       controller: _minController,
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      decoration: InputDecoration(labelText: 'Min'),
+                      decoration: InputDecoration(labelText: 'Min', counterText: ""),
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -291,12 +293,12 @@ class _TimerOptionState extends State<_TimerOption> {
                   Text(
                     "Irrigation \n Schedules",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "Fertlization \n Schedules",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -318,7 +320,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Sun")
+                            Text("Sun",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -331,7 +335,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Mon")
+                            Text("Mon",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -344,7 +350,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Tue")
+                            Text("Tue",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -357,7 +365,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Wed")
+                            Text("Wed",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -370,7 +380,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Thu")
+                            Text("Thu",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -383,7 +395,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Fri")
+                            Text("Fri",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                         Row(
@@ -396,7 +410,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                 });
                               },
                             ),
-                            Text("Sat")
+                            Text("Sat",style: TextStyle(
+                              fontSize: 20.0,
+                            ),)
                           ],
                         ),
                       ],
@@ -407,7 +423,7 @@ class _TimerOptionState extends State<_TimerOption> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: 90.0,
+                        width: 100.0,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -421,7 +437,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Sun")
+                                Text("Sun",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -434,7 +452,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Mon")
+                                Text("Mon",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -447,7 +467,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Tue")
+                                Text("Tue",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -460,7 +482,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Wed")
+                                Text("Wed",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -473,7 +497,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Thu")
+                                Text("Thu",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -486,7 +512,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Fri")
+                                Text("Fri",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                             Row(
@@ -499,7 +527,9 @@ class _TimerOptionState extends State<_TimerOption> {
                                     });
                                   },
                                 ),
-                                Text("Sat")
+                                Text("Sat",style: TextStyle(
+                                  fontSize: 20.0,
+                                ),)
                               ],
                             ),
                           ],
@@ -510,11 +540,6 @@ class _TimerOptionState extends State<_TimerOption> {
                 ],
               ),
               SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                ],
-              ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -531,13 +556,13 @@ class _TimerOptionState extends State<_TimerOption> {
                         ControllerDetails.navigateToPage(context, ControllerDetailsPageId.TIMER.nextPageId);
                       }
                     },
-                    fillColor: Colors.indigo,
+                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
                     splashColor: Colors.white,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        _oldTimerData != null ? "Update & Next" : "Save & Next",
-                        style: TextStyle(color: Colors.white),
+                        _oldTimerData != null ? "Update" : "Save",
+                        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
                     ),
                     shape: const StadiumBorder(),

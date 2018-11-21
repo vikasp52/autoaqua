@@ -8,3 +8,11 @@ String dateFormatted(){
 
   return formatted;
 }
+
+AppendZero(String etController) {
+  if (etController.length < 2) {
+    return '0' + '$etController';
+  } else {
+    return etController;
+  }
+}

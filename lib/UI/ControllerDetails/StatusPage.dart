@@ -67,11 +67,11 @@ class _StatusPageState extends State<StatusPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             RaisedButton(
-              color: Colors.white,
+              color: Color.fromRGBO(0, 84, 179, 1.0),
               padding: const EdgeInsets.all(24.0),
               child: Text(
                 "IRRIGATION STATUS",
-                style: TextStyle(fontSize: 20.0),
+                style: TextStyle(fontSize: 20.0,color: Colors.white),
               ),
               onPressed: () {
                 ControllerDetails.navigateToNext(context);
@@ -80,11 +80,11 @@ class _StatusPageState extends State<StatusPage> {
             SizedBox(height: 16.0),
             _maxFogger > 0 && _maxFogger != null
                 ? RaisedButton(
-                    color: Colors.white,
+                    color: Color.fromRGBO(0, 84, 179, 1.0),
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
                       "WEATHER STATUS",
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
                       ControllerDetails.navigateToNext(context);
@@ -94,12 +94,12 @@ class _StatusPageState extends State<StatusPage> {
                     height: 0.0,
                   ),
             SizedBox(height: 16.0),
-            _ECpHStatus == "1" ?RaisedButton(
-              color: Colors.white,
+            _ECpHStatus == "true" ?RaisedButton(
+              color: Color.fromRGBO(0, 84, 179, 1.0),
               padding: const EdgeInsets.all(24.0),
               child: Text(
                 "EC/pH STATUS",
-                style: TextStyle(fontSize: 20.0),
+                style: TextStyle(fontSize: 20.0,color: Colors.white),
               ),
               onPressed: () {
                 ControllerDetails.navigateToNext(context);

@@ -28,12 +28,16 @@ class DataBaseHelper {
   final String configId = "configid";
   final String configMaxProg = "configMaxProg";
   final String configMaxOut = "configMaxOutput";
+  final String configMaxInjectorCol = "configMaxInjector";
   final String configEcpHStatusCol = "configEcpHStatus";
   final String configMaxRTUOnOffCol = "configMaxRTUOnOff";
   final String configMaxRTU = "configMaxRTU";
   final String configNoOfSlaves = "configNoOfSlaves";
   final String configSlaveMobNos = "configSlaveMobNos";
   final String ConfigDateCreated = "ConfigDateCreated";
+  final String ConfigStringCol = "ConfigString";
+  final String ConfigmaxFoggerCol = "ConfigmaxFogger";
+  final String ConfigfoggerDelayCol = "ConfigfoggerDelay";
 
   //Slaves Variable
   final String tableSlaves = "Slave_Table";
@@ -125,6 +129,7 @@ class DataBaseHelper {
   static String fogger_tempDegreeCol = "fogger_tempDegree";
   static String fogger_humCol = "fogger_hum";
   static String fogger_dateCreated = "fogger_DateCreated";
+  static String fogger_configStringCol = "fogger_configString";
 
   static Database _db;
 
@@ -139,8 +144,8 @@ class DataBaseHelper {
 
   initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentDirectory.path, "AutoAqua.db");
-    var ourDb = await openDatabase(path, version: 1, onCreate: _onConfigure);
+    String path = join(documentDirectory.path, "AutoAquaNew.db");
+    var ourDb = await openDatabase(path, version: 2, onCreate: _onConfigure);
     return ourDb;
   }
 
@@ -159,13 +164,17 @@ class DataBaseHelper {
         configid INTEGER PRIMARY KEY AUTOINCREMENT,
         controllerId INTEGER NOT NULL,
         $configMaxProg TEXT, 
-        $configMaxOut TEXT, 
+        $configMaxOut TEXT,
+        $configMaxInjectorCol TEXT, 
         $configEcpHStatusCol TEXT,
         $configMaxRTUOnOffCol TEXT,
         $configMaxRTU TEXT, 
         $configSlaveMobNos TEXT,
         $configNoOfSlaves TEXT, 
         $ConfigDateCreated TEXT,
+        $ConfigStringCol TEXT,
+        $ConfigmaxFoggerCol TEXT,
+        $ConfigfoggerDelayCol TEXT,
         FOREIGN KEY (controllerId) REFERENCES $tableName (id))
         """);
     print("Table is created for Config");
@@ -271,6 +280,7 @@ class DataBaseHelper {
       $fogger_tempDegreeCol TEXT,
       $fogger_humCol TEXT,
       $fogger_dateCreated TEXT,
+      $fogger_configStringCol TEXT,
       FOREIGN KEY ($fogger_controllerCol) REFERENCES $tableName(id))
       """
     );
@@ -312,7 +322,22 @@ class DataBaseHelper {
     return await dbClient.update("$tableConfigName", item.toDbMap(),
         where: "$configId = ?", whereArgs: [item.configid]);
   }
+
+  // Update the Configuration for FOgger
+  Future<int> updateConfigurationItemsforFogger(ConfigurationModel item) async {
+    var dbClient = await db;
+    print("Updated config data ${item.toDbMap()}");
+    return await dbClient.rawUpdate(
+        'UPDATE $tableConfigName SET $ConfigmaxFoggerCol = ?, $ConfigfoggerDelayCol = ? WHERE $configId = ?',
+        [item.ConfigmaxFogger, item.ConfigfoggerDelay, item.configid]);
+  }
 /*
+
+int count = await database.rawUpdate(
+    'UPDATE Test SET name = ?, VALUE = ? WHERE name = ?',
+    ["updated name", "9876", "some name"]);
+print("updated: $count");
+
   Future<bool> deleteConfiguationItem(int configId) async {
     int result = await (await db).delete(
       '$tableConfigName',
@@ -521,6 +546,17 @@ class DataBaseHelper {
     return foggerResult
         .map((data) => FoggerModel.fromMap_Fogger(data))
         .toList(growable: false);
+  }
+
+  Future<FoggerModel> getFoggerDetailsforConfig(int controllerId)async{
+    var dbClient = await db;
+    var foggerResult = await dbClient.rawQuery(
+        "SELECT $fogger_maxRTUCol, $fogger_foggerDelayCol FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
+    );
+    if(foggerResult.length == 0){
+      return null;
+    }
+    return FoggerModel.fromMap_Fogger(foggerResult.first);
   }
 
   //Delete Items

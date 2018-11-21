@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_sms (0.0.1):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
   - FMDB (2.7.2):
@@ -13,6 +15,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
+  - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -24,6 +27,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
+  flutter_sms:
+    :path: ".symlinks/plugins/flutter_sms/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   path_provider:
@@ -33,11 +38,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  flutter_sms: fe8c88d249cd328d355a63032400ba0c9477630e
   fluttertoast: ad0527b15297baf11349f3f581dae4d40f24f340
   FMDB: 6198a90e7b6900cfc046e6bc0ef6ebb7be9236aa
   path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
   sqflite: 801b6b0983f722fa29baf00d1476e4556ada6de4
 
-PODFILE CHECKSUM: 1e5af4103afd21ca5ead147d7b81d06f494f51a2
+PODFILE CHECKSUM: d42c2e353ea5e8e4043d6898e788676afe0d0a85
 
 COCOAPODS: 1.5.3

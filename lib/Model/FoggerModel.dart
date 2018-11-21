@@ -10,9 +10,10 @@ class FoggerModel {
   String _fogger_tempDegree;
   String _fogger_hum;
   String _fogger_DateCreated;
+  String _fogger_configString;
 
   FoggerModel(
-      this.fogger_controllerID,this._fogger_maxRTU, this._fogger_foggerDelay, this._fogger_Field, this._fogger_onSec, this._fogger_tempDegree, this._fogger_hum, this._fogger_DateCreated);
+      this.fogger_controllerID,this._fogger_maxRTU, this._fogger_foggerDelay, this._fogger_Field, this._fogger_onSec, this._fogger_tempDegree, this._fogger_hum, this._fogger_DateCreated,this._fogger_configString);
 
   FoggerModel.map(dynamic obj) {
     this._foggerId = obj["foggerId"];
@@ -24,6 +25,7 @@ class FoggerModel {
     this._fogger_tempDegree = obj["fogger_tempDegree"];
     this._fogger_hum = obj["fogger_hum"];
     this._fogger_DateCreated = obj["fogger_DateCreated"];
+    this._fogger_configString = obj["fogger_configString"];
   }
 
   set foggerId(int value) => _foggerId = value;
@@ -37,6 +39,7 @@ class FoggerModel {
   String get fogger_tempDegree => _fogger_tempDegree;
   String get fogger_hum => _fogger_hum;
   String get fogger_DateCreated => _fogger_DateCreated;
+  String get fogger_configString => _fogger_configString;
 
   Map<String, dynamic> tomap_Fogger(){
     var mapFogger = new Map<String, dynamic>();
@@ -51,6 +54,7 @@ class FoggerModel {
     mapFogger[DataBaseHelper.fogger_tempDegreeCol] = _fogger_tempDegree;
     mapFogger[DataBaseHelper.fogger_humCol] = _fogger_hum;
     mapFogger[DataBaseHelper.fogger_dateCreated] = _fogger_DateCreated;
+    mapFogger[DataBaseHelper.fogger_configStringCol] = _fogger_configString;
     return mapFogger;
   }
 
@@ -64,5 +68,6 @@ class FoggerModel {
     this._fogger_tempDegree = mapFogger["fogger_tempDegree"];
     this._fogger_hum = mapFogger["fogger_hum"];
     this._fogger_DateCreated = mapFogger["fogger_DateCreated"];
+    this._fogger_configString = mapFogger["fogger_configString"];
   }
 }

@@ -98,11 +98,12 @@ class _LoginState extends State<Login> {
 
   void _UserValidation() {
 
-    if(_UserNameControler.text == "v@v.com" && _PasswordControler.text == "12345"){
+    Navigator.of(context).push(HomePage.route());
+    /*if(_UserNameControler.text == "v@v.com" && _PasswordControler.text == "12345"){
       Navigator.of(context).push(HomePage.route());
     }else{
       showColoredToast();
-    }
+    }*/
   }
 
   void showColoredToast() {

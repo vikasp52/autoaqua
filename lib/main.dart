@@ -9,6 +9,11 @@ class AutoAquaApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AutoAqua',
+      theme: ThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          contentPadding: EdgeInsets.all(2.0),
+        )
+      ),
       home: Login(),
     );
   }
