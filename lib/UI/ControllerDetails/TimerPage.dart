@@ -116,13 +116,13 @@ class _TimerOptionState extends State<_TimerOption> {
   bool checkboxIntegrationDay_Sat = true;
   bool checkboxIntegrationDay_Sun = true;
 
-  bool checkboxFertDay_Mon = true;
-  bool checkboxFertDay_Tues = true;
-  bool checkboxFertDay_Wed = true;
-  bool checkboxFertDay_Thurs = true;
-  bool checkboxFertDay_Fri = true;
-  bool checkboxFertDay_Sat = true;
-  bool checkboxFertDay_Sun = true;
+  bool checkboxFertDay_Mon = false;
+  bool checkboxFertDay_Tues = false;
+  bool checkboxFertDay_Wed = false;
+  bool checkboxFertDay_Thurs = false;
+  bool checkboxFertDay_Fri = false;
+  bool checkboxFertDay_Sat = false;
+  bool checkboxFertDay_Sun = false;
 
   TimerModel _oldTimerData;
   DataBaseHelper db = new DataBaseHelper();
@@ -221,82 +221,90 @@ class _TimerOptionState extends State<_TimerOption> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 18.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      //color: Color.fromRGBO(0, 84, 179, 1.0),
-                      decoration: ShapeDecoration(shape: StadiumBorder(), color: Color.fromRGBO(0, 84, 179, 1.0)),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-                        child: Text(
-                          "Program No: ${widget.timerIndex + 1}",
-                          style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
-                        ),
+                child: Center(
+                  child: Container(
+                    //color: Color.fromRGBO(0, 84, 179, 1.0),
+                    decoration: ShapeDecoration(shape: StadiumBorder(), color: Color.fromRGBO(0, 84, 179, 1.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+                      child: Text(
+                        "Program No: ${widget.timerIndex + 1}",
+                        style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
                       ),
-                    )
-                  ],
+                    ),
+                  ),
                 ),
               ),
               SizedBox(
                 height: 20.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      "IRRIGATION START TIME",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+              Center(
+                child: Text(
+                  "IRRIGATION START TIME",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 50.0,
-                    child: TextFormField(
-                      maxLength: 2,
-                      controller: _hrsController,
-                      style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      decoration: InputDecoration(labelText: 'Hrs', counterText: ""),
-                      keyboardType: TextInputType.number,
+              Center(
+                child: Text(
+                  "[24 Hrs Format]",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15.0,),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(40.0,10.0,40.0,0.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                        maxLength: 2,
+                        textAlign: TextAlign.center,
+                        controller: _hrsController,
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            suffixText: "Hrs",
+                            counterText: ""),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      ":",
-                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0,0.0,10.0,30.0),
+                      child: Text(
+                        ":",
+                        style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 50.0,
-                    child: TextFormField(
-                      maxLength: 2,
-                      controller: _minController,
-                      style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      decoration: InputDecoration(labelText: 'Min', counterText: ""),
-                      keyboardType: TextInputType.number,
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                        maxLength: 2,
+                        textAlign: TextAlign.center,
+                        controller: _minController,
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        decoration: InputDecoration(
+                            suffixText: "Mins",
+                            border: OutlineInputBorder(),
+                            counterText: ""),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text(
-                    "Irrigation \n Schedules",
+                    "Irrigation \nSchedules",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Fertlization \n Schedules",
+                    "Fertlization \nSchedules",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
@@ -430,12 +438,12 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Sun,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Sun == false ?false:checkboxFertDay_Sun,
+                                  onChanged: checkboxIntegrationDay_Sun == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Sun = value;
                                     });
-                                  },
+                                  }
                                 ),
                                 Text("Sun",style: TextStyle(
                                   fontSize: 20.0,
@@ -445,8 +453,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Mon,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Mon == false ?false:checkboxFertDay_Mon,
+                                  onChanged: checkboxIntegrationDay_Mon == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Mon = value;
                                     });
@@ -460,8 +468,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Tues,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Tues == false ?false:checkboxFertDay_Tues,
+                                  onChanged: checkboxIntegrationDay_Tues == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Tues = value;
                                     });
@@ -475,8 +483,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Wed,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Wed == false ?false:checkboxFertDay_Wed,
+                                  onChanged: checkboxIntegrationDay_Wed == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Wed = value;
                                     });
@@ -490,8 +498,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Thurs,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Thurs == false ?false:checkboxFertDay_Thurs,
+                                  onChanged: checkboxIntegrationDay_Thurs == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Thurs = value;
                                     });
@@ -505,8 +513,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Fri,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Friday == false ?false:checkboxFertDay_Fri,
+                                  onChanged: checkboxIntegrationDay_Friday == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Fri = value;
                                     });
@@ -520,8 +528,8 @@ class _TimerOptionState extends State<_TimerOption> {
                             Row(
                               children: <Widget>[
                                 Checkbox(
-                                  value: checkboxFertDay_Sat,
-                                  onChanged: (bool value) {
+                                  value: checkboxIntegrationDay_Sat == false ?false:checkboxFertDay_Sat,
+                                  onChanged: checkboxIntegrationDay_Sat == false ?null:(bool value) {
                                     setState(() {
                                       checkboxFertDay_Sat = value;
                                     });

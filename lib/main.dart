@@ -11,7 +11,7 @@ class AutoAquaApp extends StatelessWidget {
       title: 'AutoAqua',
       theme: ThemeData(
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding: EdgeInsets.all(2.0),
+          contentPadding: EdgeInsets.all(10.0),
         )
       ),
       home: Login(),

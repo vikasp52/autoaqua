@@ -6,6 +6,8 @@ class ConfigurationModel {
   String _configMaxProg;
   String _configMaxOutput;
   String _configMaxInjector;
+  String _ConfigTotalFoggerValves;
+  String _ConfigTotalIrrigationValves;
   String _configEcpHStatus;
   String _configMaxRTUOnOff;
   String _configMaxRTU;
@@ -13,8 +15,9 @@ class ConfigurationModel {
   String _ConfigString;
   List<String> _configSlaveMobNos;
   String _configDateCreated;
-  String _ConfigmaxFogger;
   String _ConfigfoggerDelay;
+  String _configTotalValves;
+  String _configRemaningValves;
   int _controllerId;
 
   ConfigurationModel(
@@ -22,6 +25,10 @@ class ConfigurationModel {
       this._configMaxProg,
       this._configMaxOutput,
       this._configMaxInjector,
+      this._ConfigTotalFoggerValves,
+      this._ConfigTotalIrrigationValves,
+      this._configTotalValves,
+      this._configRemaningValves,
       this._configEcpHStatus,
       this._configMaxRTUOnOff,
       this._configMaxRTU,
@@ -30,24 +37,6 @@ class ConfigurationModel {
       this._configDateCreated,
       this._ConfigString,
       [this._configId]);
-
-  ConfigurationModel.fogger(
-      this._ConfigmaxFogger,
-      this._ConfigfoggerDelay,
-      this._ConfigString,
-     [
-  this._controllerId,
-  this._configMaxProg,
-  this._configMaxOutput,
-  this._configMaxInjector,
-  this._configEcpHStatus,
-  this._configMaxRTUOnOff,
-  this._configMaxRTU,
-  this._configNoOfSlaves,
-  this._configSlaveMobNos,
-  this._configDateCreated,
-  ]
-  );
 
   ConfigurationModel.map(dynamic obj) {
     this._configId = obj["configid"];
@@ -62,7 +51,10 @@ class ConfigurationModel {
     this._configNoOfSlaves = obj["configNoOfSlaves"];
     this._configDateCreated = obj["ConfigDateCreated"];
     this._ConfigString = obj["ConfigString"];
-    this._ConfigmaxFogger = obj["ConfigmaxFogger"];
+    this._ConfigTotalFoggerValves = obj["ConfigmaxFogger"];
+    this._ConfigTotalIrrigationValves = obj["ConfigTotalIrrigationValves"];
+    this._configTotalValves = obj["configTotalValves"];
+    this._configRemaningValves = obj["configRemaningValves"];
     this._ConfigfoggerDelay = obj["ConfigfoggerDelay"];
   }
 
@@ -90,7 +82,13 @@ class ConfigurationModel {
 
   String get ConfigString => _ConfigString;
 
-  String get ConfigmaxFogger => _ConfigmaxFogger;
+  String get ConfigmaxFogger => _ConfigTotalFoggerValves;
+
+  String get ConfigTotalIrrigationValves => _ConfigTotalIrrigationValves;
+
+  String get configTotalValves => _configTotalValves;
+
+  String get configRemaningValves => _configRemaningValves;
 
   String get ConfigfoggerDelay => _ConfigfoggerDelay;
 
@@ -110,8 +108,11 @@ class ConfigurationModel {
     map["configSlaveMobNos"] = json.encode(_configSlaveMobNos);
     map["ConfigDateCreated"] = _configDateCreated;
     map["ConfigString"] = _ConfigString;
-    map["ConfigmaxFogger"] = _ConfigmaxFogger;
+    map["ConfigmaxFogger"] = _ConfigTotalFoggerValves;
     map["ConfigfoggerDelay"] = _ConfigfoggerDelay;
+    map["ConfigTotalIrrigationValves"] = _ConfigTotalIrrigationValves;
+    map["configTotalValves"] = _configTotalValves;
+    map["configRemaningValves"] = _configRemaningValves;
     return map;
   }
 
@@ -130,8 +131,11 @@ class ConfigurationModel {
     );
     this._configDateCreated = map["ConfigDateCreated"];
     this._ConfigString = map["ConfigString"];
-    this._ConfigmaxFogger = map["ConfigmaxFogger"];
+    this._ConfigTotalFoggerValves = map["ConfigmaxFogger"];
+    this._ConfigTotalIrrigationValves = map["ConfigTotalIrrigationValves"];
+    this._configTotalValves = map["configTotalValves"];
     this._ConfigfoggerDelay = map["ConfigfoggerDelay"];
+    this._configRemaningValves = map["configRemaningValves"];
   }
 
   @override

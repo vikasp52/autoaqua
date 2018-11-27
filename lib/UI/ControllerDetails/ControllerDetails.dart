@@ -16,10 +16,11 @@ import 'package:flutter/material.dart';
 
 class ControllerDetails extends StatefulWidget {
 
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return MaterialPageRoute(
       builder: (context) => ControllerDetails(
         controllerId: controllerId,
+          controllerName: controllerName
       ),
     );
   }
@@ -27,9 +28,11 @@ class ControllerDetails extends StatefulWidget {
   const ControllerDetails({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   ControllerDetailsState createState() => ControllerDetailsState();
@@ -230,32 +233,42 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top:2.0),
+            child: Text("Controller Name", style: TextStyle(
+              color: Colors.black,
+              fontSize: 20.0
+            ),),
+          ),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 8.0),
-            child: GridView.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 20.0,
-              crossAxisSpacing: 5.0,
-              padding: const EdgeInsets.all(4.0),
-              children: ControllerDetailsPageId.ids
-                  .map((pageId){
-                return _ControllerDetailsButton(
-                  icon: pageId.icon,
-                  text: pageId.name,
-                  onPressed: () => ControllerDetails.navigateToPage(context, pageId),
-                );
-              })
-                  .toList(growable: false),
+            child: Scrollbar(
+              child: GridView.count(
+                crossAxisCount: 3,
+                mainAxisSpacing: 20.0,
+                crossAxisSpacing: 5.0,
+                padding: const EdgeInsets.all(4.0),
+                children: ControllerDetailsPageId.ids
+                    .map((pageId){
+                  return _ControllerDetailsButton(
+                    icon: pageId.icon,
+                    text: pageId.name,
+                    onPressed: () => ControllerDetails.navigateToPage(context, pageId),
+                  );
+                })
+                    .toList(growable: false),
+              ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(56.0, 0.0, 56.0, 40.0),
+          padding: const EdgeInsets.fromLTRB(86.0, 0.0, 86.0, 70.0),
           child: RawMaterialButton(
             onPressed: () {
               //Navigator.of(context).pop();
@@ -315,20 +328,34 @@ class _ControllerDetailsButton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue
-            ),
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: this.icon,
-              )),
+          Expanded(
+            flex: 8,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color.fromRGBO(0, 84, 179, 1.0),
+                  width: 2.0,
+                  style: BorderStyle.solid
+                ),
+                shape: BoxShape.circle,
+                color: Colors.transparent//Color.fromRGBO(0, 84, 179, 1.0),
+              ),
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: this.icon,
+                )),
+          ),
           SizedBox(height: 8.0),
-          Text(
-            this.text,
-            textAlign: TextAlign.center,
-            textScaleFactor: 0.85,
+          Expanded(
+            flex: 2,
+            child: Text(
+              this.text,
+              style: TextStyle(
+                fontSize: 15.0
+              ),
+              textAlign: TextAlign.center,
+              textScaleFactor: 0.85,
+            ),
           )
         ],
       ),
@@ -397,55 +424,55 @@ typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId
 
 class ControllerDetailsPageId {
   static const CONFIGURATION = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/settings.png'), color: Colors.white,),
+    ImageIcon(AssetImage('Images/settings.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'CONFIGURATION',
     ConfigurationPage.route,
   );
 
   static const PROGRAM = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/menu.png'), color: Colors.white ),
+    ImageIcon(AssetImage('Images/menu.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0, ),
     'PROGRAM',
     ProgramPage.route,
   );
 
   static const VALVES = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/valve_1.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/valve_1.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'VALVES',
     ValvesPage.route,
   );
 
   static const TIMER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/recycle.png'),  color: Colors.white),
+    ImageIcon(AssetImage('Images/recycle.png'),  color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'SCHEDULES',
     TimerPage.route,
   );
 
   static const FOGGER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/fogger_icon.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/sprinkler.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'FOGGER',
     FoggerPage.route,
   );
 
   static const STATUS = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/flag.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/flag.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'STATUS',
     StatusPage.route,
   );
 
   static const IRR_STOP = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/irrstop.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/irrstop.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'IRR STOP',
     IRRPage.route,
   );
 
   static const SET_TIME = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/setclock.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/setclock.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'SET CLOCK TIME',
     SetClockTimePage.route,
   );
 
   static const EDIT_NUMBER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/changenumber_icon.png'), color: Colors.white),
+    ImageIcon(AssetImage('Images/changenumber_icon.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'SET NUMBER',
     EditNumberPage.route,
   );

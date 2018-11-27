@@ -35,10 +35,22 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
   void initState() {
     super.initState();
 
-    var now = DateTime.now();
+   // var now = DateTime.now();
+   setState(() {
+    /*  _hrsController.value = TextEditingValue(text: hrsFormate);
+      _minController.value = TextEditingValue(text: minFormate);
+      _dayOfWeekController.value = TextEditingValue(text: dayFormate);
+      _dateController.value = TextEditingValue(text: dateFormate);
+      _monthController.value = TextEditingValue(text: monthFormate);
+      _yearController.value = TextEditingValue(text: yearFormate);*/
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    var now = DateTime.now();
     var dayFormatter = new DateFormat("EEE");
-    var monthFormatter = new DateFormat("M");
+    var monthFormatter = new DateFormat("MMMM");
     var dateFormatter = new DateFormat("d");
     var yearFormatter = new DateFormat("yyyy");
     var hrsFormatter = new DateFormat("HH");
@@ -49,138 +61,72 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
     String yearFormate = yearFormatter.format(now);
     String hrsFormate = hrsFormatter.format(now);
     String minFormate = minFormatter.format(now);
-
-    setState(() {
-      _hrsController.value = TextEditingValue(text: hrsFormate);
-      _minController.value = TextEditingValue(text: minFormate);
-      _dayOfWeekController.value = TextEditingValue(text: dayFormate);
-      _dateController.value = TextEditingValue(text: dateFormate);
-      _monthController.value = TextEditingValue(text: monthFormate);
-      _yearController.value = TextEditingValue(text: yearFormate);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
       hasBackground: false,
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 80.0,
-                child: TextFormField(
-                  enabled: false,
-                  controller: _hrsController,
-                  decoration: InputDecoration(suffixText: "Hrs", fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+          Container(
+            //height: 30.0,
+            color: Color.fromRGBO(0, 84, 179, 1.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "$hrsFormate",
+                    style: TextStyle(
+                      fontSize: 50.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  ":",
-                  style: TextStyle(fontSize: 15.0),
-                ),
-              ),
-              Container(
-                width: 80.0,
-                child: TextFormField(
-                  enabled: false,
-                  controller: _minController,
-                  decoration: InputDecoration(suffixText: "Min", fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  //Text("hrs",style: TextStyle(fontSize: 20.0),),
+                  Text(
+                    ":",
+                    style: TextStyle(
+                        fontSize: 50.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-              )
-            ],
+                  Text(
+                    "$minFormate",
+                    style: TextStyle(
+                        fontSize: 50.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  Text(
+                    " $dayFormate",
+                    style: TextStyle(
+                        fontSize: 50.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 80.0,
-                child: TextFormField(
-                  controller: _dayOfWeekController,
-                  decoration: InputDecoration(
-                      //prefixText: "day",
-                      fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 60.0,
-                child: TextFormField(
-                  enabled: false,
-                  controller: _dateController,
-                  decoration: InputDecoration(fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Container(
-                width: 60.0,
-                child: TextFormField(
-                  enabled: false,
-                  controller: _monthController,
-                  decoration: InputDecoration(fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Container(
-                width: 60.0,
-                child: TextFormField(
-                  enabled: false,
-                  controller: _yearController,
-                  decoration: InputDecoration(fillColor: Colors.black),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              )
-            ],
-          ),
+          Text("$dateFormate",style: TextStyle(
+              fontSize: 50.0,
+              color: Color.fromRGBO(0, 84, 179, 1.0),
+              fontWeight: FontWeight.bold
+          ),),
+          Text("$monthFormate",style: TextStyle(
+              fontSize: 40.0,
+              color: Color.fromRGBO(0, 84, 179, 1.0),
+              fontWeight: FontWeight.bold
+          ),),
+          Text("$yearFormate",style: TextStyle(
+              fontSize: 40.0,
+              color: Color.fromRGBO(0, 84, 179, 1.0),
+              fontWeight: FontWeight.bold
+          ),),
           /*SizedBox(
             height: 20.0,
           ),

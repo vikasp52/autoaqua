@@ -65,6 +65,9 @@ flutter:
      - Images/setclock.png
      - Images/recycle.png
      - Images/flag.png
+     - Images/sprinkler.png
+     - Images/stop.png
+     - Images/jjlogo.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

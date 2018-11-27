@@ -1,6 +1,5 @@
 import 'package:autoaqua/UI/TopLevel/HomePage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
 
@@ -15,9 +14,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController _UserNameControler =
+  final TextEditingController _userNameController =
   new TextEditingController();
-  final TextEditingController _PasswordControler=
+  final TextEditingController _passwordController=
   new TextEditingController();
 
   @override
@@ -33,57 +32,81 @@ class _LoginState extends State<Login> {
         child: ListView(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: new Column(
-                children: <Widget>[
-                  Image.asset("Images/AutoAquaLogo.png",
-                    height: 150.0,
-                    width: 150.0,),
-                  new Form(
-                      child: new Container(
-                          padding: const EdgeInsets.fromLTRB(70.0, 0.0, 70.0, 70.0),
-                          child: new Column(
-                            children: <Widget>[
-                              new TextFormField(
-                                controller: _UserNameControler,
-                                decoration: new InputDecoration(
-                                    prefixIcon: Icon(Icons.email, color: Colors.black,),
-                                    hintText: "E-mail"
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                              new TextFormField(
-                                controller: _PasswordControler,
-                                decoration: new InputDecoration(
-                                  prefixIcon: Icon(Icons.lock, color: Colors.black,),
-                                  hintText: "Password",
-                                ),
-                                keyboardType: TextInputType.text,
-                                obscureText: true,
-                              ),
-                              new Padding(padding: EdgeInsets.only(top: 20.0)),
-                              new MaterialButton(
-                                  textColor: Colors.blue,
-                                  color: Colors.white,
-                                  child: new Text("Login", style: TextStyle(
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                                  splashColor: Colors.amber,
-                                  onPressed: () {
-                                    _UserValidation();
-                                  }),
-                              FlatButton(onPressed: null,
-                                  child: Text("Forgot Password?", style: TextStyle(
-                                      color: Colors.black
-                                  ),))
-                            ],
-                          ))
-                  )
-                ],
+              padding: const EdgeInsets.all(40.0),
+              child: Form(
+                child: Column(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Image.asset("Images/AutoAquaLogo.png",
+                          height: 150.0,
+                          width: 150.0,),
+                        Text("SMART \n IRRIGATION + FERTIGATION + CLIMATE \n CONTROLLER",
+                          textAlign: TextAlign.center,style: TextStyle(
+                              color: Colors.black
+                          ),),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _userNameController,
+                          decoration: new InputDecoration(
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.email, color: Colors.black,),
+                              hintText: "Username"
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: new InputDecoration(
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.lock, color: Colors.black,),
+                            hintText: "Password",
+                          ),
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 20.0,),
+                        MaterialButton(
+                            textColor: Colors.white,
+                            color: Color.fromRGBO(0, 84, 179, 1.0),
+                            child: new Text("Login", style: TextStyle(
+                                fontWeight: FontWeight.bold
+                            ),),
+                            splashColor: Colors.amber,
+                            onPressed: () {
+                              _userValidation();
+                            }),
+                        FlatButton(onPressed: null,
+                            child: Text("Forgot Password?", style: TextStyle(
+                                color: Colors.black
+                            ),)),
+                        SizedBox(height: 20.0,),
+                        Text("Powered By",style: TextStyle(
+                            color: Colors.black
+                        ),),
+                        //jjlogo
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15.0,0.0,15.0,10.0),
+                          child: Image.asset("Images/jjlogo.png",),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
-        ),
+        )
       ),/*new Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
@@ -96,23 +119,14 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _UserValidation() {
+  void _userValidation() {
 
     Navigator.of(context).push(HomePage.route());
     /*if(_UserNameControler.text == "v@v.com" && _PasswordControler.text == "12345"){
       Navigator.of(context).push(HomePage.route());
     }else{
-      showColoredToast();
+      showColoredToast("Please enter valid username and password");
     }*/
-  }
-
-  void showColoredToast() {
-    Fluttertoast.showToast(
-        msg: "Please enter the valid username or password!",
-        toastLength: Toast.LENGTH_SHORT,
-        bgcolor: "#e74c3c",
-        textcolor: '#ffffff'
-    );
   }
 
 }

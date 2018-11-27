@@ -3,6 +3,7 @@ import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ValvesPage extends StatefulWidget {
   static Route<dynamic> route(int controllerId) {
@@ -111,24 +112,59 @@ class _ValveOption extends StatefulWidget {
 class _ValveOptionState extends State<_ValveOption> {
   // state variable
   double _result = 0.0;
-  int _radioFertilizerProgrammingValue = 0;
+  final valvesFormKey = GlobalKey<FormState>();
+  int _radioFertilizerProgrammingValue;
   DataBaseHelper dbh = DataBaseHelper();
   int noOfValves = 0;
   var integrationType;
   var fertlizationType;
   Future _loading;
-  int _maxSequence = 0;
+  int _maxSequence = 9999999;
   int _maxTanks = 0;
+  int _maxIrrigationValves = 0;
+  String _showecPh;
   ValvesModel _oldValveModel;
-  //ConfigurationModel _oldConfig;
+  bool showValveErrorMsg = false;
   var _cropList = ['Wheat', 'Barley', 'Oat', 'RyeTriticale', 'Maize', 'Corn', 'Broomcorn'];
   List<String> _currentCropSlected;
   final _ctrl_FieldNo = <TextEditingController>[];
   final _ctrl_Tank = <TextEditingController>[];
   final _ctrl_ValveNo = <TextEditingController>[];
   final TextEditingController _ctrl_FertlizerDelay = new TextEditingController();
+  final TextEditingController _postdelayController = new TextEditingController();
   final TextEditingController _ctrl_ECSetp = new TextEditingController();
   final TextEditingController _ctrl_PHSetp = new TextEditingController();
+
+  void getDataToDisplay() async {
+    await dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
+      _oldValveModel = valvesData;
+      if (valvesData != null) {
+        _ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
+        noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
+        noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
+        noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
+        _ctrl_FieldNo[0].value = TextEditingValue(text: valvesData.valves_fieldNo_1);
+        noOfValves > 1 ? _ctrl_FieldNo[1].value = TextEditingValue(text: valvesData.valves_fieldNo_2) : null;
+        noOfValves > 2 ? _ctrl_FieldNo[2].value = TextEditingValue(text: valvesData.valves_fieldNo_3) : null;
+        noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
+
+        _currentCropSlected[0] = valvesData.valves_field1_Crop;
+        _currentCropSlected[1] = valvesData.valves_field2_Crop;
+        _currentCropSlected[2] = valvesData.valves_field3_Crop;
+        _currentCropSlected[3] = valvesData.valves_field4_Crop;
+        _ctrl_Tank[0].value = TextEditingValue(text: valvesData.valves_tank_1);
+        _maxTanks > 1 ? _ctrl_Tank[1].value = TextEditingValue(text: valvesData.valves_tank_2) : null;
+        _maxTanks > 2 ? _ctrl_Tank[2].value = TextEditingValue(text: valvesData.valves_tank_3) : null;
+        _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;
+        _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
+        _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerDelay);
+        _ctrl_ECSetp.value = TextEditingValue(text: valvesData.valves_ECSetp);
+        _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
+      } else {
+        return CircularProgressIndicator();
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -137,8 +173,9 @@ class _ValveOptionState extends State<_ValveOption> {
     dbh.getConfigDataForController(widget.controllerId).then((maxSeq) {
       if (maxSeq != null) {
         setState(() {
-          _maxSequence = int.parse(maxSeq.configMaxOutput);
+          _maxIrrigationValves = int.parse(maxSeq.ConfigTotalIrrigationValves);
           _maxTanks = int.parse(maxSeq.configMaxInjector);
+          _showecPh = maxSeq.configEcpHStatus;
         });
       }
     });
@@ -149,30 +186,18 @@ class _ValveOptionState extends State<_ValveOption> {
           noOfValves = programData.program_mode != "null" ? int.parse(programData.program_mode) : 0;
           integrationType = programData.program_irrigationtype;
           fertlizationType = programData.program_fertilizationtype;
-          print("Data from db ${programData.program_irrigationtype}");
         });
       }
-      print('integrationType is $integrationType');
-      print('fertlizationType is $fertlizationType');
-      print(integrationType == "0");
     });
 
     _currentCropSlected = [];
-    print("Valve index ${widget.controllerId}");
-    print("Valve index ${widget.valveIndex}");
-    print("seq index ${widget.sequenceIndex}");
-    //print("THis is database table for Configuration ${dbh.getProgramItems}");
-
     _loading = dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
       _oldValveModel = valvesData;
-
-      print("Valve index ${widget.controllerId}");
-      print("Valve index ${widget.valveIndex}");
-      print("seq index ${widget.sequenceIndex}");
       if (valvesData != null) {
         setState(() {
-          print("Valves Data for Shaid ${valvesData.valves_fieldNo_1}");
-          //print("Valves Data for Shaid ${_ctrl_Tank[0]}");
+          getDataToDisplay();
+          /*print("Valves  ${valvesData.valves_fieldNo_1}");
+          // print("Valves Data for Shaid ${_ctrl_ValveNo[0]}");
           //_currentCropSlected.length = 4;
           // print("Fogger data is : $model");
           //_ctrl_FieldNo.length = noOfValves;
@@ -196,14 +221,14 @@ class _ValveOptionState extends State<_ValveOption> {
           _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
           _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerDelay);
           _ctrl_ECSetp.value = TextEditingValue(text: valvesData.valves_ECSetp);
-          _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
+          _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);*/
         });
       }
     });
   }
 
   var _db = DataBaseHelper();
-  void _handelValvesDataSubmit() async {
+  Future<void> _handelValvesDataSubmit() async {
     if (_oldValveModel == null) {
       ValvesModel submitValvesData = new ValvesModel(
           widget.controllerId,
@@ -283,10 +308,13 @@ class _ValveOptionState extends State<_ValveOption> {
 
   @override
   Widget build(BuildContext context) {
-    return ControllerDetailsPageFrame(
-      title: "VALVES",
+    return ControllerDetailsPageFrame(title: "VALVES", child: buildValveContent(context));
+  }
+
+  Widget buildValveContent(BuildContext context) {
+    return Form(
+      key: valvesFormKey,
       child: SingleChildScrollView(
-        //padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -327,51 +355,98 @@ class _ValveOptionState extends State<_ValveOption> {
               ),
             ),
             //SizedBox(height: 10.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "VALVES DETAILS",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-              ],
+            Center(
+              child: Text(
+                "VALVE DETAILS",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "Images/valve_1.png",
-                  height: 50.0,
-                  width: 50.0,
-                ),
-                SizedBox(
-                  width: 195.0,
-                ),
-                integrationType == "0"
-                    ? Image.asset(
-                        "Images/ltr.png",
-                        height: 50.0,
-                        width: 50.0,
-                      )
-                    : integrationType == "1"
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
+            integrationType == "0" || integrationType == "1"
+                ? Column(
+                    children: <Widget>[
+                      Row(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 3,
                             child: Image.asset(
-                              "Images/minutes.png",
+                              "Images/valve_1.png",
                               height: 50.0,
+                              color: Color.fromRGBO(0, 84, 179, 1.0),
                               width: 50.0,
                             ),
+                          ),
+                          Expanded(
+                              flex: 2,
+                              child: SizedBox(
+                                width: 0.0,
+                              )),
+                          Expanded(
+                            flex: 5,
+                            child: Center(
+                              child: integrationType == "0"
+                                  ? Image.asset(
+                                      "Images/ltr.png",
+                                      height: 50.0,
+                                      color: Color.fromRGBO(0, 84, 179, 1.0),
+                                      width: 50.0,
+                                    )
+                                  : integrationType == "1"
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Image.asset(
+                                            "Images/minutes.png",
+                                            height: 50.0,
+                                            color: Color.fromRGBO(0, 84, 179, 1.0),
+                                            width: 50.0,
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          width: 0.0,
+                                        ),
+                            ),
                           )
-                        : SizedBox(
-                            width: 0.0,
-                          )
-              ],
-            ),
+                        ],
+                      ),
+                      listOfValve(),
+                      Container(
+                        //color: Colors.indigo,
+                        decoration: ShapeDecoration(
+                            shape: StadiumBorder(),
+                            color: Colors.green
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.info_outline,color: Colors.white,),
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Valve No. should be between 1 to $_maxIrrigationValves.",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Please select the valve details in Program page",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ),
 
-            Container(
-              child: listOfValve(),
-            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Divider(
@@ -397,15 +472,15 @@ class _ValveOptionState extends State<_ValveOption> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
+                    Text(
+                      "Sequential",
+                      style: TextStyle(color: Colors.black, fontSize: 20.0),
+                    ),
                     Radio(
                       value: 0,
                       //activeColor: Colors.white,
                       groupValue: _radioFertilizerProgrammingValue,
                       onChanged: _handleRadioValueChange,
-                    ),
-                    Text(
-                      "Sequential",
-                      style: TextStyle(color: Colors.black, fontSize: 20.0),
                     ),
                   ],
                 ),
@@ -447,14 +522,17 @@ class _ValveOptionState extends State<_ValveOption> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    width: 90.0,
+                  Expanded(
+                    flex: 4,
                     child: TextFormField(
-                      maxLength: 2,
-                      decoration: InputDecoration(
-                        counterText: "",
-                      ),
+                      maxLength: 3,
+                      decoration: InputDecoration(counterText: "", hintText: "PRE", border: OutlineInputBorder()),
                       textAlign: TextAlign.center,
+                      validator: (value) {
+                        if (_ctrl_FertlizerDelay.text.isEmpty) {
+                          return "Enter valid value";
+                        }
+                      },
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -463,12 +541,16 @@ class _ValveOptionState extends State<_ValveOption> {
                       keyboardType: TextInputType.number,
                     ),
                   ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 30.0),
                     child: integrationType == "0"
                         ? Image.asset(
                             "Images/ltr.png",
                             height: 50.0,
+                            color: Color.fromRGBO(0, 84, 179, 1.0),
                             width: 50.0,
                           )
                         : integrationType == "1"
@@ -477,151 +559,273 @@ class _ValveOptionState extends State<_ValveOption> {
                                 child: Image.asset(
                                   "Images/minutes.png",
                                   height: 50.0,
+                                  color: Color.fromRGBO(0, 84, 179, 1.0),
                                   width: 50.0,
                                 ),
                               )
                             : SizedBox(
                                 width: 0.0,
                               ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Divider(
-                height: 1.0,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "Images/tankicon.png",
-                  height: 50.0,
-                  width: 50.0,
-                ),
-                SizedBox(
-                  width: 135.0,
-                ),
-                fertlizationType == "0"
-                    ? Image.asset(
-                        "Images/ltr.png",
-                        height: 50.0,
-                        width: 50.0,
-                      )
-                    : fertlizationType == "1"
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              "Images/minutes.png",
-                              height: 50.0,
-                              width: 50.0,
-                            ),
-                          )
-                        : SizedBox(
-                            width: 0.0,
-                          )
-              ],
-            ),
-            listOfTanks(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Divider(
-                height: 1.0,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "SET EC AND pH VALUES",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(45.0, 0.0, 45.0, 0.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Flexible(
-                    child: Container(
-                      width: 70.0,
-                      child: TextFormField(
-                        maxLength: 5,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.black,
-                        ),
-                        decoration: InputDecoration(hintText: 'EC', counterText: ""),
-                        keyboardType: TextInputType.number,
-                        controller: _ctrl_ECSetp,
-                      ),
-                    ),
                   ),
                   SizedBox(
-                    width: 20.0,
+                    width: 10.0,
                   ),
-                  Flexible(
-                    child: Container(
-                      width: 70.0,
-                      child: TextFormField(
-                        maxLength: 5,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.black,
-                        ),
-                        decoration: InputDecoration(hintText: 'pH', counterText: ""),
-                        keyboardType: TextInputType.number,
-                        controller: _ctrl_PHSetp,
+                  Expanded(
+                    flex: 4,
+                    child: TextFormField(
+                      maxLength: 3,
+                      controller: _postdelayController,
+                      decoration: InputDecoration(counterText: "", hintText: "POST", border: OutlineInputBorder()),
+                      textAlign: TextAlign.center,
+                      validator: (value) {
+                        if (_postdelayController.text.isEmpty) {
+                          return "Enter valid value";
+                        }
+                      },
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
                       ),
+                      //controller: _ctrl_FertlizerDelay,
+                      keyboardType: TextInputType.number,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Divider(
+                height: 1.0,
+              ),
+            ),
+            Center(
+              child: Text(
+                "FERTILIZER TANK",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            fertlizationType == "0" || fertlizationType == "1"
+                ? Column(
+                    children: <Widget>[
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: Center(
+                              child: Image.asset(
+                                "Images/tankicon.png",
+                                height: 50.0,
+                                color: Color.fromRGBO(0, 84, 179, 1.0),
+                                width: 50.0,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 6,
+                            child: Center(
+                              child: fertlizationType == "0"
+                                  ? Image.asset(
+                                      "Images/ltr.png",
+                                      height: 50.0,
+                                      color: Color.fromRGBO(0, 84, 179, 1.0),
+                                      width: 50.0,
+                                    )
+                                  : fertlizationType == "1"
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Image.asset(
+                                            "Images/minutes.png",
+                                            height: 50.0,
+                                            color: Color.fromRGBO(0, 84, 179, 1.0),
+                                            width: 50.0,
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          width: 0.0,
+                                        ),
+                            ),
+                          )
+                        ],
+                      ),
+                      listOfTanks(),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                    "Please select the tank details in Program Page",
+                    style: TextStyle(color: Colors.red),
+                  )),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Divider(
+                height: 1.0,
+              ),
+            ),
+            _showecPh == "true"
+                ? Column(
+                    children: <Widget>[
+                      Text(
+                        "SET EC AND pH VALUES",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 5,
+                              child: TextFormField(
+                                maxLength: 5,
+                                textAlign: TextAlign.center,
+                                validator: (value) {
+                                  if (_ctrl_ECSetp.text.isEmpty) {
+                                    return "Enter valid value";
+                                  }
+                                },
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                    hintText: 'EC', suffixText: "mS/Cm", counterText: "", border: OutlineInputBorder()),
+                                keyboardType: TextInputType.number,
+                                controller: _ctrl_ECSetp,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: TextFormField(
+                                maxLength: 5,
+                                textAlign: TextAlign.center,
+                                validator: (value) {
+                                  if (_ctrl_PHSetp.text.isEmpty) {
+                                    return "Enter valid value";
+                                  }
+                                },
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                    hintText: 'pH', suffixText: "pH", counterText: "", border: OutlineInputBorder()),
+                                keyboardType: TextInputType.number,
+                                controller: _ctrl_PHSetp,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : SizedBox(
+                    height: 0.0,
+                  ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 RawMaterialButton(
-                  onPressed: () {
-                    _handelValvesDataSubmit();
-                    if (widget.sequenceIndex < _maxSequence - 1) {
-                      Navigator.of(context).pushReplacement(
-                        _ValveOption.route(
-                          widget.controllerId,
-                          widget.valveIndex,
-                          widget.maxIndex,
-                          widget.sequenceIndex + 1,
-                        ),
-                      );
-                    } else {
-                      int nextIndex = widget.valveIndex + 1;
-                      if (nextIndex < widget.maxIndex) {
+                    child: Text(
+                      "Back",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    shape: const StadiumBorder(),
+                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
+                    onPressed: () {
+                      if (widget.sequenceIndex < 1) {
+                        Navigator.of(context).pop();
+                      } else {
                         Navigator.of(context).pushReplacement(
                           _ValveOption.route(
                             widget.controllerId,
-                            nextIndex,
+                            widget.valveIndex,
                             widget.maxIndex,
-                            0,
+                            widget.sequenceIndex - 1,
                           ),
                         );
-                      } else {
-                        ControllerDetails.navigateToPage(context, ControllerDetailsPageId.VALVES.nextPageId);
                       }
-                    }
+                    }),
+                RawMaterialButton(
+                    child: Text(
+                      "Update",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    shape: const StadiumBorder(),
+                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
+                    onPressed: () {
+                      _handelValvesDataSubmit();
+                      Navigator.of(context).pop();
+                    }),
+                RawMaterialButton(
+                  onPressed: () {
+                    setState(() {
+                      if (valvesFormKey.currentState.validate()) {
+                        showValveErrorMsg = false;
+                        _loading = _handelValvesDataSubmit().then((_) {
+                          if (mounted) {
+                            if (widget.sequenceIndex < _maxSequence - 1) {
+                              Navigator.of(context).pushReplacement(
+                                _ValveOption.route(
+                                  widget.controllerId,
+                                  widget.valveIndex,
+                                  widget.maxIndex,
+                                  widget.sequenceIndex + 1,
+                                ),
+                              );
+                            } else {
+                              int nextIndex = widget.valveIndex + 1;
+                              if (nextIndex < widget.maxIndex) {
+                                Navigator.of(context).pushReplacement(
+                                  _ValveOption.route(
+                                    widget.controllerId,
+                                    nextIndex,
+                                    widget.maxIndex,
+                                    0,
+                                  ),
+                                );
+                              } else {
+                                ControllerDetails.navigateToPage(context, ControllerDetailsPageId.VALVES.nextPageId);
+                              }
+                            }
+                          }
+                        });
+                      } else {
+                        for (int i = 0; i < int.parse(noOfValves.toString()); i++) {
+                          if (int.parse(_ctrl_ValveNo[i].text) > _maxIrrigationValves) {
+                            setState(() {
+                              showValveErrorMsg = true;
+                            });
+                          } else {
+                            setState(() {
+                              showValveErrorMsg = false;
+                            });
+                          }
+                        }
+                      }
+                    });
                   },
                   fillColor: Color.fromRGBO(0, 84, 179, 1.0),
                   splashColor: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Text(
-                      _oldValveModel != null ? "Update & Next" : "Save & Next",
+                      _oldValveModel != null ? "Next" : "Next",
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
                     ),
                   ),
@@ -661,81 +865,54 @@ class _ValveOptionState extends State<_ValveOption> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Flexible(
-                      child: Container(
-                        width: 100.0,
-                        child: Padding(
-                          padding: paddingforText(),
-                          child: Text(
-                            "Valve No.",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                      ),
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: Center(
+                            child: Text(
+                              "Valve No.",
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                          )),
                     ),
-                    Container(
-                      width: 30.0,
+                    Expanded(
+                      flex: 2,
                       child: TextFormField(
                         maxLength: 2,
-                        decoration: InputDecoration(counterText: ""),
+                        decoration: InputDecoration(counterText: "", border: OutlineInputBorder()),
                         controller: _ctrl_ValveNo[index],
                         textAlign: TextAlign.center,
+                        validator: (value) {
+                          if (int.parse(_ctrl_ValveNo[index].text) > _maxIrrigationValves) {
+                            return "";
+                          }
+                        },
                         style: TextStyle(
                           fontSize: 20.0,
                           color: Colors.black,
                         ),
-                        //controller: _ctrl_FieldNo[index],
                         keyboardType: TextInputType.number,
                       ),
                     ),
                     SizedBox(
-                      width: 105.0,
+                      width: 20.0,
                     ),
-                    /* Expanded(
-                      flex: 3,
-                      child: DropdownButtonHideUnderline(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom:15.0),
-                          child: Container(
-                            decoration: ShapeDecoration(shape: StadiumBorder(
-                              side: BorderSide(
-                                color: Colors.grey.shade700
-                              )
-                            ), color: Colors.transparent),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(5.0,8.0,0.0,4.0),
-                              child: DropdownButton<String>(
-                                hint: Text("Select Crop"),
-                                iconSize: 40.0,
-                                items: _cropList.map((String dropDownMenuItem) {
-                                  return DropdownMenuItem<String>(
-                                    value: dropDownMenuItem,
-                                    child: SingleChildScrollView(child: Text(dropDownMenuItem)),
-                                  );
-                                }).toList(),
-                                onChanged: (String newValueSelected) {
-                                  setState(() {
-                                    _currentCropSlected[index] = newValueSelected;
-                                  });
-                                },
-                                value: _currentCropSlected[index],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),*/
-
-                    Container(
-                      width: 60.0,
+                    Expanded(
+                      flex: 5,
                       child: TextFormField(
-                        maxLength: integrationType == "0" ? 6 : 3,
+                        maxLength: integrationType == "0" ? 6 : integrationType == "1" ? 3 : null,
                         decoration: InputDecoration(
-                          // suffixText: integrationType == "0" ? "Ltr" : "Mins",
-                          //border: InputBorder.none,
                           counterText: "",
+                          border: OutlineInputBorder(),
+                          suffixText: integrationType == "0" ? " Ltr" : integrationType == "1" ? " Mins" : " ",
                         ),
                         textAlign: TextAlign.center,
+                        validator: (value) {
+                          if (_ctrl_FieldNo[index].text.isEmpty) {
+                            return "Enter valid value";
+                          }
+                        },
                         style: TextStyle(
                           fontSize: 20.0,
                           color: Colors.black,
@@ -744,16 +921,6 @@ class _ValveOptionState extends State<_ValveOption> {
                         keyboardType: TextInputType.number,
                       ),
                     ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Padding(
-                      padding: paddingforText(),
-                      child: Text(
-                        integrationType == "0" ? "Ltr" : "Mins",
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                    )
                   ],
                 ),
               ),
@@ -785,41 +952,43 @@ class _ValveOptionState extends State<_ValveOption> {
       children: List.generate(_maxTanks, (index) {
         return Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left:38.0),
-                  child: Text("Tank ${index + 1}", textAlign: TextAlign.center, style: TextStyle(fontSize: 20.0)),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: 90.0,
-                      child: TextFormField(
-                        maxLength: fertlizationType == "0" ? 6 : 2,
-                        decoration: InputDecoration(
-                          counterText: "",
-                        ),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.black,
-                        ),
-                        controller: _ctrl_Tank[index],
-                        keyboardType: TextInputType.number,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Text("Tank ${index + 1}", textAlign: TextAlign.center, style: TextStyle(fontSize: 20.0)),
                     ),
-                    Padding(
-                      padding: paddingforText(),
-                      child: Text(
-                        fertlizationType == "0" ? " Ltr" : fertlizationType == "1" ? " Mins" : " ",
-                        style: TextStyle(fontSize: 20.0),
+                  ),
+                  Expanded(
+                    flex: 6,
+                    child: TextFormField(
+                      maxLength: fertlizationType == "0" ? 6 : 3,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        border: OutlineInputBorder(),
+                        suffixText: fertlizationType == "0" ? " Ltr" : fertlizationType == "1" ? " Mins" : " ",
                       ),
-                    )
-                  ],
-                ),
-              ],
+                      textAlign: TextAlign.center,
+                      validator: (value) {
+                        if (_ctrl_Tank[index].text.isEmpty) {
+                          return "Enter valid value";
+                        }
+                      },
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
+                      ),
+                      controller: _ctrl_Tank[index],
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );

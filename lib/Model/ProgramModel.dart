@@ -9,6 +9,7 @@ class ProgramModel{
   String _programFlushOn;
   String _programIrrigationType;
   String _program_fertilizationtype;
+  String _program_sensorOverride;
   String _programDateCreated;
 
   ProgramModel(
@@ -20,6 +21,7 @@ class ProgramModel{
       this._programFlushOn,
       this._programIrrigationType,
       this._program_fertilizationtype,
+      this._program_sensorOverride,
       this._programDateCreated,
       [this._programID]
       );
@@ -34,6 +36,7 @@ class ProgramModel{
     this._programFlushOn = obj["program_flushon"];
     this._programIrrigationType = obj["program_irrigationtype"];
     this._program_fertilizationtype = obj["program_fertilizationtype"];
+    this._program_sensorOverride = obj["program_sensorOverride"];
     this._programDateCreated = obj["program_DateCreated"];
   }
 
@@ -46,6 +49,7 @@ class ProgramModel{
   String get program_flushon => _programFlushOn;
   String get program_irrigationtype => _programIrrigationType;
   String get program_fertilizationtype => _program_fertilizationtype;
+  String get program_sensorOverride => _program_sensorOverride;
   String get program_DateCreated => _programDateCreated;
 
   Map<String, dynamic> toMap_program(){
@@ -61,6 +65,7 @@ class ProgramModel{
     map_program["program_flushon"] = _programFlushOn;
     map_program["program_irrigationtype"] = _programIrrigationType;
     map_program["program_fertilizationtype"] = _program_fertilizationtype;
+    map_program["program_sensorOverride"] = _program_sensorOverride;
     map_program["program_DateCreated"] = _programDateCreated;
     return map_program;
   }
@@ -75,6 +80,7 @@ class ProgramModel{
     this._programFlushOn = map["program_flushon"];
     this._programIrrigationType = map["program_irrigationtype"];
     this._program_fertilizationtype = map["program_fertilizationtype"];
+    this._program_sensorOverride = map["program_sensorOverride"];
     this._programDateCreated = map["program_DateCreated"];
   }
 

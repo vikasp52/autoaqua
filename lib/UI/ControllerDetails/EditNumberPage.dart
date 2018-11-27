@@ -75,42 +75,45 @@ class _EditNumberPageState extends State<EditNumberPage> {
       hasBackground: false,
       child: Padding(padding: EdgeInsets.all(10.0),
         child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Theme(
-              data: ThemeData(
+            Text("Enter the Mob No. of Controller",style: TextStyle(
+              fontSize: 20.0
+            ),),
 
+            TextFormField(
+              maxLength: 10,
+              controller: _mobNoController,
+              decoration: InputDecoration(
+                  //labelText: "Enter the number",
+                counterText: "",
+                border: OutlineInputBorder()
               ),
-              child: TextFormField(
-                maxLength: 10,
-                controller: _mobNoController,
-                decoration: InputDecoration(
-                    labelText: "Enter the number",
-                  counterText: ""
-                ),
-                style: TextStyle(fontSize: 20.0,
-                    color: Colors.black),
-                keyboardType: TextInputType.number,
-              ),
+              style: TextStyle(fontSize: 20.0,
+                  color: Colors.black),
+              keyboardType: TextInputType.number,
             ),
-            RawMaterialButton(
-              onPressed: () {
-                _saveMobNo();
-                ControllerDetails.navigateToNext(context);
-              },
-              fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-              splashColor: Colors.white,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 15.0),
-                child: Text(
-                  _oldnoModel != null? "Update": "Save",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+            Center(
+              child: RawMaterialButton(
+                onPressed: () {
+                  _saveMobNo();
+                  ControllerDetails.navigateToNext(context);
+                },
+                fillColor: Color.fromRGBO(0, 84, 179, 1.0),
+                splashColor: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 15.0),
+                  child: Text(
+                    _oldnoModel != null? "Update": "Save",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
+                shape: const StadiumBorder(),
               ),
-              shape: const StadiumBorder(),
             ),
           ],
         ),

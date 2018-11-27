@@ -24,7 +24,7 @@ class DataBaseHelper {
 
   //Configuration Variable
   final String tableConfigName = "ConfigurationTabe";
-  final String ControllerIdCol = "controllerId";
+  final String controllerIdCol = "controllerId";
   final String configId = "configid";
   final String configMaxProg = "configMaxProg";
   final String configMaxOut = "configMaxOutput";
@@ -34,10 +34,13 @@ class DataBaseHelper {
   final String configMaxRTU = "configMaxRTU";
   final String configNoOfSlaves = "configNoOfSlaves";
   final String configSlaveMobNos = "configSlaveMobNos";
-  final String ConfigDateCreated = "ConfigDateCreated";
-  final String ConfigStringCol = "ConfigString";
-  final String ConfigmaxFoggerCol = "ConfigmaxFogger";
-  final String ConfigfoggerDelayCol = "ConfigfoggerDelay";
+  final String configDateCreated = "ConfigDateCreated";
+  final String configStringCol = "ConfigString";
+  final String configTotalFoggerValvesCol = "ConfigmaxFogger";
+  final String configTotalIrrigationValvesCol = "ConfigTotalIrrigationValves";
+  final String configTotalValvesCol = "configTotalValves";
+  final String configRemaningValvesCol = "configRemaningValves";
+  final String configfoggerDelayCol = "ConfigfoggerDelay";
 
   //Slaves Variable
   final String tableSlaves = "Slave_Table";
@@ -53,6 +56,7 @@ class DataBaseHelper {
   final String program_modelCol = "program_mode";
   final String program_flushModeCol = "program_flushMode";
   final String program_flushtypeCol = "program_flushtype";
+  final String program_sensorOverrideCol = "program_sensorOverride";
   final String program_intervalCol = "program_interval";
   final String program_flushonCol = "program_flushon";
   final String program_irrigationtypeCol = "program_irrigationtype";
@@ -122,12 +126,14 @@ class DataBaseHelper {
   final String tableFogger = "Fogger_Table";
   static String foggerIdCol = "foggerId";
   static String fogger_controllerCol = "fogger_controllerId";
-  static String fogger_maxRTUCol = "fogger_maxRTU";
+  static String foggingTypeCol = "fogger_maxRTU";
   static String fogger_foggerDelayCol = "fogger_foggerDelay";
   static String fogger_FieldCol = "fogger_Field";
   static String fogger_onSecCol = "fogger_onSec";
-  static String fogger_tempDegreeCol = "fogger_tempDegree";
-  static String fogger_humCol = "fogger_hum";
+  static String fogger_minTempCol = "fogger_tempDegree";
+  static String fogger_maxTempCol = "fogger_maxTemp";
+  static String fogger_minHumCol = "fogger_hum";
+  static String fogger_maxHumCol = "fogger_maxHum";
   static String fogger_dateCreated = "fogger_DateCreated";
   static String fogger_configStringCol = "fogger_configString";
 
@@ -144,8 +150,8 @@ class DataBaseHelper {
 
   initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentDirectory.path, "AutoAquaNew.db");
-    var ourDb = await openDatabase(path, version: 2, onCreate: _onConfigure);
+    String path = join(documentDirectory.path, "AutoAquaDB.db");
+    var ourDb = await openDatabase(path, version: 3, onCreate: _onConfigure);
     return ourDb;
   }
 
@@ -171,10 +177,13 @@ class DataBaseHelper {
         $configMaxRTU TEXT, 
         $configSlaveMobNos TEXT,
         $configNoOfSlaves TEXT, 
-        $ConfigDateCreated TEXT,
-        $ConfigStringCol TEXT,
-        $ConfigmaxFoggerCol TEXT,
-        $ConfigfoggerDelayCol TEXT,
+        $configDateCreated TEXT,
+        $configStringCol TEXT,
+        $configTotalFoggerValvesCol TEXT,
+        $configTotalIrrigationValvesCol TEXT,
+        $configTotalValvesCol TEXT,
+        $configRemaningValvesCol TEXT,
+        $configfoggerDelayCol TEXT,
         FOREIGN KEY (controllerId) REFERENCES $tableName (id))
         """);
     print("Table is created for Config");
@@ -198,6 +207,7 @@ class DataBaseHelper {
         $program_modelCol TEXT,
         $program_flushModeCol TEXT,
         $program_flushtypeCol TEXT,
+        $program_sensorOverrideCol TEXT,
         $program_intervalCol TEXT,
         $program_flushonCol TEXT,
         $program_irrigationtypeCol TEXT,
@@ -273,12 +283,14 @@ class DataBaseHelper {
       CREATE TABLE $tableFogger(
       $foggerIdCol INTEGER PRIMARY KEY,
       $fogger_controllerCol INTEGER NOT NULL,
-      $fogger_maxRTUCol TEXT,
+      $foggingTypeCol TEXT,
       $fogger_foggerDelayCol TEXT,
       $fogger_FieldCol TEXT,
       $fogger_onSecCol TEXT,
-      $fogger_tempDegreeCol TEXT,
-      $fogger_humCol TEXT,
+      $fogger_minTempCol TEXT,
+      $fogger_maxTempCol TEXT,
+      $fogger_minHumCol TEXT,
+      $fogger_maxHumCol TEXT,
       $fogger_dateCreated TEXT,
       $fogger_configStringCol TEXT,
       FOREIGN KEY ($fogger_controllerCol) REFERENCES $tableName(id))
@@ -328,7 +340,7 @@ class DataBaseHelper {
     var dbClient = await db;
     print("Updated config data ${item.toDbMap()}");
     return await dbClient.rawUpdate(
-        'UPDATE $tableConfigName SET $ConfigmaxFoggerCol = ?, $ConfigfoggerDelayCol = ? WHERE $configId = ?',
+        'UPDATE $tableConfigName SET $configTotalFoggerValvesCol = ?, $configfoggerDelayCol = ? WHERE $configId = ?',
         [item.ConfigmaxFogger, item.ConfigfoggerDelay, item.configid]);
   }
 /*
@@ -471,7 +483,7 @@ print("updated: $count");
       int controllerId) async {
     var dbClient = await db;
     var result = await dbClient.rawQuery(
-        "SELECT * FROM $tableConfigName WHERE $ControllerIdCol = $controllerId");
+        "SELECT * FROM $tableConfigName WHERE $controllerIdCol = $controllerId");
     if (result.length == 0) return null;
     return new ConfigurationModel.fromDbMap(result.first);
   }
@@ -551,7 +563,7 @@ print("updated: $count");
   Future<FoggerModel> getFoggerDetailsforConfig(int controllerId)async{
     var dbClient = await db;
     var foggerResult = await dbClient.rawQuery(
-        "SELECT $fogger_maxRTUCol, $fogger_foggerDelayCol FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
+        "SELECT $foggingTypeCol, $fogger_foggerDelayCol FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
     );
     if(foggerResult.length == 0){
       return null;
