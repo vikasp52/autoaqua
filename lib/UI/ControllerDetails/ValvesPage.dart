@@ -135,31 +135,33 @@ class _ValveOptionState extends State<_ValveOption> {
   final TextEditingController _ctrl_ECSetp = new TextEditingController();
   final TextEditingController _ctrl_PHSetp = new TextEditingController();
 
-  void getDataToDisplay() async {
-    await dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
+  void getDataToDisplay() {
+     _loading =  dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
       _oldValveModel = valvesData;
       if (valvesData != null) {
-        _ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
-        noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
-        noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
-        noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
-        _ctrl_FieldNo[0].value = TextEditingValue(text: valvesData.valves_fieldNo_1);
-        noOfValves > 1 ? _ctrl_FieldNo[1].value = TextEditingValue(text: valvesData.valves_fieldNo_2) : null;
-        noOfValves > 2 ? _ctrl_FieldNo[2].value = TextEditingValue(text: valvesData.valves_fieldNo_3) : null;
-        noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
+        setState(() {
+          _ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
+          noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
+          noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
+          noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
+          _ctrl_FieldNo[0].value = TextEditingValue(text: valvesData.valves_fieldNo_1);
+          noOfValves > 1 ? _ctrl_FieldNo[1].value = TextEditingValue(text: valvesData.valves_fieldNo_2) : null;
+          noOfValves > 2 ? _ctrl_FieldNo[2].value = TextEditingValue(text: valvesData.valves_fieldNo_3) : null;
+          noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
 
-        _currentCropSlected[0] = valvesData.valves_field1_Crop;
-        _currentCropSlected[1] = valvesData.valves_field2_Crop;
-        _currentCropSlected[2] = valvesData.valves_field3_Crop;
-        _currentCropSlected[3] = valvesData.valves_field4_Crop;
-        _ctrl_Tank[0].value = TextEditingValue(text: valvesData.valves_tank_1);
-        _maxTanks > 1 ? _ctrl_Tank[1].value = TextEditingValue(text: valvesData.valves_tank_2) : null;
-        _maxTanks > 2 ? _ctrl_Tank[2].value = TextEditingValue(text: valvesData.valves_tank_3) : null;
-        _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;
-        _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
-        _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerDelay);
-        _ctrl_ECSetp.value = TextEditingValue(text: valvesData.valves_ECSetp);
-        _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
+          _currentCropSlected[0] = valvesData.valves_field1_Crop;
+          _currentCropSlected[1] = valvesData.valves_field2_Crop;
+          _currentCropSlected[2] = valvesData.valves_field3_Crop;
+          _currentCropSlected[3] = valvesData.valves_field4_Crop;
+          _ctrl_Tank[0].value = TextEditingValue(text: valvesData.valves_tank_1);
+          _maxTanks > 1 ? _ctrl_Tank[1].value = TextEditingValue(text: valvesData.valves_tank_2) : null;
+          _maxTanks > 2 ? _ctrl_Tank[2].value = TextEditingValue(text: valvesData.valves_tank_3) : null;
+          _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;
+          _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
+          _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerDelay);
+          _ctrl_ECSetp.value = TextEditingValue(text: valvesData.valves_ECSetp);
+          _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
+        });
       } else {
         return CircularProgressIndicator();
       }
@@ -191,12 +193,13 @@ class _ValveOptionState extends State<_ValveOption> {
     });
 
     _currentCropSlected = [];
-    _loading = dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
+    getDataToDisplay();
+    /*_loading = dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex).then((valvesData) {
       _oldValveModel = valvesData;
       if (valvesData != null) {
         setState(() {
           getDataToDisplay();
-          /*print("Valves  ${valvesData.valves_fieldNo_1}");
+          print("Valves  ${valvesData.valves_fieldNo_1}");
           // print("Valves Data for Shaid ${_ctrl_ValveNo[0]}");
           //_currentCropSlected.length = 4;
           // print("Fogger data is : $model");
@@ -221,10 +224,10 @@ class _ValveOptionState extends State<_ValveOption> {
           _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
           _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerDelay);
           _ctrl_ECSetp.value = TextEditingValue(text: valvesData.valves_ECSetp);
-          _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);*/
+          _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);*//*
         });
       }
-    });
+    });*/
   }
 
   var _db = DataBaseHelper();
