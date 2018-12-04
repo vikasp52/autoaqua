@@ -78,16 +78,13 @@ class DataBaseHelper {
   final String valves_fieldNo2Col = "valves_fieldNo_2";
   final String valves_fieldNo3Col = "valves_fieldNo_3";
   final String valves_fieldNo4Col = "valves_fieldNo_4";
-  final String valves_fieldNo1_Crop_Col = "valves_field1_Crop";
-  final String valves_fieldNo2_Crop_Col = "valves_field2_Crop";
-  final String valves_fieldNo3_Crop_Col = "valves_field3_Crop";
-  final String valves_fieldNo4_Crop_Col = "valves_field4_Crop";
   final String valves_tank1_Col = "valves_tank_1";
   final String valves_tank2_Col = "valves_tank_2";
   final String valves_tank3_Col = "valves_tank_3";
   final String valves_tank4_Col = "valves_tank_4";
   final String valves_FertlizerProgramming_Col = "valves_FertlizerProgramming";
-  final String valves_FertlizerDelay_Col = "valves_FertlizerDelay";
+  final String valves_FertlizerPreDelay_Col = "valves_FertlizerPreDelay";
+  final String valves_FertlizerPostDelay_Col = "valves_FertlizerPostDelay";
   final String valves_ECSetp_Col = "valves_ECSetp";
   final String valves_PHSetp_Col = "valves_PHSetp";
   final String valves_DateCreatedCol = "valves_DateCreated";
@@ -233,16 +230,13 @@ class DataBaseHelper {
        $valves_fieldNo2Col TEXT,
        $valves_fieldNo3Col TEXT,
        $valves_fieldNo4Col TEXT,
-       $valves_fieldNo1_Crop_Col TEXT,
-       $valves_fieldNo2_Crop_Col TEXT,
-       $valves_fieldNo3_Crop_Col TEXT,
-       $valves_fieldNo4_Crop_Col TEXT,
        $valves_tank1_Col TEXT,
        $valves_tank2_Col TEXT,
        $valves_tank3_Col TEXT,
        $valves_tank4_Col TEXT,
        $valves_FertlizerProgramming_Col TEXT,
-       $valves_FertlizerDelay_Col TEXT,
+       $valves_FertlizerPreDelay_Col TEXT,
+       $valves_FertlizerPostDelay_Col TEXT,
        $valves_ECSetp_Col TEXT,
        $valves_PHSetp_Col TEXT,
        $valves_DateCreatedCol TEXT,
@@ -497,10 +491,6 @@ print("updated: $count");
     if (result.length == 0 || programId+1 > result.length) {
       return null;
     };
-    print('THis is result for program ${result[programId]}');
-    print(programId+1);
-    print(result.length);
-    print(result.first);
     return ProgramModel.fromMap_program(result[programId]);
   }
 

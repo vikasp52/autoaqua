@@ -138,7 +138,6 @@ class TimerModel {
     this._timer_FertDay_Sat = mapTimer["timer_FertDay_Sat"];
     this._timer_FertDay_Sun = mapTimer["timer_FertDay_Sun"];
     this._timer_DateCreated = mapTimer["timer_DateCreated"];
-    this._timer_DateCreated = mapTimer["timer_DateCreated"];
   }
 
 

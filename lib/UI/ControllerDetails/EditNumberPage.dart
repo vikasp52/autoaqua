@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 
 class EditNumberPage extends StatefulWidget {
 
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.EDIT_NUMBER,
       builder: (context) => EditNumberPage(
         controllerId: controllerId,
+          controllerName:controllerName
       ),
     );
   }
@@ -18,9 +19,11 @@ class EditNumberPage extends StatefulWidget {
   const EditNumberPage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _EditNumberPageState createState() => _EditNumberPageState();
@@ -77,6 +80,17 @@ class _EditNumberPageState extends State<EditNumberPage> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(
+                child: Text(widget.controllerName,style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                ),),
+              ),
+            ),
+            commonDivider(),
             Text("Enter the Mob No. of Controller",style: TextStyle(
               fontSize: 20.0
             ),),
@@ -97,6 +111,7 @@ class _EditNumberPageState extends State<EditNumberPage> {
               child: RawMaterialButton(
                 onPressed: () {
                   _saveMobNo();
+                  _oldnoModel != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
                   ControllerDetails.navigateToNext(context);
                 },
                 fillColor: Color.fromRGBO(0, 84, 179, 1.0),

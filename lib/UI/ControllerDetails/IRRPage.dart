@@ -1,13 +1,15 @@
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class IRRPage extends StatefulWidget {
 
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.IRR_STOP,
       builder: (context) => IRRPage(
         controllerId: controllerId,
+          controllerName:controllerName
       ),
     );
   }
@@ -15,9 +17,11 @@ class IRRPage extends StatefulWidget {
   const IRRPage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _IRRPageState createState() => _IRRPageState();
@@ -28,50 +32,67 @@ class _IRRPageState extends State<IRRPage> {
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
       hasBackground: false,
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            RaisedButton(
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Icon(Icons.stop,color: Colors.white,size: 40.0,),
-                  Text(
-                    "STOP",
-                    style: TextStyle(fontSize: 20.0,color: Colors.white),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                _showDialogforStop();
-              },
+      child: Column(
+        children: <Widget>[
+          Flexible(
+            child: Center(
+              child: Text(widget.controllerName,style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+              ),),
             ),
-            SizedBox(height: 16.0),
-            RaisedButton(
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Icon(Icons.pause,color: Colors.white,size: 40.0,),
-                  Text(
-                    "PAUSE",
-                    style: TextStyle(fontSize: 20.0,color: Colors.white),
-                  ),
-                ],
+          ),
+          commonDivider(),
+          Expanded(
+            flex: 9,
+              child:Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    RaisedButton(
+                      color: Color.fromRGBO(0, 84, 179, 1.0),
+                      padding: const EdgeInsets.all(24.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Icon(Icons.stop,color: Colors.white,size: 40.0,),
+                          Text(
+                            "STOP",
+                            style: TextStyle(fontSize: 20.0,color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        _showDialogforStop();
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    RaisedButton(
+                      color: Color.fromRGBO(0, 84, 179, 1.0),
+                      padding: const EdgeInsets.all(24.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Icon(Icons.pause,color: Colors.white,size: 40.0,),
+                          Text(
+                            "PAUSE",
+                            style: TextStyle(fontSize: 20.0,color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        _showDialogforPause();
+                      },
+                    ),
+                  ],
+                ),
               ),
-              onPressed: () {
-                _showDialogforPause();
-              },
-            ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

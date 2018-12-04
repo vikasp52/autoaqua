@@ -60,14 +60,18 @@ class ControllerDetailsState extends State<ControllerDetails> {
     final nav = _navigatorKey.currentState;
     nav.popUntil((route) => route is ControllerDetailsMainRoute);
     if(pageId != null) {
-      nav.push(pageId.builder(widget.controllerId));
+      nav.push(pageId.builder(widget.controllerId, widget.controllerName));
     }
+  }
+
+  String getName(){
+    return widget.controllerName;
   }
 
   void setCurrentPageId(ControllerDetailsPageId pageId) {
 
     scheduleMicrotask(() => _setAppBarState(() {
-      _title = pageId?.name ?? 'Controller Details';
+      _title = pageId?.name ?? '${widget.controllerName} - Details';
 
       final nextPageId = pageId?.nextPageId;
       if(nextPageId != null){
@@ -225,6 +229,7 @@ class _ControllerDetailsNavObserver extends NavigatorObserver {
 }
 
 class _ControllerDetailsMainPage extends StatefulWidget {
+
   @override
   _ControllerDetailsMainPageState createState() => _ControllerDetailsMainPageState();
 }
@@ -236,18 +241,9 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top:2.0),
-            child: Text("Controller Name", style: TextStyle(
-              color: Colors.black,
-              fontSize: 20.0
-            ),),
-          ),
-        ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 8.0),
             child: Scrollbar(
               child: GridView.count(
                 crossAxisCount: 3,
@@ -397,6 +393,7 @@ class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame>
 }
 
 class ControllerDetailsMainRoute extends MaterialPageRoute {
+
   ControllerDetailsMainRoute() : super(
     builder: (context) => _ControllerDetailsMainPage(),
   );
@@ -420,9 +417,10 @@ class ControllerDetailsPageRoute extends MaterialPageRoute {
   }
 }
 
-typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId);
+typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId, String controllerName);
 
-class ControllerDetailsPageId {
+class ControllerDetailsPageId{
+
   static const CONFIGURATION = const ControllerDetailsPageId(
     ImageIcon(AssetImage('Images/settings.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
     'CONFIGURATION',

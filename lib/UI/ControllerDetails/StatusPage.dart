@@ -1,13 +1,15 @@
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:flutter/material.dart';
 
 class StatusPage extends StatefulWidget {
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.STATUS,
       builder: (context) => StatusPage(
             controllerId: controllerId,
+          controllerName:controllerName
           ),
     );
   }
@@ -15,9 +17,11 @@ class StatusPage extends StatefulWidget {
   const StatusPage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _StatusPageState createState() => _StatusPageState();
@@ -59,56 +63,76 @@ class _StatusPageState extends State<StatusPage> {
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            RaisedButton(
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              padding: const EdgeInsets.all(24.0),
-              child: Text(
-                "IRRIGATION STATUS",
-                style: TextStyle(fontSize: 20.0,color: Colors.white),
+      child: Column(
+        children: <Widget>[
+          Flexible(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(widget.controllerName,style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                ),),
               ),
-              onPressed: () {
-                ControllerDetails.navigateToNext(context);
-              },
             ),
-            SizedBox(height: 16.0),
-            _maxFogger > 0 && _maxFogger != null
-                ? RaisedButton(
+          ),
+          commonDivider(),
+          Expanded(
+            flex: 8,
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  RaisedButton(
                     color: Color.fromRGBO(0, 84, 179, 1.0),
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      "WEATHER STATUS",
+                      "IRRIGATION STATUS",
                       style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
                       ControllerDetails.navigateToNext(context);
                     },
-                  )
-                : SizedBox(
+                  ),
+                  SizedBox(height: 16.0),
+                  _maxFogger > 0 && _maxFogger != null
+                      ? RaisedButton(
+                          color: Color.fromRGBO(0, 84, 179, 1.0),
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            "WEATHER STATUS",
+                            style: TextStyle(fontSize: 20.0,color: Colors.white),
+                          ),
+                          onPressed: () {
+                            ControllerDetails.navigateToNext(context);
+                          },
+                        )
+                      : SizedBox(
+                          height: 0.0,
+                        ),
+                  SizedBox(height: 16.0),
+                  _ECpHStatus == "true" ?RaisedButton(
+                    color: Color.fromRGBO(0, 84, 179, 1.0),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      "EC/pH STATUS",
+                      style: TextStyle(fontSize: 20.0,color: Colors.white),
+                    ),
+                    onPressed: () {
+                      ControllerDetails.navigateToNext(context);
+                    },
+                  ):SizedBox(
                     height: 0.0,
                   ),
-            SizedBox(height: 16.0),
-            _ECpHStatus == "true" ?RaisedButton(
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              padding: const EdgeInsets.all(24.0),
-              child: Text(
-                "EC/pH STATUS",
-                style: TextStyle(fontSize: 20.0,color: Colors.white),
+                ],
               ),
-              onPressed: () {
-                ControllerDetails.navigateToNext(context);
-              },
-            ):SizedBox(
-              height: 0.0,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

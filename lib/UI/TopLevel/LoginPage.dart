@@ -39,8 +39,8 @@ class _LoginState extends State<Login> {
                     Column(
                       children: <Widget>[
                         Image.asset("Images/AutoAquaLogo.png",
-                          height: 150.0,
-                          width: 150.0,),
+                          height: 170.0,
+                          width: 170.0,),
                         Text("SMART \n IRRIGATION + FERTIGATION + CLIMATE \n CONTROLLER",
                           textAlign: TextAlign.center,style: TextStyle(
                               color: Colors.black
@@ -48,7 +48,7 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                     SizedBox(
-                      height: 50.0,
+                      height: 10.0,
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,

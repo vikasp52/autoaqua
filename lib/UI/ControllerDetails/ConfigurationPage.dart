@@ -3,17 +3,19 @@ import 'dart:async';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
+import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 //var etMaxProgram = TextEditingController();
 class ConfigurationPage extends StatefulWidget {
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.CONFIGURATION,
       builder: (context) => ConfigurationPage(
             controllerId: controllerId,
+            controllerName: controllerName,
           ),
     );
   }
@@ -21,9 +23,11 @@ class ConfigurationPage extends StatefulWidget {
   const ConfigurationPage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _ConfigurationPageState createState() => _ConfigurationPageState();
@@ -49,6 +53,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   int _totalValves = 0;
   int _remaningValves = 0;
 
+  APIMethods apiMethods = new APIMethods();
+  
   Future _loading;
   ConfigurationModel _oldConfig;
 
@@ -78,6 +84,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   @override
   void initState() {
     super.initState();
+    print("Controller Name : ${widget.controllerName}");
+
     print("THis is database table for Configuration ${db.getConfigItems()}");
     _errorMsg = false;
 
@@ -149,8 +157,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
       int saveItemId = await db.saveConfigurationItem(newConfig);
       var addedItem = await db.getConfigDataForController(widget.controllerId);
       print('Added Item: $saveItemId: $addedItem');
-
-      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId));
+      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
     } else {
       ConfigurationModel newConfig = new ConfigurationModel(
           widget.controllerId,
@@ -174,24 +181,27 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
       var addedItem = await db.getConfigDataForController(widget.controllerId);
       print('Added Item: $saveItemId: $addedItem');
 
-      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId));
+      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
     }
   }
 
   void CalculateTotalandremaningValves() async {
-    await setState(() {
-      _totalControllerOutput = int.parse(_MaxOutputController.text);
-      _irrigationValves = int.parse(_TotalIrrigationController.text);
-      _foggerValves = int.parse(_TotalFoggerController.text);
-      _totalValves = _irrigationValves + _foggerValves;
-      _remaningValves = int.parse(_MaxOutputController.text) - _totalValves;
 
-      if (_totalValves > _totalControllerOutput) {
-        _errorMsg = true;
-      } else {
-        _errorMsg = false;
-      }
-    });
+    if(_MaxOutputController.text.isNotEmpty){
+      await setState(() {
+        _totalControllerOutput = int.parse(_MaxOutputController.text);
+        _irrigationValves = int.parse(_TotalIrrigationController.text);
+        _foggerValves = int.parse(_TotalFoggerController.text);
+        _totalValves = _irrigationValves + _foggerValves;
+        _remaningValves = int.parse(_MaxOutputController.text) - _totalValves;
+
+        if (_totalValves > _totalControllerOutput) {
+          _errorMsg = true;
+        } else {
+          _errorMsg = false;
+        }
+      });
+    }
   }
 
   String showSnackBar(BuildContext context, String message) {
@@ -217,6 +227,14 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Center(
+                child: Text(widget.controllerName,style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+                ),),
+              ),
+              commonDivider(),
               LabelForTextBoxes("Total Programs per Day"),
               TextFormField(
                 //textAlign: TextAlign.center,
@@ -273,11 +291,10 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               ),
               LabelForTextBoxes("Total Valves Details"),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  LabelForTextBoxes("Irrigation"),
-                  LabelForTextBoxes("Fogger"),
-                  LabelForTextBoxes("       "),
+                  Expanded(flex:4,child: Center(child: LabelForTextBoxes("Irrigation"))),
+                  Expanded(flex:4,child: Center(child: LabelForTextBoxes("Fogger"))),
+                  Expanded(flex:3,child: LabelForTextBoxes("       ")),
                 ],
               ),
               Row(
@@ -535,11 +552,34 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     }
 
                     CalculateTotalandremaningValves();
+                    List<String> MobNo = _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false);
+                    String slaveMoNo = MobNo.join(',');
+                    print("Mob No is $MobNo");
+                    print("slave No is $slaveMoNo");
+                    apiMethods.saveAndUpdateConfigDataOnServer(
+                        _MaxProgController.text,
+                        _MaxOutputController.text,
+                        //slaveMoNo,
+                        _MaxRTUController.text,
+                        _MaxInjectorController.text,
+                        _TotalIrrigationController.text,
+                        _TotalFoggerController.text,
+                        _totalValves.toString(),
+                        _remaningValves.toString(),
+                        _valECpHType == true ? "1" : "0",
+                        _valRTU == true ? "1" : "0",
+                        _phDelayController.text,
+                        slaveMoNo,
+                        //"00",
+                        widget.controllerId.toString()
+                    );
                     setState(() {
-                      if (_configurationformkey.currentState.validate() && (_MaxRTUController.text.isEmpty && _valRTU == false) && (_totalValves <= _totalControllerOutput)) {
+                      if (_configurationformkey.currentState.validate() && errorMsgRTU == false && (_totalValves <= _totalControllerOutput)) {
                           _loading = _handleSave().then((_) {
-                            if (mounted) {
-                              ControllerDetails.navigateToNext(context);
+                            if (mounted){
+                              //ControllerDetails.navigateToNext(context);
+                               Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                               _oldConfig != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
                             }
                           });
                       }else{
@@ -548,7 +588,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     });
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Text(
                       _oldConfig != null ? "Update" : "Save",
                       style: TextStyle(color: Colors.white),

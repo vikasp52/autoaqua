@@ -47,3 +47,13 @@ void showColoredToast(String errormessage) {
       textcolor: '#ffffff'
   );
 }
+
+void showPositiveToast(String errormessage) {
+  Fluttertoast.showToast(
+      msg: errormessage,
+      timeInSecForIos: 4,
+      toastLength: Toast.LENGTH_SHORT,
+      bgcolor: "#008000",
+      textcolor: '#ffffff'
+  );
+}

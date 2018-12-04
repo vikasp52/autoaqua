@@ -1,5 +1,6 @@
 import 'dart:ui';
-
+import 'package:autoaqua/Utils/APICallMethods.dart';
+import 'package:http/http.dart' as http;
 import 'package:autoaqua/Model/ControllerItems.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
@@ -23,6 +24,8 @@ class _ControllerState extends State<Controller> {
   var db = new DataBaseHelper();
   final List<ControllerItem> _itemList = <ControllerItem>[];
 
+  APIMethods apiMethods = new APIMethods();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,8 +36,8 @@ class _ControllerState extends State<Controller> {
 
 
   void _handleSubmitted(String text, String number) async {
-    _textEditingControler.clear();
-    _textEditingControlerNumber.clear();
+//    _textEditingControler.clear();
+//    _textEditingControlerNumber.clear();
 
     ControllerItem doItems = new ControllerItem(text,number, dateFormatted());
     int saveItemId = await db.saveItem(doItems);
@@ -227,7 +230,9 @@ class _ControllerState extends State<Controller> {
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 _handleSubmitted(_textEditingControler.text, _textEditingControlerNumber.text);
+                apiMethods.saveDataToServer(_textEditingControler.text, _textEditingControlerNumber.text);
                 _textEditingControler.clear();
+                _textEditingControlerNumber.clear();
                 Navigator.pop(context);
               }
             },
@@ -329,6 +334,7 @@ class _ControllerState extends State<Controller> {
                 });
 
                 //Redrawing the Screen
+                //apiMethods.updateControllerOnServer(_textEditingControler.text, _textEditingControlerNumber.text,itemList.id);
                 _handelSubmittedUpdate(index, newItemUpdated);
                 await db.updateItems(newItemUpdated); // Updating the Item*/
                 setState(() {

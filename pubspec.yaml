@@ -25,6 +25,7 @@ dependencies:
   fluttertoast: ^2.0.9
   scoped_model: ^0.3.0
   flutter_sms: ^0.0.3
+  http: ^0.12.0
 
 dev_dependencies:
   flutter_test:

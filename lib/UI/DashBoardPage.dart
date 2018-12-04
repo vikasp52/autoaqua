@@ -29,81 +29,71 @@ class _DashboardPageState extends State<DashboardPage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 1.0
-                          )
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 3.0),
-                          child: DropdownButton<String>(
-                            hint: Text("Select Head Unit No", style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15.0
-                            ),),
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                            items: <String>[
-                              '1',
-                              '2',
-                              '3',
-                              '4'
-                            ].map((String value) {
-                              return new DropdownMenuItem<String>(
-                                value: value,
-                                child: new Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (_) {},
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 3.0),
+                        child: DropdownButton<String>(
+                          hint: Text("Select Controller", style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0
+                          ),),
+                          style: TextStyle(
+                            color: Colors.black,
                           ),
+                          items: <String>[
+                            'Controller 1',
+                            'Controller 2',
+                            'Controller 3',
+                            'Controller 4'
+                          ].map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (_) {},
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.white,
-                                width: 1.0
-                            )
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 3.0),
-                          child: DropdownButton<String>(
-                            hint: Text("Select Controller", style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15.0
-                            ),),
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                            items: <String>[
-                              'Controller 1',
-                              'Controller 2',
-                              'Controller 3',
-                              'Controller 4'
-                            ].map((String value) {
-                              return new DropdownMenuItem<String>(
-                                value: value,
-                                child: new Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (_) {},
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 3.0),
+                        child: DropdownButton<String>(
+                          hint: Text("Select Head Unit No", style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0
+                          ),),
+                          style: TextStyle(
+                            color: Colors.black,
                           ),
+                          items: <String>[
+                            '1',
+                            '2',
+                            '3',
+                            '4'
+                          ].map((String value) {
+                            return new DropdownMenuItem<String>(
+                              value: value,
+                              child: new Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (_) {},
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      color: Color.fromRGBO(0, 84, 179, 1.0),
+                      decoration: BoxDecoration(
+                          color: Color.fromRGBO(0, 84, 179, 1.0),
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(40.0),
+                            topRight: Radius.circular(40.0),
+                          )
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(25.0, 8.0, 8.0, 8.0),
                         child: Text("CONTROLLER STATUS", style: TextStyle(
@@ -217,7 +207,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 SizedBox(height: 10.0,),
                 Container(
                   width: 180.0,
-                  color: Color.fromRGBO(0, 84, 179, 1.0),
+                  //color: Color.fromRGBO(0, 84, 179, 1.0),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(0, 84, 179, 1.0),
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(40.0),
+                      topRight: Radius.circular(40.0),
+                    )
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(65.0, 8.0, 8.0, 8.0),
                     child: Text("OBSERVATION", style: TextStyle(

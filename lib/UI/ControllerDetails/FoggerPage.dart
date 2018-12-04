@@ -6,11 +6,12 @@ import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class FoggerPage extends StatefulWidget {
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.FOGGER,
       builder: (context) => FoggerPage(
             controllerId: controllerId,
+          controllerName:controllerName,
           ),
     );
   }
@@ -18,9 +19,11 @@ class FoggerPage extends StatefulWidget {
   const FoggerPage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _FoggerPageState createState() => _FoggerPageState();
@@ -46,7 +49,6 @@ class _FoggerPageState extends State<FoggerPage> {
   ConfigurationModel configurationModel;
   final _foggerKey = GlobalKey<FormState>();
 
-
   void _handleFoggingRadioValueChange(int value) {
     setState(() {
       _radioFoggingType = value;
@@ -67,8 +69,8 @@ class _FoggerPageState extends State<FoggerPage> {
     super.initState();
     print("THis is database table for Configuration ${db.getConfigItems()}");
 
-    _loading = db.getConfigDataForController(widget.controllerId).then((configData){
-      if(configData != null){
+    _loading = db.getConfigDataForController(widget.controllerId).then((configData) {
+      if (configData != null) {
         setState(() {
           _count = int.parse(configData.ConfigmaxFogger);
           _ensureTextControllsers(_count);
@@ -84,7 +86,7 @@ class _FoggerPageState extends State<FoggerPage> {
       _oldmodelFogger = foggerdetails;
       if (foggerdetails != null) {
         setState(() {
-         // _ensureTextControllsers(foggerdetails.length);
+          // _ensureTextControllsers(foggerdetails.length);
           for (int i = 0; i < foggerdetails.length; i++) {
             final model = foggerdetails[i];
             print("Fogger data is : $foggerdetails[]");
@@ -131,21 +133,19 @@ class _FoggerPageState extends State<FoggerPage> {
   }*/
 
   Future<void> _handelFoggerDataSubmit() async {
-
     for (int i = 0; i < _count; i++) {
       final model = FoggerModel(
-        widget.controllerId,
+          widget.controllerId,
           _radioFoggingType.toString(),
           _foggerDelayController.text,
-        _foggerValveNoController[i].text,
-        _onSecontroller[i].text,
-        _minTempController[i].text,
-        _maxTempController[i].text,
-        _minHumController[i].text,
-        _maxHumController[i].text,
-        dateFormatted(),
-        "${AppendZero(_foggerDelayController.text)}"
-      );
+          _foggerValveNoController[i].text,
+          _onSecontroller[i].text,
+          _minTempController[i].text,
+          _maxTempController[i].text,
+          _minHumController[i].text,
+          _maxHumController[i].text,
+          dateFormatted(),
+          "${AppendZero(_foggerDelayController.text)}");
       if (i < (_oldmodelFogger?.length ?? 0)) {
         model.foggerId = _oldmodelFogger[i].foggerId;
       }
@@ -157,9 +157,6 @@ class _FoggerPageState extends State<FoggerPage> {
       }
     }
   }
-  paddingforText(){
-    return const EdgeInsets.only(bottom: 12.0);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +165,17 @@ class _FoggerPageState extends State<FoggerPage> {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(widget.controllerName,style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                ),),
+              ),
+            ),
+            commonDivider(),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
@@ -175,25 +183,19 @@ class _FoggerPageState extends State<FoggerPage> {
                 children: <Widget>[
                   LabelForTextBoxes("Fogger Sensing Delay:"),
                   TextFormField(
-                      style:TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.black
-                      ),
+                      style: TextStyle(fontSize: 20.0, color: Colors.black),
                       keyboardType: TextInputType.number,
-                      validator: (val){
-                        if(_foggerDelayController.text.isEmpty){
+                      validator: (val) {
+                        if (_foggerDelayController.text.isEmpty) {
                           return "Please enter Fogger Sensing Delay";
                         }
                       },
                       controller: _foggerDelayController,
                       maxLength: 2,
                       decoration: new InputDecoration(
-                          fillColor: Colors.black,
-                          border: OutlineInputBorder(),
-                          counterText: "",
-                          suffixText: "mins"
-                        //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
-                      )),
+                          fillColor: Colors.black, border: OutlineInputBorder(), counterText: "", suffixText: "mins"
+                          //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
+                          )),
                   commonDivider(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -202,40 +204,45 @@ class _FoggerPageState extends State<FoggerPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(children: <Widget>[
-                            Radio(
-                              value: 1,
-                              groupValue: _radioFoggingType,
-                              onChanged: _handleFoggingRadioValueChange,
-                            ),
-                            Text(
-                              "Time",
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                          ],),
-                          Row(children: <Widget>[
-                            Radio(
-                              value: 3,
-                              groupValue: _radioFoggingType,
-                              onChanged: _handleFoggingRadioValueChange,
-                            ),
-                            Text(
-                              "Humidity",
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                          ],),
-                          Row(children: <Widget>[
-                            Radio(
-                              value: 2,
-                              groupValue: _radioFoggingType,
-                              onChanged: _handleFoggingRadioValueChange,
-                            ),
-                            Text(
-                              "Temperature",
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-
-                          ],),
+                          Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 1,
+                                groupValue: _radioFoggingType,
+                                onChanged: _handleFoggingRadioValueChange,
+                              ),
+                              Text(
+                                "Time",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 3,
+                                groupValue: _radioFoggingType,
+                                onChanged: _handleFoggingRadioValueChange,
+                              ),
+                              Text(
+                                "Humidity",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 2,
+                                groupValue: _radioFoggingType,
+                                onChanged: _handleFoggingRadioValueChange,
+                              ),
+                              Text(
+                                "Temperature",
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            ],
+                          ),
                         ],
                       )
                     ],
@@ -270,102 +277,122 @@ class _FoggerPageState extends State<FoggerPage> {
                 ],
               ),
             ),
-            _count > 0 && (_radioFoggingType == 1 || _radioFoggingType == 2 ||_radioFoggingType == 3)
-                ?ControllerDetailsPageFrame(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        //color: Colors.indigo,
-                        decoration: ShapeDecoration(
-                            shape: StadiumBorder(),
-                            color: Colors.green
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+            _count > 0 && (_radioFoggingType == 1 || _radioFoggingType == 2 || _radioFoggingType == 3)
+                ? ControllerDetailsPageFrame(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
                           children: <Widget>[
-                            Icon(Icons.info_outline,color: Colors.white,),
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Fogger Valve No. should be between $_minFValveNo to $_totalValves.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
+                            Container(
+                              //color: Colors.indigo,
+                              decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.green),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.info_outline,
                                     color: Colors.white,
-                                    fontSize: 14.0,
                                   ),
-                                ),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "Fogger Valve No. should be between $_minFValveNo to $_totalValves.",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      commonDivider(),
-                      Row(
-                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 2,
-                              child: Text(
-                            "Fogger Valve \n No.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.0),
-                          )),
-                          _radioFoggingType == 1? Expanded(
-                            flex: 2,
-                              //width: 60.0,
-                              child: Text(
-                            "FoggerOn \n (Sec)",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18.0),
-                          )):SizedBox(width: 0.0,),
-                          _radioFoggingType == 2? Expanded(
-                              flex: 2,
-                              child: Text(
-                            "Set Min Temp \n [°C]",
-                                textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.0),
-                          )):SizedBox(width: 0.0,),
-                          _radioFoggingType == 2? Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Set Max Temp \n [°C]",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18.0),
-                              )):SizedBox(width: 0.0,),
-                          _radioFoggingType == 3? Expanded(
-                              flex: 2,
-                              child: Text(
-                            "Set Min Humidity \n [%]",
-                                textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.0),
-                          )):SizedBox(width: 0.0,),
-                          _radioFoggingType == 3? Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Set Max Humidity \n [%]",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18.0),
-                              )):SizedBox(width: 0.0,),
-                        ],
-                      ),
-                      SizedBox.fromSize(
-                        size: Size(10.0, 10.0),
-                      ),
-                      Container(
-                        height: 300.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1.0, color: Colors.black),
-                        ),
-                        child: SingleChildScrollView(child: createFoggerList()),
-                      ),
-                      SizedBox.fromSize(
-                        size: Size(10.0, 10.0),
-                      ),
-                      /* Row(
+                            commonDivider(),
+                            Row(
+                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      "Fogger Valve \n No.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 18.0),
+                                    )),
+                                _radioFoggingType == 1
+                                    ? Expanded(
+                                        flex: 2,
+                                        //width: 60.0,
+                                        child: Text(
+                                          "FoggerOn \n (Sec)",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18.0),
+                                        ))
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                                _radioFoggingType == 2
+                                    ? Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          "Set Min Temp \n [°C]",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18.0),
+                                        ))
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                                _radioFoggingType == 2
+                                    ? Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          "Set Max Temp \n [°C]",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18.0),
+                                        ))
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                                _radioFoggingType == 3
+                                    ? Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          "Set Min Humidity \n [%]",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18.0),
+                                        ))
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                                _radioFoggingType == 3
+                                    ? Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          "Set Max Humidity \n [%]",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18.0),
+                                        ))
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                              ],
+                            ),
+                            SizedBox.fromSize(
+                              size: Size(10.0, 10.0),
+                            ),
+                            Container(
+                              height: 300.0,
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 1.0, color: Colors.black),
+                              ),
+                              child: SingleChildScrollView(child: createFoggerList()),
+                            ),
+                            SizedBox.fromSize(
+                              size: Size(10.0, 10.0),
+                            ),
+                            /* Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           IconButton(
@@ -378,11 +405,14 @@ class _FoggerPageState extends State<FoggerPage> {
                           ),
                         ],
                       ),*/
-                    ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    height: 0.0,
                   ),
-                ),
-              ),
-            ):SizedBox(height: 0.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -392,9 +422,12 @@ class _FoggerPageState extends State<FoggerPage> {
                       if (_foggerKey.currentState.validate()) {
                         _loading = _handelFoggerDataSubmit().then((_) {
                           if (mounted) {
+                            _oldmodelFogger != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
                             ControllerDetails.navigateToNext(context);
                           }
                         });
+                      } else {
+                        showColoredToast("Please check the values");
                       }
                     });
                   },
@@ -404,7 +437,7 @@ class _FoggerPageState extends State<FoggerPage> {
                     padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Text(
                       _oldmodelFogger != null ? "Update" : "Save",
-                      style: TextStyle(color: Colors.white,fontSize: 20.0,fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   shape: const StadiumBorder(),
@@ -424,7 +457,7 @@ class _FoggerPageState extends State<FoggerPage> {
     return Column(
       children: List.generate(_count, (index) {
         return Padding(
-          padding: const EdgeInsets.fromLTRB(8.0,8.0,8.0,0.0),
+          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -432,127 +465,136 @@ class _FoggerPageState extends State<FoggerPage> {
                 flex: 2,
                 child: TextFormField(
                   maxLength: 2,
-                  validator: (val){
-                    if(_foggerValveNoController[index].text.isEmpty){
+                  validator: (val) {
+                    if (_foggerValveNoController[index].text.isEmpty) {
                       return "";
-                    }else if(int.parse(_foggerValveNoController[index].text) < _minFValveNo || int.parse(_foggerValveNoController[index].text) > _totalValves){
+                    } else if (int.parse(_foggerValveNoController[index].text) < _minFValveNo ||
+                        int.parse(_foggerValveNoController[index].text) > _totalValves) {
                       return "";
                     }
                   },
-                  decoration: InputDecoration(
-                      counterText: "",
-                      border: OutlineInputBorder()
-                  ),
+                  decoration: InputDecoration(counterText: "", border: OutlineInputBorder()),
                   textAlign: TextAlign.center,
                   controller: _foggerValveNoController[index],
                   style: TextStyle(fontSize: 20.0, color: Colors.black),
                   keyboardType: TextInputType.number,
                 ),
               ),
-              SizedBox(width: 5.0,),
-              _radioFoggingType == 1?Expanded(
-                flex: 2,
-                child: TextFormField(
-                  maxLength: 2,
-                  validator: (val){
-                    if(_onSecontroller[index].text.isEmpty){
-                      return "";
-                    }
-                  },
-                  decoration: InputDecoration(
-                      counterText: "",
-                    border: OutlineInputBorder()
-                  ),
-                  textAlign: TextAlign.center,
-                  controller: _onSecontroller[index],
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                  keyboardType: TextInputType.number,
-                ),
-              ):SizedBox(width: 0.0,),
-              SizedBox(width: 5.0,),
-              _radioFoggingType == 2? Expanded(
-                flex: 2,
-                child: TextFormField(
-                  maxLength: 2,
-                  validator: (val){
-                    if(_minTempController[index].text.isEmpty){
-                      return "";
-                    }
-                  },
-                  decoration: InputDecoration(
-                      counterText: "",
-                      suffixText: "°C",
-                    border: OutlineInputBorder()
-                  ),
-                  textAlign: TextAlign.center,
-                  controller: _minTempController[index],
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                  keyboardType: TextInputType.number,
-                ),
-              ):SizedBox(width: 0.0,),
-              SizedBox(width: 5.0,),
-              _radioFoggingType == 2? Expanded(
-                flex: 2,
-                child: TextFormField(
-                  maxLength: 2,
-                  validator: (val){
-                    if(_maxTempController[index].text.isEmpty){
-                      return "";
-                    }
-                  },
-                  decoration: InputDecoration(
-                      counterText: "",
-                      suffixText: "°C",
-                      border: OutlineInputBorder()
-                  ),
-                  textAlign: TextAlign.center,
-                  controller: _maxTempController[index],
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                  keyboardType: TextInputType.number,
-                ),
-              ):SizedBox(width: 0.0,),
-              SizedBox(width: 5.0,),
-              _radioFoggingType == 3? Expanded(
-                flex: 2,
-                child: TextFormField(
-                  maxLength: 2,
-                  validator: (val){
-                    if(_minHumController[index].text.isEmpty){
-                      return "";
-                    }
-                  },
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    counterText: "",
-                      suffixText: "%",
-                    border: OutlineInputBorder()
-                  ),
-                  controller: _minHumController[index],
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                  keyboardType: TextInputType.number,
-                ),
-              ):SizedBox(width: 0.0,),
-              SizedBox(width: 5.0,),
-              _radioFoggingType == 3? Expanded(
-                flex: 2,
-                child: TextFormField(
-                  maxLength: 2,
-                  validator: (val){
-                    if(_maxHumController[index].text.isEmpty){
-                      return "";
-                    }
-                  },
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                      counterText: "",
-                      suffixText: "%",
-                      border: OutlineInputBorder()
-                  ),
-                  controller: _maxHumController[index],
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                  keyboardType: TextInputType.number,
-                ),
-              ):SizedBox(width: 0.0,),
+              SizedBox(
+                width: 5.0,
+              ),
+              _radioFoggingType == 1
+                  ? Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        maxLength: 2,
+                        validator: (val) {
+                          if (_onSecontroller[index].text.isEmpty) {
+                            return "";
+                          }
+                        },
+                        decoration: InputDecoration(counterText: "", border: OutlineInputBorder()),
+                        textAlign: TextAlign.center,
+                        controller: _onSecontroller[index],
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
+                  : SizedBox(
+                      width: 0.0,
+                    ),
+              SizedBox(
+                width: 5.0,
+              ),
+              _radioFoggingType == 2
+                  ? Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        maxLength: 2,
+                        validator: (val) {
+                          if (_minTempController[index].text.isEmpty) {
+                            return "";
+                          }
+                        },
+                        decoration: InputDecoration(counterText: "", suffixText: "°C", border: OutlineInputBorder()),
+                        textAlign: TextAlign.center,
+                        controller: _minTempController[index],
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
+                  : SizedBox(
+                      width: 0.0,
+                    ),
+              SizedBox(
+                width: 5.0,
+              ),
+              _radioFoggingType == 2
+                  ? Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        maxLength: 2,
+                        validator: (val) {
+                          if (_maxTempController[index].text.isEmpty) {
+                            return "";
+                          }
+                        },
+                        decoration: InputDecoration(counterText: "", suffixText: "°C", border: OutlineInputBorder()),
+                        textAlign: TextAlign.center,
+                        controller: _maxTempController[index],
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
+                  : SizedBox(
+                      width: 0.0,
+                    ),
+              SizedBox(
+                width: 5.0,
+              ),
+              _radioFoggingType == 3
+                  ? Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        maxLength: 2,
+                        validator: (val) {
+                          if (_minHumController[index].text.isEmpty) {
+                            return "";
+                          }
+                        },
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(counterText: "", suffixText: "%", border: OutlineInputBorder()),
+                        controller: _minHumController[index],
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
+                  : SizedBox(
+                      width: 0.0,
+                    ),
+              SizedBox(
+                width: 5.0,
+              ),
+              _radioFoggingType == 3
+                  ? Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        maxLength: 2,
+                        validator: (val) {
+                          if (_maxHumController[index].text.isEmpty) {
+                            return "";
+                          }
+                        },
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(counterText: "", suffixText: "%", border: OutlineInputBorder()),
+                        controller: _maxHumController[index],
+                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
+                  : SizedBox(
+                      width: 0.0,
+                    ),
             ],
           ),
         );

@@ -1,13 +1,15 @@
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class SetClockTimePage extends StatefulWidget {
-  static Route<dynamic> route(int controllerId) {
+  static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
       pageId: ControllerDetailsPageId.SET_TIME,
       builder: (context) => SetClockTimePage(
             controllerId: controllerId,
+          controllerName: controllerName
           ),
     );
   }
@@ -15,9 +17,11 @@ class SetClockTimePage extends StatefulWidget {
   const SetClockTimePage({
     Key key,
     @required this.controllerId,
+    @required this.controllerName,
   }) : super(key: key);
 
   final int controllerId;
+  final String controllerName;
 
   @override
   _SetClockTimePageState createState() => _SetClockTimePageState();
@@ -63,91 +67,107 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
     String minFormate = minFormatter.format(now);
     return ControllerDetailsPageFrame(
       hasBackground: false,
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        //mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            //height: 30.0,
-            color: Color.fromRGBO(0, 84, 179, 1.0),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "$hrsFormate",
-                    style: TextStyle(
-                      fontSize: 50.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  //Text("hrs",style: TextStyle(fontSize: 20.0),),
-                  Text(
-                    ":",
-                    style: TextStyle(
+      Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Text(widget.controllerName,style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+            fontWeight: FontWeight.bold
+        ),),
+      ),
+      commonDivider(),
+      Expanded(
+        flex: 9,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              //height: 30.0,
+              color: Color.fromRGBO(0, 84, 179, 1.0),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "$hrsFormate",
+                      style: TextStyle(
                         fontSize: 50.0,
                         color: Colors.white,
                         fontWeight: FontWeight.bold
+                      ),
                     ),
-                  ),
-                  Text(
-                    "$minFormate",
-                    style: TextStyle(
-                        fontSize: 50.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
+                    //Text("hrs",style: TextStyle(fontSize: 20.0),),
+                    Text(
+                      ":",
+                      style: TextStyle(
+                          fontSize: 50.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
-                  ),
-                  Text(
-                    " $dayFormate",
-                    style: TextStyle(
-                        fontSize: 50.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
+                    Text(
+                      "$minFormate",
+                      style: TextStyle(
+                          fontSize: 50.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
-                  )
-                ],
+                    Text(
+                      " $dayFormate",
+                      style: TextStyle(
+                          fontSize: 50.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
+            Text("$dateFormate",style: TextStyle(
+                fontSize: 50.0,
+                color: Color.fromRGBO(0, 84, 179, 1.0),
+                fontWeight: FontWeight.bold
+            ),),
+            Text("$monthFormate",style: TextStyle(
+                fontSize: 40.0,
+                color: Color.fromRGBO(0, 84, 179, 1.0),
+                fontWeight: FontWeight.bold
+            ),),
+            Text("$yearFormate",style: TextStyle(
+                fontSize: 40.0,
+                color: Color.fromRGBO(0, 84, 179, 1.0),
+                fontWeight: FontWeight.bold
+            ),),
+          ],
+        ),
+      ),
+      /*SizedBox(
+        height: 20.0,
+      ),
+      RawMaterialButton(
+        onPressed: () {
+          ControllerDetails.navigateToNext(context);
+        },
+        fillColor: Colors.indigo,
+        splashColor: Colors.white,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Text(
+            "Save",
+            //_oldTimerData != null? "Update & Next": "Save & Next",
+            style: TextStyle(color: Colors.white),
           ),
-          Text("$dateFormate",style: TextStyle(
-              fontSize: 50.0,
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              fontWeight: FontWeight.bold
-          ),),
-          Text("$monthFormate",style: TextStyle(
-              fontSize: 40.0,
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              fontWeight: FontWeight.bold
-          ),),
-          Text("$yearFormate",style: TextStyle(
-              fontSize: 40.0,
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              fontWeight: FontWeight.bold
-          ),),
-          /*SizedBox(
-            height: 20.0,
-          ),
-          RawMaterialButton(
-            onPressed: () {
-              ControllerDetails.navigateToNext(context);
-            },
-            fillColor: Colors.indigo,
-            splashColor: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
-              child: Text(
-                "Save",
-                //_oldTimerData != null? "Update & Next": "Save & Next",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            shape: const StadiumBorder(),
-          ),*/
+        ),
+        shape: const StadiumBorder(),
+      ),*/
         ],
-      )),
+      ),
     );
   }
 }

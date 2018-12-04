@@ -12,16 +12,13 @@ class ValvesModel {
   String _valves_fieldNo_2;
   String _valves_fieldNo_3;
   String _valves_fieldNo_4;
-  String _valves_field1_Crop;
-  String _valves_field2_Crop;
-  String _valves_field3_Crop;
-  String _valves_field4_Crop;
   String _valves_tank_1;
   String _valves_tank_2;
   String _valves_tank_3;
   String _valves_tank_4;
   String _valves_FertlizerProgramming;
-  String _valves_FertlizerDelay;
+  String _valves_FertlizerPreDelay;
+  String _valves_FertlizerPostDelay;
   String _valves_ECSetp;
   String _valves_PHSetp;
   String _valves_DateCreated;
@@ -39,16 +36,13 @@ class ValvesModel {
       this._valves_fieldNo_2,
       this._valves_fieldNo_3,
       this._valves_fieldNo_4,
-      this._valves_field1_Crop,
-      this._valves_field2_Crop,
-      this._valves_field3_Crop,
-      this._valves_field4_Crop,
       this._valves_tank_1,
       this._valves_tank_2,
       this._valves_tank_3,
       this._valves_tank_4,
       this._valves_FertlizerProgramming,
-      this._valves_FertlizerDelay,
+      this._valves_FertlizerPreDelay,
+      this._valves_FertlizerPostDelay,
       this._valves_ECSetp,
       this._valves_PHSetp,
       this._valves_DateCreated);
@@ -67,16 +61,13 @@ class ValvesModel {
     this._valves_fieldNo_2 = obj["valves_fieldNo_2"];
     this._valves_fieldNo_3 = obj["valves_fieldNo_3"];
     this._valves_fieldNo_4 = obj["valves_fieldNo_4"];
-    this._valves_field1_Crop = obj["valves_field1_Crop"];
-    this._valves_field2_Crop = obj["valves_field2_Crop"];
-    this._valves_field3_Crop = obj["valves_field3_Crop"];
-    this._valves_field4_Crop = obj["valves_field4_Crop"];
     this._valves_tank_1 = obj["valves_tank_1"];
     this._valves_tank_2 = obj["valves_tank_2"];
     this._valves_tank_3 = obj["valves_tank_3"];
     this._valves_tank_4 = obj["valves_tank_4"];
     this._valves_FertlizerProgramming = obj["valves_FertlizerProgramming"];
-    this._valves_FertlizerDelay = obj["valves_FertlizerDelay"];
+    this._valves_FertlizerPreDelay = obj["valves_FertlizerPreDelay"];
+    this._valves_FertlizerPostDelay = obj["valves_FertlizerPostDelay"];
     this._valves_ECSetp = obj["valves_ECSetp"];
     this._valves_PHSetp = obj["valves_PHSetp"];
     this._valves_DateCreated = obj["valves_DateCreated"];
@@ -97,16 +88,13 @@ class ValvesModel {
   String get valves_fieldNo_2 => _valves_fieldNo_2;
   String get valves_fieldNo_3 => _valves_fieldNo_3;
   String get valves_fieldNo_4 => _valves_fieldNo_4;
-  String get valves_field1_Crop => _valves_field1_Crop;
-  String get valves_field2_Crop => _valves_field2_Crop;
-  String get valves_field3_Crop => _valves_field3_Crop;
-  String get valves_field4_Crop => _valves_field4_Crop;
   String get valves_tank_1 => _valves_tank_1;
   String get valves_tank_2 => _valves_tank_2;
   String get valves_tank_3 => _valves_tank_3;
   String get valves_tank_4 => _valves_tank_4;
   String get valves_FertlizerProgramming => _valves_FertlizerProgramming;
-  String get valves_FertlizerDelay => _valves_FertlizerDelay;
+  String get valves_FertlizerPreDelay => _valves_FertlizerPreDelay;
+  String get valves_FertlizerPostDelay => _valves_FertlizerPostDelay;
   String get valves_ECSetp => _valves_ECSetp;
   String get valves_PHSetp => _valves_PHSetp;
   String get valves_DateCreated => _valves_DateCreated;
@@ -125,16 +113,13 @@ class ValvesModel {
     map_Valves["valves_fieldNo_2"] = _valves_fieldNo_2;
     map_Valves["valves_fieldNo_3"] = _valves_fieldNo_3;
     map_Valves["valves_fieldNo_4"] = _valves_fieldNo_4;
-    map_Valves["valves_field1_Crop"] = _valves_field1_Crop;
-    map_Valves["valves_field2_Crop"] = _valves_field2_Crop;
-    map_Valves["valves_field3_Crop"] = _valves_field3_Crop;
-    map_Valves["valves_field4_Crop"] = _valves_field4_Crop;
     map_Valves["valves_tank_1"] = _valves_tank_1;
     map_Valves["valves_tank_2"] = _valves_tank_2;
     map_Valves["valves_tank_3"] = _valves_tank_3;
     map_Valves["valves_tank_4"] = _valves_tank_4;
     map_Valves["valves_FertlizerProgramming"] = _valves_FertlizerProgramming;
-    map_Valves["valves_FertlizerDelay"] = _valves_FertlizerDelay;
+    map_Valves["valves_FertlizerPreDelay"] = _valves_FertlizerPreDelay;
+    map_Valves["valves_FertlizerPostDelay"] = _valves_FertlizerPostDelay;
     map_Valves["valves_ECSetp"] = _valves_ECSetp;
     map_Valves["valves_PHSetp"] = _valves_PHSetp;
     map_Valves["valves_DateCreated"] = _valves_DateCreated;
@@ -159,16 +144,13 @@ class ValvesModel {
     this._valves_fieldNo_2 = map["valves_fieldNo_2"];
     this._valves_fieldNo_3 = map["valves_fieldNo_3"];
     this._valves_fieldNo_4 = map["valves_fieldNo_4"];
-    this._valves_field1_Crop = map["valves_field1_Crop"];
-    this._valves_field2_Crop = map["valves_field2_Crop"];
-    this._valves_field3_Crop = map["valves_field3_Crop"];
-    this._valves_field4_Crop = map["valves_field4_Crop"];
     this._valves_tank_1 = map["valves_tank_1"];
     this._valves_tank_2 = map["valves_tank_2"];
     this._valves_tank_3 = map["valves_tank_3"];
     this._valves_tank_4 = map["valves_tank_4"];
     this._valves_FertlizerProgramming = map["valves_FertlizerProgramming"];
-    this._valves_FertlizerDelay = map["valves_FertlizerDelay"];
+    this._valves_FertlizerPreDelay = map["valves_FertlizerPreDelay"];
+    this._valves_FertlizerPostDelay = map["valves_FertlizerPostDelay"];
     this._valves_ECSetp = map["valves_ECSetp"];
     this._valves_PHSetp = map["valves_PHSetp"];
     this._valves_DateCreated = map["valves_DateCreated"];
