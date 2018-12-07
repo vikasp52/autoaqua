@@ -12,7 +12,7 @@ class ValvesPage extends StatefulWidget {
       pageId: ControllerDetailsPageId.VALVES,
       builder: (context) => ValvesPage(
             controllerId: controllerId,
-          controllerName:controllerName,
+            controllerName: controllerName,
           ),
     );
   }
@@ -55,12 +55,12 @@ class _ValvesPageState extends State<ValvesPage> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Flexible(child: Center(
-          child: Text(widget.controllerName,style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold
-          ),),
+        Flexible(
+            child: Center(
+          child: Text(
+            widget.controllerName,
+            style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         )),
         Expanded(
           flex: 9,
@@ -87,7 +87,8 @@ class _ValvesPageState extends State<ValvesPage> {
                                 ),
                               )),
                           onTap: () => Navigator.of(context).push(
-                                _ValveOption.route(widget.controllerId, index, _maxProgramforValves, 0, widget.controllerName),
+                                _ValveOption.route(
+                                    widget.controllerId, index, _maxProgramforValves, 0, widget.controllerName),
                               ),
                         );
                       }),
@@ -99,14 +100,15 @@ class _ValvesPageState extends State<ValvesPage> {
 }
 
 class _ValveOption extends StatefulWidget {
-  static Route<dynamic> route(int controllerId, int valveIndex, int maxIndex, int sequenceIndex, String controllerName) {
+  static Route<dynamic> route(
+      int controllerId, int valveIndex, int maxIndex, int sequenceIndex, String controllerName) {
     return MaterialPageRoute(
       builder: (context) => _ValveOption(
             controllerId: controllerId,
             valveIndex: valveIndex,
             maxIndex: maxIndex,
             sequenceIndex: sequenceIndex,
-          controllerName:controllerName,
+            controllerName: controllerName,
           ),
     );
   }
@@ -142,7 +144,7 @@ class _ValveOptionState extends State<_ValveOption> {
   Future _loading;
   int _maxSequence = 9999999;
   int _maxTanks = 0;
-  String _maxIrrigationValves = "0";
+  int _maxIrrigationValves = 0;
   String _showecPh;
   ValvesModel _oldValveModel;
   bool showFertProgErrorMsg = false;
@@ -159,12 +161,10 @@ class _ValveOptionState extends State<_ValveOption> {
   Future<void> getDataToDisplay() async {
     final maxSeq = await dbh.getConfigDataForController(widget.controllerId);
     if (maxSeq != null) {
-      _maxIrrigationValves = maxSeq.ConfigTotalIrrigationValves;
+      _maxIrrigationValves = int.parse(maxSeq.ConfigTotalIrrigationValves);
       _maxTanks = int.parse(maxSeq.configMaxInjector);
       _showecPh = maxSeq.configEcpHStatus;
     }
-
-    _updateTankControllerCount();
 
     final programData = await dbh.getProgramData(widget.controllerId, widget.valveIndex);
     if (programData != null) {
@@ -173,21 +173,39 @@ class _ValveOptionState extends State<_ValveOption> {
       fertlizationType = programData.program_fertilizationtype;
     }
 
+    _updateTankControllerCount();
+    _updateValvesCount();
+
     final valvesData = await dbh.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex);
+
     _oldValveModel = valvesData;
     if (valvesData != null) {
-      _ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
+      final List<String> valveNoList =[valvesData.valves_VolveNo1,valvesData.valves_VolveNo2, valvesData.valves_VolveNo3,valvesData.valves_VolveNo4];
+      final List<String> valveFieldList =[valvesData.valves_fieldNo_1, valvesData.valves_fieldNo_2, valvesData.valves_fieldNo_3, valvesData.valves_fieldNo_4];
+      final List<String> tankList = [valvesData.valves_tank_1,valvesData.valves_tank_2,valvesData.valves_tank_3,valvesData.valves_tank_4];
+
+      for(int i = 0; i < noOfValves; i++){
+          _ctrl_ValveNo[i].text = valveNoList[i];
+          _ctrl_FieldNo[i].text = valveFieldList[i];
+      }
+      for(int i = 0; i < _maxTanks; i++){
+        setState(() {
+          _ctrl_Tank[i].text = tankList[i];
+        });
+      }
+
+   /*_ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
       noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
       noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
-      noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
+      noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
       _ctrl_FieldNo[0].value = TextEditingValue(text: valvesData.valves_fieldNo_1);
       noOfValves > 1 ? _ctrl_FieldNo[1].value = TextEditingValue(text: valvesData.valves_fieldNo_2) : null;
       noOfValves > 2 ? _ctrl_FieldNo[2].value = TextEditingValue(text: valvesData.valves_fieldNo_3) : null;
-      noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
+      noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
       _ctrl_Tank[0].value = TextEditingValue(text: valvesData.valves_tank_1);
       _maxTanks > 1 ? _ctrl_Tank[1].value = TextEditingValue(text: valvesData.valves_tank_2) : null;
       _maxTanks > 2 ? _ctrl_Tank[2].value = TextEditingValue(text: valvesData.valves_tank_3) : null;
-      _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;
+      _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;*/
       _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
       _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerPreDelay);
       _postdelayController.value = TextEditingValue(text: valvesData.valves_FertlizerPostDelay);
@@ -195,16 +213,14 @@ class _ValveOptionState extends State<_ValveOption> {
       _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
     }
 
-    if (mounted) {
+   /* if (mounted) {
       setState(() {});
-    }
+    }*/
   }
 
   @override
   void initState() {
     super.initState();
-
-    _updateValvesCount();
 
     _loading = getDataToDisplay();
   }
@@ -218,9 +234,9 @@ class _ValveOptionState extends State<_ValveOption> {
           widget.sequenceIndex,
           integrationType == "0" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
-          noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
-          noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
-          noOfValves > 3 ? _ctrl_ValveNo[3].text : null,
+          noOfValves > 1 ? _ctrl_ValveNo[1].text : "",
+          noOfValves > 2 ? _ctrl_ValveNo[2].text : "",
+          noOfValves > 3 ? _ctrl_ValveNo[3].text : "",
           _ctrl_FieldNo[0].text,
           noOfValves > 1 ? _ctrl_FieldNo[1].text : null,
           noOfValves > 2 ? _ctrl_FieldNo[2].text : null,
@@ -308,11 +324,10 @@ class _ValveOptionState extends State<_ValveOption> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(widget.controllerName,style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold
-                ),),
+                child: Text(
+                  widget.controllerName,
+                  style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             commonDivider(),
@@ -782,8 +797,8 @@ class _ValveOptionState extends State<_ValveOption> {
                         _handelValvesDataSubmit();
                         _oldValveModel != null
                             ? showPositiveToast("Data is updated successfully")
-                            : showColoredToast("Data is saved successfully");
-                        Navigator.of(context).pop();
+                            : showPositiveToast("Data is saved successfully");
+                        Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                       } else {
                         showColoredToast("Please check the values");
                       }
@@ -801,8 +816,8 @@ class _ValveOptionState extends State<_ValveOption> {
                         apiMethods.saveAndUpdateValvesDataOnServer(
                             "${widget.valveIndex + 1}",
                             "${widget.sequenceIndex + 1}",
-                            integrationType == "0" ? "Ltr" : integrationType == "1" ?"Time":"NULL",
-                            fertlizationType == "0" ? "Ltr" : fertlizationType == "1" ?"Time":"NULL",
+                            integrationType == "0" ? "Ltr" : integrationType == "1" ? "Time" : "NULL",
+                            fertlizationType == "0" ? "Ltr" : fertlizationType == "1" ? "Time" : "NULL",
                             _ctrl_ValveNo[0].text,
                             noOfValves > 1 ? _ctrl_ValveNo[1].text : "00",
                             noOfValves > 2 ? _ctrl_ValveNo[2].text : "00",
@@ -878,9 +893,9 @@ class _ValveOptionState extends State<_ValveOption> {
   //Method to generate the No. of Valves
   void _updateValvesCount() {
     setState(() {
-      _ctrl_FieldNo.length = 4;
-      _ctrl_ValveNo.length = 4;
-      for (int i = 0; i < 4; i++) {
+      _ctrl_FieldNo.length = noOfValves;
+      _ctrl_ValveNo.length = noOfValves;
+      for (int i = 0; i < noOfValves; i++) {
         _ctrl_FieldNo[i] ??= TextEditingController();
         _ctrl_ValveNo[i] ??= TextEditingController();
       }
@@ -922,7 +937,7 @@ class _ValveOptionState extends State<_ValveOption> {
                             return "";
                           } else if (value != null && !value.isEmpty) {
                             var val = int.parse(value);
-                            if (val > int.parse(_maxIrrigationValves)) {
+                            if (val > _maxIrrigationValves) {
                               return "";
                             }
                           }

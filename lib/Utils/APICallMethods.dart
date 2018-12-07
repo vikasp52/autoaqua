@@ -1,4 +1,7 @@
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:path/path.dart';
 
 class APIMethods {
   //Save the Controller data to server
@@ -108,106 +111,86 @@ class APIMethods {
   }
 
   //Save and Update the Valves data
-void saveAndUpdateValvesDataOnServer(
-    programNo,
-    seqNo,
-    valveUnitType,
-    tankUnitType,
-    valveNo1,
-    valveNo2,
-    valveNo3,
-    valveNo4,
-    valveDetails1,
-    valveDetails2,
-    valveDetails3,
-    valveDetails4,
-    fertProgramming,
-    preDelay,
-    postDelay,
-    tank1,
-    tank2,
-    tank3,
-    tank4,
-    ecValues,
-    pHValues,
-    controllerId
-    ){
-
+  void saveAndUpdateValvesDataOnServer(
+      programNo,
+      seqNo,
+      valveUnitType,
+      tankUnitType,
+      valveNo1,
+      valveNo2,
+      valveNo3,
+      valveNo4,
+      valveDetails1,
+      valveDetails2,
+      valveDetails3,
+      valveDetails4,
+      fertProgramming,
+      preDelay,
+      postDelay,
+      tank1,
+      tank2,
+      tank3,
+      tank4,
+      ecValues,
+      pHValues,
+      controllerId) {
     var url = "http://www.adevole.com/clients/autoaqua/autoaqua/api/controller/valves/create/$controllerId";
 
-    http.post(url,body: {
-    "seq":seqNo,
-    "valves_unit_type":valveUnitType,
-    "tank_unit_type":tankUnitType,
-    "tank_1":tank1,
-    "tank_2":tank2,
-    "tank_3":tank3,
-    "tank_4":tank4,
-    "fertilizer_delays":preDelay,
-    "fertilizer_type":fertProgramming,
-    "ecset":ecValues,
-    "phset":pHValues,
-    "valveNo1":valveNo1,
-    "valveNo2":valveNo2,
-    "valveNo3":valveNo3,
-    "valveNo4":valveNo4,
-    "valveFieldNo1":valveDetails1,
-    "valveFieldNo2":valveDetails2,
-    "valveFieldNo3":valveDetails3,
-    "valveFieldNo4":valveDetails4,
-    "fertilizer_delays_post":postDelay,
-    "program_no":programNo
+    http.post(url, body: {
+      "seq": seqNo,
+      "valves_unit_type": valveUnitType,
+      "tank_unit_type": tankUnitType,
+      "tank_1": tank1,
+      "tank_2": tank2,
+      "tank_3": tank3,
+      "tank_4": tank4,
+      "fertilizer_delays": preDelay,
+      "fertilizer_type": fertProgramming,
+      "ecset": ecValues,
+      "phset": pHValues,
+      "valveNo1": valveNo1,
+      "valveNo2": valveNo2,
+      "valveNo3": valveNo3,
+      "valveNo4": valveNo4,
+      "valveFieldNo1": valveDetails1,
+      "valveFieldNo2": valveDetails2,
+      "valveFieldNo3": valveDetails3,
+      "valveFieldNo4": valveDetails4,
+      "fertilizer_delays_post": postDelay,
+      "program_no": programNo
     }).then((response) {
       print("Valves Response status: ${response.statusCode}");
       print("Valves Response body: ${response.body}");
     });
-}
+  }
 
 //Save and Update the timer data
-void saveAndUpdateTimerData(
-    controllerId,
-    programId,
-    timeHrs,
-    timeMins,
-    irrson,
-    irrmon,
-    irrtue,
-    irrwed,
-    irrthu,
-    irrfri,
-    irrsat,
-    frdson,
-    frdmon,
-    frdtue,
-    frdwed,
-    frdthu,
-    frdfri,
-    frdsat){
-
+  void saveAndUpdateTimerData(controllerId, programId, timeHrs, timeMins, irrson, irrmon, irrtue, irrwed, irrthu,
+      irrfri, irrsat, frdson, frdmon, frdtue, frdwed, frdthu, frdfri, frdsat) {
     var url = "http://www.adevole.com/clients/autoaqua/autoaqua/api/controller/timing/create/$controllerId";
 
     http.post(url, body: {
-    "program_id": programId,
-    "start_time_hr": timeHrs,
-    "start_time_min": timeMins,
-    "irr_sun":irrson,
-    "irr_mon":irrmon,
-    "irr_tue":irrtue,
-    "irr_wed":irrwed,
-    "irr_thu":irrthu,
-    "irr_fri":irrfri,
-    "irr_sat":irrsat,
-    "fer_sun":frdson,
-    "fer_mon":frdmon,
-    "fer_tue":frdtue,
-    "fer_wed":frdwed,
-    "fer_thu":frdthu,
-    "fer_fri":frdfri,
-    "fer_sat":frdsat
+      "program_id": programId,
+      "start_time_hr": timeHrs,
+      "start_time_min": timeMins,
+      "irr_sun": irrson,
+      "irr_mon": irrmon,
+      "irr_tue": irrtue,
+      "irr_wed": irrwed,
+      "irr_thu": irrthu,
+      "irr_fri": irrfri,
+      "irr_sat": irrsat,
+      "fer_sun": frdson,
+      "fer_mon": frdmon,
+      "fer_tue": frdtue,
+      "fer_wed": frdwed,
+      "fer_thu": frdthu,
+      "fer_fri": frdfri,
+      "fer_sat": frdsat
     }).then((response) {
       print("Program Response status: ${response.statusCode}");
       print("Program Response body: ${response.body}");
     });
-}
+  }
 
 }

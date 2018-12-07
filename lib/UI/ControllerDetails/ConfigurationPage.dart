@@ -7,6 +7,7 @@ import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 //var etMaxProgram = TextEditingController();
 class ConfigurationPage extends StatefulWidget {
@@ -54,7 +55,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   int _remaningValves = 0;
 
   APIMethods apiMethods = new APIMethods();
-  
+
   Future _loading;
   ConfigurationModel _oldConfig;
 
@@ -137,8 +138,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     if (_oldConfig == null) {
       ConfigurationModel newConfig = new ConfigurationModel(
           widget.controllerId,
-          AppendZero(_MaxProgController.text),
-          AppendZero(_MaxOutputController.text),
+          _MaxProgController.text,
+          _MaxOutputController.text,
           _MaxInjectorController.text,
           _TotalFoggerController.text,
           _TotalIrrigationController.text,
@@ -161,8 +162,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     } else {
       ConfigurationModel newConfig = new ConfigurationModel(
           widget.controllerId,
-          AppendZero(_MaxProgController.text),
-          AppendZero(_MaxOutputController.text),
+          _MaxProgController.text,
+          _MaxOutputController.text,
           _MaxInjectorController.text,
           _TotalFoggerController.text,
           _TotalIrrigationController.text,
@@ -186,8 +187,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   }
 
   void CalculateTotalandremaningValves() async {
-
-    if(_MaxOutputController.text.isNotEmpty){
+    if (_MaxOutputController.text.isNotEmpty) {
       await setState(() {
         _totalControllerOutput = int.parse(_MaxOutputController.text);
         _irrigationValves = int.parse(_TotalIrrigationController.text);
@@ -228,20 +228,31 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Center(
-                child: Text(widget.controllerName,style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-                ),),
+                child: Text(
+                  widget.controllerName,
+                  style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
               ),
               commonDivider(),
               LabelForTextBoxes("Total Programs per Day"),
-              TextFormField(
+              CommonTextField(
+                _MaxProgController,
+                (value) {
+                  if (validateEmpty(value)) {
+                    return "Please enter the programs per day"; //showSnackBar(context, "Please enter the Max program");
+                  }
+                },
+              ),
+              /*TextFormField(
                 //textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  BlacklistingTextInputFormatter(new RegExp('[\\.|\\,-]')),
+                ],
                 controller: _MaxProgController,
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
                 validator: (value) {
+                  //bool tst = _MaxProgController.text.isNotEmpty?int.parse(value) < 1:false;
                   if (value.isEmpty || int.parse(value) < 1) {
                     return "Please enter the programs per day"; //showSnackBar(context, "Please enter the Max program");
                   }
@@ -253,16 +264,24 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   border: OutlineInputBorder(),
                   fillColor: Colors.black,
                 ),
-              ),
+              ),*/
               LabelForTextBoxes("Total Injectors per Controller"),
-              TextFormField(
+              CommonTextField(_MaxInjectorController, (value) {
+                if (validateEmpty(value)) {
+                  return "Please enter Total Injectors per Controller";
+                } else if (int.parse(value) > 4) {
+                  return "You cannot enter more then 4";
+                }
+              }, TextAlign.start,
+                  "(Max 4)"),
+              /*TextFormField(
                 //textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 controller: _MaxInjectorController,
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
                 maxLength: 1,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value.isEmpty || int.parse(value) < 1) {
                     return "Please enter Total Injectors per Controller";
                   } else if (int.parse(value) > 4) {
                     return "You cannot enter more then 4";
@@ -270,16 +289,23 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                 },
                 decoration: new InputDecoration(
                     fillColor: Colors.black, counterText: "", suffixText: "(Max 4)", border: OutlineInputBorder()),
-              ),
+              ),*/
               LabelForTextBoxes("Total Controller Outputs"),
-              TextFormField(
-                //textAlign: TextAlign.center,
+              CommonTextField(
+                _MaxOutputController,
+                (value) {
+                  if (validateEmpty(value)) {
+                    return "Please enter Total Controller Outputs";
+                  }
+                },
+              ),
+              /*TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _MaxOutputController,
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
                 maxLength: 2,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value.isEmpty || int.parse(value) < 1) {
                     return "Please enter Total Controller Outputs";
                   }
                 },
@@ -288,71 +314,91 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   border: OutlineInputBorder(),
                   fillColor: Colors.black,
                 ),
-              ),
+              ),*/
               LabelForTextBoxes("Total Valves Details"),
               Row(
                 children: <Widget>[
-                  Expanded(flex:4,child: Center(child: LabelForTextBoxes("Irrigation"))),
-                  Expanded(flex:4,child: Center(child: LabelForTextBoxes("Fogger"))),
-                  Expanded(flex:3,child: LabelForTextBoxes("       ")),
+                  Expanded(flex: 4, child: Center(child: LabelForTextBoxes("Irrigation"))),
+                  Expanded(flex: 4, child: Center(child: LabelForTextBoxes("Fogger"))),
+                  Expanded(flex: 3, child: LabelForTextBoxes("       ")),
                 ],
               ),
               Row(
                 children: <Widget>[
                   Expanded(
                     flex: 4,
-                    child: TextFormField(
+                    child: CommonTextField(
+                      _TotalIrrigationController,
+                      (value) {
+                        if (validateEmpty(value)) {
+                          return "Please enter \n Irrigation";
+                        }
+                      },
+                      TextAlign.center,
+                    ),
+
+                    /*TextFormField(
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
                       controller: _TotalIrrigationController,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value.isEmpty || int.parse(value) < 1) {
                           return "Please enter \n Irrigation";
                         }
                       },
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                       maxLength: 2,
-                      /*validator: (value) {
+                      */ /*validator: (value) {
                         if (value.isEmpty) {
                           return "Please enter the maximum valves";
                         }
-                      },*/
+                      },*/ /*
                       decoration: new InputDecoration(
                         counterText: "",
                         hintText: "Irrigation",
                         border: OutlineInputBorder(),
                         fillColor: Colors.black,
                       ),
-                    ),
+                    ),*/
                   ),
                   SizedBox(
                     width: 10.0,
                   ),
                   Expanded(
                     flex: 4,
-                    child: TextFormField(
+                    child: CommonTextField(
+                      _TotalFoggerController,
+                      (value) {
+                        if (validateEmpty(value)) {
+                          return "Please enter \n Fogger";
+                        }
+                      },
+                      TextAlign.center,
+                    ),
+
+                    /*TextFormField(
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
                       controller: _TotalFoggerController,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value.isEmpty || int.parse(value) < 1) {
                           return "Please enter \n Fogger";
                         }
                       },
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                       maxLength: 2,
-                      /* onChanged: (str) {
+                      */ /* onChanged: (str) {
                         setState(() {
                           _foggerValves = int.parse(_TotalFoggerController.text);
                         });
-                      },*/
+                      },*/ /*
                       decoration: new InputDecoration(
                         counterText: "",
                         hintText: "Fogger",
                         border: OutlineInputBorder(),
                         fillColor: Colors.black,
                       ),
-                    ),
+                    ),*/
                   ),
                   SizedBox(
                     width: 10.0,
@@ -395,9 +441,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                       ),
                     )
                   : Text(
-                    "Total should not be more then ${_MaxOutputController.text}.",
-                    style: TextStyle(color: Colors.red),
-                  ),
+                      "Total should not be more then ${_MaxOutputController.text}.",
+                      style: TextStyle(color: Colors.red),
+                    ),
               commonDivider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -443,20 +489,33 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                         ),
                         Expanded(
                           flex: 7,
-                          child: TextFormField(
+                          child:CommonTextField(
+                              _phDelayController,
+                                (value) {
+                              if (validateEmpty(value)) {
+                                return "Please enter the phDelay in mins";
+                              }
+                            },
+                              TextAlign.center,
+                            "Every",
+                            "mins"
+                          ),
+
+
+                          /*TextFormField(
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 20.0, color: Colors.black),
                             keyboardType: TextInputType.number,
                             controller: _phDelayController,
                             maxLength: 2,
                             validator: (value) {
-                              if (value.isEmpty) {
+                              if (value.isEmpty || int.parse(value) < 1) {
                                 return "Please enter the phDelay in mins";
                               }
                             },
                             decoration: new InputDecoration(
                                 counterText: "", border: OutlineInputBorder(), prefixText: "Every", suffixText: "mins"),
-                          ),
+                          ),*/
                         ),
                       ],
                     )
@@ -490,9 +549,14 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                               //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
                               ),
                         ),
-                        errorMsgRTU == true?Text("Please enter Total RTU’s per Controller",style: TextStyle(
-                            color: Colors.red
-                        ),):SizedBox(height: 0.0,),
+                        errorMsgRTU == true
+                            ? Text(
+                                "Please enter Total RTU’s per Controller",
+                                style: TextStyle(color: Colors.red),
+                              )
+                            : SizedBox(
+                                height: 0.0,
+                              ),
                       ],
                     )
                   : SizedBox(
@@ -500,14 +564,14 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     ),
               _valRTU == true
                   ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: Text(
-                        "RTU Details",
-                        style: TextStyle(fontSize: 20.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Text(
+                          "RTU Details",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
                       ),
-                    ),
-                  )
+                    )
                   : SizedBox(
                       height: 0.0,
                     ),
@@ -541,18 +605,23 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     fontSize: 20.0,
                   ),
                   onPressed: () {
-                    if(_MaxRTUController.text.isEmpty && _valRTU == true){
+                    /*int _maxControllerData;
+                    if(_MaxRTUController.text != null){
+                      _maxControllerData = int.parse(_MaxRTUController.text);
+                    }*/
+                    if (_MaxRTUController.text.isEmpty && _valRTU == true) {
                       setState(() {
                         errorMsgRTU = true;
                       });
-                    }else{
+                    } else {
                       setState(() {
                         errorMsgRTU = false;
                       });
                     }
 
                     CalculateTotalandremaningValves();
-                    List<String> MobNo = _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false);
+                    List<String> MobNo =
+                        _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false);
                     String slaveMoNo = MobNo.join(',');
                     print("Mob No is $MobNo");
                     print("slave No is $slaveMoNo");
@@ -571,18 +640,21 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                         _phDelayController.text,
                         slaveMoNo,
                         //"00",
-                        widget.controllerId.toString()
-                    );
+                        widget.controllerId.toString());
                     setState(() {
-                      if (_configurationformkey.currentState.validate() && errorMsgRTU == false && (_totalValves <= _totalControllerOutput)) {
-                          _loading = _handleSave().then((_) {
-                            if (mounted){
-                              //ControllerDetails.navigateToNext(context);
-                               Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                               _oldConfig != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
-                            }
-                          });
-                      }else{
+                      if (_configurationformkey.currentState.validate() &&
+                          errorMsgRTU == false &&
+                          (_totalValves <= _totalControllerOutput)) {
+                        _loading = _handleSave().then((_) {
+                          if (mounted) {
+                            //ControllerDetails.navigateToNext(context);
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                            _oldConfig != null
+                                ? showPositiveToast("Data is updated successfully")
+                                : showPositiveToast("Data is saved successfully");
+                          }
+                        });
+                      } else {
                         showColoredToast("Please enter the valid value");
                       }
                     });
@@ -639,13 +711,13 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                 ),
                 Expanded(
                   flex: 7,
-                  child: TextFormField(
+                  child:TextFormField(
                     style: TextStyle(fontSize: 20.0, color: Colors.black),
                     textAlign: TextAlign.center,
                     controller: _slaveTextControllers[index],
                     maxLength: 10,
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value.isEmpty || int.parse(value) < 1 || value.length < 10) {
                         return "Please enter Mob no for RTU";
                       }
                     },

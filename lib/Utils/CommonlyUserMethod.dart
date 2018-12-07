@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-String dateFormatted(){
+String dateFormatted() {
   var now = DateTime.now();
 
   var formatter = new DateFormat("EEE, MMM d, ''yy, HH, m");
@@ -12,24 +13,54 @@ String dateFormatted(){
 }
 
 AppendZero(String etController) {
-  if (etController.length < 2) {
+  if (etController.length < 2 && etController.isNotEmpty) {
     return '0' + '$etController';
   } else {
     return etController;
   }
 }
 
-
-Widget LabelForTextBoxes(String label){
+Widget LabelForTextBoxes(String label) {
   return Padding(
-    padding: const EdgeInsets.only(bottom:8.0),
-    child: Text("$label",style: TextStyle(
-      fontSize: 20.0,
-    ),),
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Text(
+      "$label",
+      style: TextStyle(
+        fontSize: 20.0,
+      ),
+    ),
   );
 }
 
-commonDivider(){
+bool validateEmpty(String val){
+return val.isEmpty || int.parse(val) < 1;
+}
+
+Widget CommonTextField(
+    TextEditingController controller, FormFieldValidator<String> validator,
+    [TextAlign textAlign = TextAlign.start, String suffixText, String prefixText]) {
+  return TextFormField(
+    textAlign: textAlign,
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+      BlacklistingTextInputFormatter(new RegExp('[\\.|\\,-]')),
+    ],
+    controller: controller,
+    style:TextStyle(fontSize: 20.0, color: Colors.black),
+    validator: validator,
+    maxLength: 2,
+    decoration: new InputDecoration(
+      //labelText: "Total Programs per Day",
+      counterText: "",
+      suffixText: suffixText,
+      prefixText: prefixText,
+      border: OutlineInputBorder(),
+      fillColor: Colors.black,
+    ),
+  );
+}
+
+commonDivider() {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Divider(
@@ -40,20 +71,10 @@ commonDivider(){
 
 void showColoredToast(String errormessage) {
   Fluttertoast.showToast(
-      msg: errormessage,
-      timeInSecForIos: 4,
-      toastLength: Toast.LENGTH_SHORT,
-      bgcolor: "#e74c3c",
-      textcolor: '#ffffff'
-  );
+      msg: errormessage, timeInSecForIos: 4, toastLength: Toast.LENGTH_SHORT, bgcolor: "#e74c3c", textcolor: '#ffffff');
 }
 
 void showPositiveToast(String errormessage) {
   Fluttertoast.showToast(
-      msg: errormessage,
-      timeInSecForIos: 4,
-      toastLength: Toast.LENGTH_SHORT,
-      bgcolor: "#008000",
-      textcolor: '#ffffff'
-  );
+      msg: errormessage, timeInSecForIos: 4, toastLength: Toast.LENGTH_SHORT, bgcolor: "#008000", textcolor: '#ffffff');
 }

@@ -499,15 +499,14 @@ print("updated: $count");
     var dbClient = await db;
     var valvesResult = await dbClient.rawQuery(
         "SELECT * FROM $tableValves WHERE $valves_controllerIdCol = $controllerId AND $valvesProgramNoCol = $valvesProgramNo AND $valvesSeqNoCol = $seqNo");
-    print("Valve result ${valvesResult.length}");
+    print("Valve result ${valvesResult}");
     if(valvesResult.length == 0){
       // || seqNo > valvesResult.length || valvesProgramNo > valvesResult.length
       return null;
     }else{
-      print("Valves 1 data is $valvesProgramNo");
       //print("Valves 2 data is ${ValvesModel.fromMap_Valves(valvesResult[valvesProgramNo])}");
+      print("Valves 1 data is ${valvesResult.first}");
       return ValvesModel.fromMap_Valves(valvesResult.first);
-      print("Valves data is $valvesProgramNo");
     }
   }
 

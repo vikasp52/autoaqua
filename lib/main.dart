@@ -14,7 +14,7 @@ class AutoAquaApp extends StatelessWidget {
           contentPadding: EdgeInsets.all(10.0),
         )
       ),
-      home: Login(),
+      home: SplashScreen(),
     );
   }
 }

@@ -25,7 +25,7 @@ class ControllerDetails extends StatefulWidget {
     );
   }
 
-  const ControllerDetails({
+   const ControllerDetails({
     Key key,
     @required this.controllerId,
     @required this.controllerName,
@@ -51,21 +51,17 @@ class ControllerDetails extends StatefulWidget {
 
 class ControllerDetailsState extends State<ControllerDetails> {
   final _navigatorKey = GlobalKey<NavigatorState>();
-
   StateSetter _setAppBarState;
   String _title;
   List<Widget> _actions;
 
+
   void navigateToPage(ControllerDetailsPageId pageId) {
     final nav = _navigatorKey.currentState;
     nav.popUntil((route) => route is ControllerDetailsMainRoute);
-    if(pageId != null) {
+    if (pageId != null) {
       nav.push(pageId.builder(widget.controllerId, widget.controllerName));
     }
-  }
-
-  String getName(){
-    return widget.controllerName;
   }
 
   void setCurrentPageId(ControllerDetailsPageId pageId) {
@@ -420,6 +416,8 @@ class ControllerDetailsPageRoute extends MaterialPageRoute {
 typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId, String controllerName);
 
 class ControllerDetailsPageId{
+
+  //static const contDet = ControllerDetailsState().widget.controllerName;
 
   static const CONFIGURATION = const ControllerDetailsPageId(
     ImageIcon(AssetImage('Images/settings.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),

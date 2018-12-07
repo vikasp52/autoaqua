@@ -106,16 +106,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
                 SizedBox(height: 10.0,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Status",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        color: Colors.blue,
-                      ),),
-                  ],
+                Center(
+                  child: Text("Status",
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      color: Colors.blue,
+                    ),),
                 ),
                 SizedBox(height: 10.0,),
                 Row(
@@ -234,8 +230,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             fontSize: 30.0
                         ),),
                         Container(
-                            height: 80.0,
-                            width: 80.0,
+                            height: 70.0,
+                            width: 70.0,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -272,8 +268,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             fontSize: 30.0
                         ),),
                         Container(
-                            height: 80.0,
-                            width: 80.0,
+                            height: 70.0,
+                            width: 70.0,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -317,8 +313,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 fontSize: 20.0
                             ),),
                           Container(
-                              height: 80.0,
-                              width: 80.0,
+                              height: 70.0,
+                              width: 70.0,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -345,6 +341,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ],
                       ),
+                      SizedBox(width: 10.0,),
                       Image.asset("Images/ec3.png",
                         height: 60.0,
                         width: 60.0,),
@@ -355,8 +352,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               fontSize: 20.0
                           ),),
                           Container(
-                              height: 80.0,
-                              width: 80.0,
+                              height: 70.0,
+                              width: 70.0,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[

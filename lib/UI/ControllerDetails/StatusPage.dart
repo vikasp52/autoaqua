@@ -95,7 +95,7 @@ class _StatusPageState extends State<StatusPage> {
                       style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
-                      ControllerDetails.navigateToNext(context);
+                      Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                     },
                   ),
                   SizedBox(height: 16.0),
@@ -108,7 +108,8 @@ class _StatusPageState extends State<StatusPage> {
                             style: TextStyle(fontSize: 20.0,color: Colors.white),
                           ),
                           onPressed: () {
-                            ControllerDetails.navigateToNext(context);
+                            //ControllerDetails.navigateToNext(context);
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                           },
                         )
                       : SizedBox(
@@ -123,7 +124,7 @@ class _StatusPageState extends State<StatusPage> {
                       style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
-                      ControllerDetails.navigateToNext(context);
+                      Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                     },
                   ):SizedBox(
                     height: 0.0,

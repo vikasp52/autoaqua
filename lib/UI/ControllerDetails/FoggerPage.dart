@@ -49,6 +49,8 @@ class _FoggerPageState extends State<FoggerPage> {
   ConfigurationModel configurationModel;
   final _foggerKey = GlobalKey<FormState>();
 
+  bool delayErrorMsg = false;
+
   void _handleFoggingRadioValueChange(int value) {
     setState(() {
       _radioFoggingType = value;
@@ -75,7 +77,7 @@ class _FoggerPageState extends State<FoggerPage> {
           _count = int.parse(configData.ConfigmaxFogger);
           _ensureTextControllsers(_count);
           _totalFoggerValves = int.parse(configData.ConfigmaxFogger);
-          _totalValves = int.parse(configData.configMaxOutput);
+          _totalValves = int.parse(configData.configTotalValves);
 
           _minFValveNo = (_totalValves - _totalFoggerValves) + 1;
         });
@@ -181,8 +183,30 @@ class _FoggerPageState extends State<FoggerPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  LabelForTextBoxes("Fogger Sensing Delay:"),
-                  TextFormField(
+                  Row(
+                    children: <Widget>[
+                      Flexible(
+                        flex:7,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom:12.0),
+                            child: LabelForTextBoxes("Fogger Sensing Delay: "),
+                          )),
+                      Expanded(
+                        flex: 3,
+                        child: CommonTextField(
+                          _foggerDelayController,
+                              (value) {
+                            if (validateEmpty(value)) {
+                              return "";
+                            }
+                          },
+                          TextAlign.center,
+                            "mins",
+                        ),
+                      ),
+                    ],
+                  ),
+                  /*TextFormField(
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                       keyboardType: TextInputType.number,
                       validator: (val) {
@@ -195,7 +219,12 @@ class _FoggerPageState extends State<FoggerPage> {
                       decoration: new InputDecoration(
                           fillColor: Colors.black, border: OutlineInputBorder(), counterText: "", suffixText: "mins"
                           //errorText: _NoOfSlavesController.text == null ?slaveValidate: "",
-                          )),
+                          )),*/
+                  Center(
+                    child: delayErrorMsg?Text("Please enter Fogger Sensing Delay.", textAlign: TextAlign.center,style: TextStyle(
+                      color: Colors.red
+                    ),):SizedBox(width: 0.0,),
+                  ),
                   commonDivider(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -287,16 +316,16 @@ class _FoggerPageState extends State<FoggerPage> {
                             Container(
                               //color: Colors.indigo,
                               decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.green),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.info_outline,
-                                    color: Colors.white,
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Colors.white,
+                                    ),
+                                    Flexible(
                                       child: Text(
                                         "Fogger Valve No. should be between $_minFValveNo to $_totalValves.",
                                         textAlign: TextAlign.center,
@@ -306,8 +335,8 @@ class _FoggerPageState extends State<FoggerPage> {
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                             commonDivider(),
@@ -418,12 +447,24 @@ class _FoggerPageState extends State<FoggerPage> {
               children: <Widget>[
                 RawMaterialButton(
                   onPressed: () {
+
+                    if (_foggerDelayController.text.isEmpty || int.parse(_foggerDelayController.text) < 1) {
+                      setState(() {
+                        delayErrorMsg = true;
+                      });
+                    }else{
+                      setState(() {
+                        delayErrorMsg = false;
+                      });
+                    }
+
                     setState(() {
-                      if (_foggerKey.currentState.validate()) {
+                      if (_foggerKey.currentState.validate() && delayErrorMsg == false) {
                         _loading = _handelFoggerDataSubmit().then((_) {
                           if (mounted) {
-                            _oldmodelFogger != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
-                            ControllerDetails.navigateToNext(context);
+                            _oldmodelFogger != null ? showPositiveToast("Data is updated successfully") : showPositiveToast("Data is saved successfully");
+                            //ControllerDetails.navigateToNext(context);
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                           }
                         });
                       } else {
@@ -463,7 +504,20 @@ class _FoggerPageState extends State<FoggerPage> {
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: TextFormField(
+                child:CommonTextField(
+                    _foggerValveNoController[index],
+                      (val) {
+                    if (validateEmpty(val)) {
+                      return "";
+                    } else if (int.parse(_foggerValveNoController[index].text) < _minFValveNo ||
+                        int.parse(_foggerValveNoController[index].text) > _totalValves) {
+                      return "";
+                    }
+                  },
+                  TextAlign.center,
+                ),
+
+                /*TextFormField(
                   maxLength: 2,
                   validator: (val) {
                     if (_foggerValveNoController[index].text.isEmpty) {
@@ -478,7 +532,7 @@ class _FoggerPageState extends State<FoggerPage> {
                   controller: _foggerValveNoController[index],
                   style: TextStyle(fontSize: 20.0, color: Colors.black),
                   keyboardType: TextInputType.number,
-                ),
+                ),*/
               ),
               SizedBox(
                 width: 5.0,
@@ -486,7 +540,17 @@ class _FoggerPageState extends State<FoggerPage> {
               _radioFoggingType == 1
                   ? Expanded(
                       flex: 2,
-                      child: TextFormField(
+                      child:CommonTextField(
+                        _onSecontroller[index],
+                            (val) {
+                          if (validateEmpty(val)) {
+                            return "";
+                          }
+                        },
+                        TextAlign.center,
+                      ),
+
+                      /*TextFormField(
                         maxLength: 2,
                         validator: (val) {
                           if (_onSecontroller[index].text.isEmpty) {
@@ -498,7 +562,7 @@ class _FoggerPageState extends State<FoggerPage> {
                         controller: _onSecontroller[index],
                         style: TextStyle(fontSize: 20.0, color: Colors.black),
                         keyboardType: TextInputType.number,
-                      ),
+                      ),*/
                     )
                   : SizedBox(
                       width: 0.0,
@@ -509,7 +573,19 @@ class _FoggerPageState extends State<FoggerPage> {
               _radioFoggingType == 2
                   ? Expanded(
                       flex: 2,
-                      child: TextFormField(
+                      child:CommonTextField(
+                        _minTempController[index],
+                            (val) {
+                          if (validateEmpty(val)) {
+                            return "";
+                          }
+                        },
+                        TextAlign.center,
+                        "°C",
+                      ),
+
+
+               /* TextFormField(
                         maxLength: 2,
                         validator: (val) {
                           if (_minTempController[index].text.isEmpty) {
@@ -521,7 +597,7 @@ class _FoggerPageState extends State<FoggerPage> {
                         controller: _minTempController[index],
                         style: TextStyle(fontSize: 20.0, color: Colors.black),
                         keyboardType: TextInputType.number,
-                      ),
+                      ),*/
                     )
                   : SizedBox(
                       width: 0.0,
@@ -532,7 +608,19 @@ class _FoggerPageState extends State<FoggerPage> {
               _radioFoggingType == 2
                   ? Expanded(
                       flex: 2,
-                      child: TextFormField(
+                      child:CommonTextField(
+                        _maxTempController[index],
+                            (val) {
+                          if (validateEmpty(val)) {
+                            return "";
+                          }
+                        },
+                        TextAlign.center,
+                        "°C",
+                      ),
+
+
+                /*TextFormField(
                         maxLength: 2,
                         validator: (val) {
                           if (_maxTempController[index].text.isEmpty) {
@@ -544,7 +632,7 @@ class _FoggerPageState extends State<FoggerPage> {
                         controller: _maxTempController[index],
                         style: TextStyle(fontSize: 20.0, color: Colors.black),
                         keyboardType: TextInputType.number,
-                      ),
+                      ),*/
                     )
                   : SizedBox(
                       width: 0.0,
@@ -555,7 +643,17 @@ class _FoggerPageState extends State<FoggerPage> {
               _radioFoggingType == 3
                   ? Expanded(
                       flex: 2,
-                      child: TextFormField(
+                      child:CommonTextField(
+                        _minHumController[index],
+                            (val) {
+                          if (validateEmpty(val)) {
+                            return "";
+                          }
+                        },
+                        TextAlign.center,
+                          "%"
+                      ),
+                      /*TextFormField(
                         maxLength: 2,
                         validator: (val) {
                           if (_minHumController[index].text.isEmpty) {
@@ -567,7 +665,7 @@ class _FoggerPageState extends State<FoggerPage> {
                         controller: _minHumController[index],
                         style: TextStyle(fontSize: 20.0, color: Colors.black),
                         keyboardType: TextInputType.number,
-                      ),
+                      ),*/
                     )
                   : SizedBox(
                       width: 0.0,
@@ -578,7 +676,18 @@ class _FoggerPageState extends State<FoggerPage> {
               _radioFoggingType == 3
                   ? Expanded(
                       flex: 2,
-                      child: TextFormField(
+                      child:CommonTextField(
+                          _maxHumController[index],
+                              (val) {
+                            if (validateEmpty(val)) {
+                              return "";
+                            }
+                          },
+                          TextAlign.center,
+                          "%"
+                      ),
+
+                /*TextFormField(
                         maxLength: 2,
                         validator: (val) {
                           if (_maxHumController[index].text.isEmpty) {
@@ -590,7 +699,7 @@ class _FoggerPageState extends State<FoggerPage> {
                         controller: _maxHumController[index],
                         style: TextStyle(fontSize: 20.0, color: Colors.black),
                         keyboardType: TextInputType.number,
-                      ),
+                      ),*/
                     )
                   : SizedBox(
                       width: 0.0,

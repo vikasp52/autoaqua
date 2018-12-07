@@ -297,7 +297,19 @@ class _TimerOptionState extends State<_TimerOption> {
                     children: <Widget>[
                       Expanded(
                         flex: 5,
-                        child: TextFormField(
+                        child:CommonTextField(
+                          _hrsController,
+                              (value) {
+                            if (validateEmpty(value)) {
+                              return ""; //showSnackBar(context, "Please enter the Max program");
+                            }else if(int.parse(value) > 23){
+                              return"";
+                            }
+                          },
+                          TextAlign.center,
+                          "Hrs",
+                        ),
+                        /*TextFormField(
                           maxLength: 2,
                           textAlign: TextAlign.center,
                           controller: _hrsController,
@@ -309,7 +321,7 @@ class _TimerOptionState extends State<_TimerOption> {
                           style: TextStyle(fontSize: 20.0, color: Colors.black),
                           decoration: InputDecoration(border: OutlineInputBorder(), suffixText: "Hrs", counterText: ""),
                           keyboardType: TextInputType.number,
-                        ),
+                        ),*/
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 30.0),
@@ -320,7 +332,20 @@ class _TimerOptionState extends State<_TimerOption> {
                       ),
                       Expanded(
                         flex: 5,
-                        child: TextFormField(
+                        child:CommonTextField(
+                          _minController,
+                              (value) {
+                            if (validateEmpty(value)) {
+                              return ""; //showSnackBar(context, "Please enter the Max program");
+                            }else if(int.parse(value) > 59){
+                              return"";
+                            }
+                          },
+                          TextAlign.center,
+                          "Mins",
+                        ),
+
+                        /*TextFormField(
                           maxLength: 2,
                           textAlign: TextAlign.center,
                           controller: _minController,
@@ -332,14 +357,14 @@ class _TimerOptionState extends State<_TimerOption> {
                           style: TextStyle(fontSize: 20.0, color: Colors.black),
                           decoration: InputDecoration(suffixText: "Mins", border: OutlineInputBorder(), counterText: ""),
                           keyboardType: TextInputType.number,
-                        ),
+                        ),*/
                       ),
                     ],
                   ),
                 ),
                 Center(
                   child: errorMsg == true ?Text(
-                    "Please check the hrs and mins.",
+                    "Please check the hrs or mins.",
                     style: TextStyle(color: Colors.red),
                   ):SizedBox(height: 0.0,)
                 ),
@@ -659,11 +684,14 @@ class _TimerOptionState extends State<_TimerOption> {
                   children: <Widget>[
                     RawMaterialButton(
                       onPressed: () {
-
-                        if(int.parse(_hrsController.text) > 23 || int.parse(_minController.text) > 59){
-                          errorMsg = true;
+                        if(_hrsController.text.isNotEmpty?int.parse(_hrsController.text) > 23:false || _minController.text.isNotEmpty?int.parse(_minController.text) > 59:false){
+                          setState(() {
+                            errorMsg = true;
+                          });
                         }else{
-                          errorMsg = false;
+                          setState(() {
+                            errorMsg = false;
+                          });
                         }
 
                         if(scheduleForm.currentState.validate() && errorMsg == false){
@@ -690,7 +718,7 @@ class _TimerOptionState extends State<_TimerOption> {
                           int nextIndex = widget.timerIndex + 1;
                           _oldTimerData != null
                               ? showPositiveToast("Data is updated successfully")
-                              : showColoredToast("Data is saved successfully");
+                              : showPositiveToast("Data is saved successfully");
                           Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                         }else{
                           showColoredToast("There is some problem");

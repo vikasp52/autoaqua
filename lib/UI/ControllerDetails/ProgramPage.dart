@@ -363,7 +363,19 @@ class _ProgramOptionState extends State<_ProgramOption> {
                     ),
                   ),
                 ),
-                TextFormField(
+                CommonTextField(
+                  _NoOfValves,
+                      (value) {
+                    if (validateEmpty(value)) {
+                      return "Please enter the Max output"; //showSnackBar(context, "Please enter the Max program");
+                    }else if (int.parse(value) > 4) {
+                      return "You cannot enter more then 4";
+                    }
+                  },
+                    TextAlign.start,
+                    "(Max 4)"
+                ),
+                /*TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _NoOfValves,
                   style: TextStyle(fontSize: 20.0, color: Colors.black),
@@ -377,7 +389,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                   },
                   decoration: new InputDecoration(
                       fillColor: Colors.black, counterText: "", border: OutlineInputBorder(), suffixText: "(Max 4)"),
-                ),
+                ),*/
                 commonDivider(),
                 Center(
                   child: Text(
@@ -617,7 +629,17 @@ class _ProgramOptionState extends State<_ProgramOption> {
                               ),
                               Flexible(
                                 flex: 5,
-                                child: TextFormField(
+                                child:CommonTextField(
+                                  _intervalController,
+                                        (value) {
+                                      if (validateEmpty(value)) {
+                                        return "Please enter Interval";
+                                      }
+                                    },
+                                    TextAlign.center,
+                                ),
+
+                                /*TextFormField(
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 20.0, color: Colors.black),
                                   maxLength: 2,
@@ -634,7 +656,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                                   ),
                                   keyboardType: TextInputType.number,
                                   controller: _intervalController,
-                                ),
+                                ),*/
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -663,7 +685,17 @@ class _ProgramOptionState extends State<_ProgramOption> {
                               ),
                               Expanded(
                                 flex: 5,
-                                child: TextFormField(
+                                child:CommonTextField(
+                                  _timeForControler,
+                                      (value) {
+                                    if (validateEmpty(value)) {
+                                      return "Please enter the mins";
+                                    }
+                                  },
+                                  TextAlign.center,
+                                ),
+
+                                /*TextFormField(
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 20.0, color: Colors.black),
                                   maxLength: 2,
@@ -680,7 +712,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                                   ),
                                   keyboardType: TextInputType.number,
                                   controller: _timeForControler,
-                                ),
+                                ),*/
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -791,7 +823,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                         );*/
                             //Navigator.of(context).pop();
                             Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                            _oldProgram != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
+                            _oldProgram != null ? showPositiveToast("Data is updated successfully") : showPositiveToast("Data is saved successfully");
                           } else {
                             ControllerDetails.navigateToPage(context, ControllerDetailsPageId.PROGRAM.nextPageId);
                           }

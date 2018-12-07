@@ -1,6 +1,7 @@
 import 'package:autoaqua/UI/Controller.dart';
 import 'package:autoaqua/UI/DashBoardPage.dart';
 import 'package:autoaqua/UI/TopLevel/LoginPage.dart';
+import 'package:autoaqua/Utils/sharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
@@ -63,7 +64,11 @@ class _HomePageState extends State<HomePage> {
                 "Images/exit.png",
                 width: 25.0,
               ),
-              onPressed: () => Navigator.of(context).push(Login.route()),
+              onPressed: (){
+                //SharedPref().sharedPreferences.remove('loginStatus');
+                SharedPref().setUserStatus(false);
+                Navigator.of(context).push(Login.route());
+              }
             ),
           ],
         ),
