@@ -78,3 +78,21 @@ void showPositiveToast(String errormessage) {
   Fluttertoast.showToast(
       msg: errormessage, timeInSecForIos: 4, toastLength: Toast.LENGTH_SHORT, bgcolor: "#008000", textcolor: '#ffffff');
 }
+
+//Close the App on back press
+Future<bool> willPop(BuildContext context){
+  return showDialog(
+      context: context,
+      builder: (context)=> AlertDialog(
+        title: Text("Do you really want to exit"),
+        actions: <Widget>[
+          FlatButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text("No")),
+          FlatButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text("Yes")),
+        ],
+      )
+  );
+}

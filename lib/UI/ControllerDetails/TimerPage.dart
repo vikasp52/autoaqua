@@ -162,8 +162,8 @@ class _TimerOptionState extends State<_TimerOption> {
       _oldTimerData = timerData;
       if (timerData != null) {
         setState(() {
-          _hrsController.value = TextEditingValue(text: timerData.timer_StartTimer_Hrs);
-          _minController.value = TextEditingValue(text: timerData.timer_StartTimer_Min);
+          _hrsController.value = TextEditingValue(text: AppendZero(timerData.timer_StartTimer_Hrs));
+          _minController.value = TextEditingValue(text: AppendZero(timerData.timer_StartTimer_Min));
           checkboxIntegrationDay_Mon = timerData.timer_IntegrationDay_Mon == 'true' ? true : false;
           checkboxIntegrationDay_Tues = timerData.timer_IntegrationDay_Tue == 'true' ? true : false;
           checkboxIntegrationDay_Wed = timerData.timer_IntegrationDay_Wed == 'true' ? true : false;
@@ -300,7 +300,7 @@ class _TimerOptionState extends State<_TimerOption> {
                         child:CommonTextField(
                           _hrsController,
                               (value) {
-                            if (validateEmpty(value)) {
+                            if (value.isEmpty) {
                               return ""; //showSnackBar(context, "Please enter the Max program");
                             }else if(int.parse(value) > 23){
                               return"";
@@ -335,7 +335,7 @@ class _TimerOptionState extends State<_TimerOption> {
                         child:CommonTextField(
                           _minController,
                               (value) {
-                            if (validateEmpty(value)) {
+                            if (value.isEmpty) {
                               return ""; //showSnackBar(context, "Please enter the Max program");
                             }else if(int.parse(value) > 59){
                               return"";
@@ -688,7 +688,12 @@ class _TimerOptionState extends State<_TimerOption> {
                           setState(() {
                             errorMsg = true;
                           });
-                        }else{
+                        }else if((_hrsController.text.isNotEmpty?int.parse(_hrsController.text) == 00:false) && (_minController.text.isNotEmpty?int.parse(_minController.text) == 00:false)){
+                          setState(() {
+                            errorMsg = true;
+                          });
+                        }
+                        else{
                           setState(() {
                             errorMsg = false;
                           });

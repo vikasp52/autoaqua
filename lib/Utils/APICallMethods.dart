@@ -58,10 +58,10 @@ class APIMethods {
     var url = "http://www.adevole.com/clients/autoaqua/autoaqua/api/controller/configuration/create/$controllerId";
 
     http.post(url, body: {
-      "max_programs": maxPrograms,
-      "max_outputs": maxOutputs,
+      "total_program_per_day": maxPrograms,
+      "total_controller_outputs": maxOutputs,
       //"mobile_no": slaveId,
-      "no_of_slaves": numberOfSlave,
+      "total_no_of_rtu": numberOfSlave,
       "total_Injectors": totalInjectors,
       "total_IrrigationValves": totalIrrigationValves,
       "total_FoggerValves": totalFoggerValves,
@@ -190,6 +190,17 @@ class APIMethods {
     }).then((response) {
       print("Program Response status: ${response.statusCode}");
       print("Program Response body: ${response.body}");
+    });
+  }
+
+  void onOffPouseController(
+      controllerId,
+      status
+      ){
+    var url = "http://www.adevole.com/clients/autoaqua/autoaqua/api/manage/2/$controllerId";
+
+    http.post(url, body: {
+      "status":status,
     });
   }
 

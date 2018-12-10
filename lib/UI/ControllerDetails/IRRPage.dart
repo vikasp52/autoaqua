@@ -1,4 +1,5 @@
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,9 @@ class IRRPage extends StatefulWidget {
 }
 
 class _IRRPageState extends State<IRRPage> {
+
+  APIMethods apiMethods = new APIMethods();
+
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
@@ -119,6 +123,7 @@ class _IRRPageState extends State<IRRPage> {
                 ],
               ),
               onPressed: () {
+                apiMethods.onOffPouseController(widget.controllerId, "0");
                 Navigator.of(context).pop();
               },
             ),
@@ -152,6 +157,7 @@ class _IRRPageState extends State<IRRPage> {
               child: new Text("Yes",style: TextStyle(
           fontSize: 20.0,fontWeight: FontWeight.bold,)),
               onPressed: () {
+                apiMethods.onOffPouseController(widget.controllerId, "2");
                 Navigator.of(context).pop();
               },
             ),

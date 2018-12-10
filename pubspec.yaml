@@ -27,6 +27,7 @@ dependencies:
   flutter_sms: ^0.0.3
   http: ^0.12.0
   shared_preferences: ^0.4.3
+  encrypt: ^0.2.0+2
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +71,8 @@ flutter:
      - Images/sprinkler.png
      - Images/stop.png
      - Images/jjlogo.png
-  #  - images/a_dot_ham.jpeg
+     - Images/AutoAquaLogo.gif
+     - Images/splashbackground.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

@@ -175,7 +175,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
           _MaxRTUController.text,
           _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false),
           dateFormatted(),
-          "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxProgController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>",
+          "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxOutputController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>",
           _oldConfig.configid);
 
       int saveItemId = await db.updateConfigurationItems(newConfig);
@@ -369,7 +369,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     child: CommonTextField(
                       _TotalFoggerController,
                       (value) {
-                        if (validateEmpty(value)) {
+                        if (value.isEmpty) {
                           return "Please enter \n Fogger";
                         }
                       },

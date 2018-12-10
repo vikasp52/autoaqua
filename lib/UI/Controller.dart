@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:autoaqua/Utils/APICallMethods.dart';
+import 'package:autoaqua/Utils/sharedPref.dart';
 import 'package:http/http.dart' as http;
 import 'package:autoaqua/Model/ControllerItems.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
@@ -227,9 +228,10 @@ class _ControllerState extends State<Controller> {
       ),
       actions: <Widget>[
          RawMaterialButton(
-            onPressed: () {
+            onPressed: () async{
               if (_formKey.currentState.validate()) {
                 _handleSubmitted(_textEditingControler.text, _textEditingControlerNumber.text);
+                await print("LoginToken ${SharedPref().getToken()}");
                 apiMethods.saveDataToServer(_textEditingControler.text, _textEditingControlerNumber.text);
                 _textEditingControler.clear();
                 _textEditingControlerNumber.clear();

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:autoaqua/UI/Controller.dart';
 import 'package:autoaqua/UI/ControllerDetails/ConfigurationPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/EditNumberPage.dart';
 import 'package:autoaqua/UI/Widgets/HeroAppBar.dart';
@@ -10,6 +12,7 @@ import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/SetClockTimePage.dart';
 import 'package:autoaqua/UI/ControllerDetails/StatusPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/TimerPage.dart';
+import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/TestMsg.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +70,8 @@ class ControllerDetailsState extends State<ControllerDetails> {
   void setCurrentPageId(ControllerDetailsPageId pageId) {
 
     scheduleMicrotask(() => _setAppBarState(() {
-      _title = pageId?.name ?? '${widget.controllerName} - Details';
+      //_title = pageId?.name + '-${widget.controllerName}'?? '${widget.controllerName} - DETAILS';
+      _title = pageId?.name?? '${widget.controllerName} - DETAILS';
 
       final nextPageId = pageId?.nextPageId;
       if(nextPageId != null){
@@ -112,20 +116,31 @@ class ControllerDetailsState extends State<ControllerDetails> {
           },
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("Images/dashboardbackgroung.jpg"),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("Images/dashboardbackgroung.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child:  BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+              child:  Container(
+                //you can change opacity with color here(I used black) for background.
+                decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
+              ),
+            ),
           ),
-        ),
-        child: Navigator(
-          key: _navigatorKey,
-          observers: [ _ControllerDetailsNavObserver(this) ],
-          onGenerateRoute: (RouteSettings settings) => (settings.isInitialRoute
-            ? ControllerDetailsMainRoute()
-            : null),
-        ),
+          Navigator(
+            key: _navigatorKey,
+            observers: [ _ControllerDetailsNavObserver(this) ],
+            onGenerateRoute: (RouteSettings settings) => (settings.isInitialRoute
+                ? ControllerDetailsMainRoute(widget.controllerId)
+                : null),
+          ),
+        ],
       ),
       bottomNavigationBar: Hero(
         tag: 'controller-details-bottom-nav',
@@ -226,11 +241,16 @@ class _ControllerDetailsNavObserver extends NavigatorObserver {
 
 class _ControllerDetailsMainPage extends StatefulWidget {
 
+  int controllerID;
+  _ControllerDetailsMainPage(this.controllerID);
+
   @override
   _ControllerDetailsMainPageState createState() => _ControllerDetailsMainPageState();
 }
 
 class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> {
+
+  APIMethods apiMethods = new APIMethods();
 
   @override
   Widget build(BuildContext context) {
@@ -265,8 +285,13 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
             onPressed: () {
               //Navigator.of(context).pop();
               //msgString.getDataforConfiguration(1);
-              getFoggerData();
-              Navigator.of(context).push(MaterialPageRoute(builder: (_)=> MyAppSMS()));
+              //getFoggerData();
+              //Navigator.of(context).push(MaterialPageRoute(builder: (_)=> MyAppSMS()));
+              apiMethods.onOffPouseController(
+                widget.controllerID,
+                "1"
+              );
+              print("Controller Id is ${widget.controllerID}");
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -376,22 +401,34 @@ class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("Images/dashboardbackgroung.jpg"),
-          fit: BoxFit.cover,
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("Images/dashboardbackgroung.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child:  BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+            child:  Container(
+              //you can change opacity with color here(I used black) for background.
+              decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
+            ),
+          ),
         ),
-      ),
-      child: widget.child,
+        widget.child
+      ],
     );
   }
 }
 
 class ControllerDetailsMainRoute extends MaterialPageRoute {
 
-  ControllerDetailsMainRoute() : super(
-    builder: (context) => _ControllerDetailsMainPage(),
+  final int controllerID;
+  ControllerDetailsMainRoute(this.controllerID) : super(
+    builder: (context) => _ControllerDetailsMainPage(controllerID),
   );
 }
 
@@ -416,8 +453,6 @@ class ControllerDetailsPageRoute extends MaterialPageRoute {
 typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId, String controllerName);
 
 class ControllerDetailsPageId{
-
-  //static const contDet = ControllerDetailsState().widget.controllerName;
 
   static const CONFIGURATION = const ControllerDetailsPageId(
     ImageIcon(AssetImage('Images/settings.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
