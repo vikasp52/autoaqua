@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:autoaqua/Model/ProgramModel.dart';
+import 'package:autoaqua/Model/StringModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
@@ -11,7 +14,7 @@ class ProgramPage extends StatefulWidget {
       pageId: ControllerDetailsPageId.PROGRAM,
       builder: (context) => ProgramPage(
             controllerId: controllerId,
-          controllerName:controllerName,
+            controllerName: controllerName,
           ),
     );
   }
@@ -39,7 +42,7 @@ class _ProgramPageState extends State<ProgramPage> {
   void initState() {
     super.initState();
     print("Controller Id is ${widget.controllerId}");
-   _loading = dbh.getConfigDataForController(widget.controllerId).then((config) {
+    _loading = dbh.getConfigDataForController(widget.controllerId).then((config) {
       //_oldConfig = config;
       if (config != null) {
         setState(() {
@@ -53,44 +56,47 @@ class _ProgramPageState extends State<ProgramPage> {
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
         child: Column(
-          children: <Widget>[
-            Flexible(child: Center(
-              child: Text(widget.controllerName,style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),),
-            )),
-            Expanded(flex: 8,child: maxnumber == null || maxnumber == 0
-                ? Center(
-              child: Text(
-                "No program is added",
-                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-              ),
-            )
-                : ListView.builder(
-              itemCount: maxnumber,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Card(
-                      color: Colors.lightBlueAccent.shade100,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          "PROGRAM ${index + 1}",
-                          style: TextStyle(
-                            //fontWeight: FontWeight.bold,
-                              fontSize: 20.0),
-                        ),
-                      )),
-                  onTap: () => Navigator.of(context).push(
-                    _ProgramOption.route(index, maxnumber, widget.controllerId, widget.controllerName),
+      children: <Widget>[
+        Flexible(
+            child: Center(
+          child: Text(
+            widget.controllerName,
+            style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        )),
+        Expanded(
+          flex: 8,
+          child: maxnumber == null || maxnumber == 0
+              ? Center(
+                  child: Text(
+                    "No program is added",
+                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
-                );
-              },
-            ),)
-          ],
-        ));
+                )
+              : ListView.builder(
+                  itemCount: maxnumber,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Card(
+                          color: Colors.lightBlueAccent.shade100,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              "PROGRAM ${index + 1}",
+                              style: TextStyle(
+                                  //fontWeight: FontWeight.bold,
+                                  fontSize: 20.0),
+                            ),
+                          )),
+                      onTap: () => Navigator.of(context).push(
+                            _ProgramOption.route(index, maxnumber, widget.controllerId, widget.controllerName),
+                          ),
+                    );
+                  },
+                ),
+        )
+      ],
+    ));
   }
 }
 
@@ -101,7 +107,7 @@ class _ProgramOption extends StatefulWidget {
             programIndex: programIndex,
             maxIndex: maxIndex,
             controllerId: controllerId,
-          controllerName:controllerName,
+            controllerName: controllerName,
           ),
     );
   }
@@ -139,12 +145,14 @@ class _ProgramOptionState extends State<_ProgramOption> {
   bool backflushError = false;
 
   APIMethods apiMethods = new APIMethods();
+  String programString;
 
   final TextEditingController _intervalController = new TextEditingController();
   final TextEditingController _timeForControler = new TextEditingController();
   final TextEditingController _NoOfValves = new TextEditingController();
 
   ProgramModel _oldProgram;
+  StringModel _oldString;
   Future _loading;
   var db = new DataBaseHelper();
 
@@ -158,12 +166,22 @@ class _ProgramOptionState extends State<_ProgramOption> {
     });
   }
 
+  //Retun Program No for String.
+  int programNo() {
+    return widget.programIndex + 1;
+  }
+
   @override
   void initState() {
     super.initState();
-    print("THis is database table for Configuration ${db.getProgramItems()}");
+    print("THis is database table for program ${db.getProgramItems()}");
     print('This is controller id ${widget.controllerId}');
     print('This is list index ${widget.programIndex + 1}');
+
+    _loading = db.getStrings(widget.controllerId).then((sData){
+      _oldString = sData;
+    });
+
     _loading = db.getProgramData(widget.controllerId, widget.programIndex).then((config) {
       _oldProgram = config;
       print(config);
@@ -179,30 +197,77 @@ class _ProgramOptionState extends State<_ProgramOption> {
               config.program_irrigationtype != "null" ? int.parse(config.program_irrigationtype) : null;
           _radioValueFertilization =
               config.program_fertilizationtype != "null" ? int.parse(config.program_fertilizationtype) : null;
-          _radioValueSensor =
-          config.program_sensorOverride != "null" ? int.parse(config.program_sensorOverride) : null;
-
+          _radioValueSensor = config.program_sensorOverride != "null" ? int.parse(config.program_sensorOverride) : null;
         });
       }
     });
   }
 
+  Future<void> stringForProgram() async {
+    programString =
+        "QP${AppendZero(programNo().toString())}${int.parse(_radioValueFlushType != null ? _radioValueFlushType.toString() : "0") + _radioValueIrrigation}${_NoOfValves.text == "1" ? 0 : _NoOfValves.text == "2" ? 1 : _NoOfValves.text == "3" ? 2 : _NoOfValves.text == "4" ? 2 : null}${AppendZero(_intervalController.text)}${AppendZero(_timeForControler.text)}>";
+    print("programString is : $programString");
+    print("Program No ${AppendZero(programNo().toString())}");
+    print("FlushType: ${_radioValueFlushType != null ? _radioValueFlushType : "0"}");
+    print("Irrigation type: ${_radioValueIrrigation}");
+    print(
+        "1st Char ${int.parse(_radioValueFlushType != null ? _radioValueFlushType.toString() : "0") + _radioValueIrrigation}");
+    print(
+        "2nd Char ${_NoOfValves.text == "1" ? 0 : _NoOfValves.text == "2" ? 1 : _NoOfValves.text == "3" ? 2 : _NoOfValves.text == "4" ? 2 : null}");
+    print("Interval ${AppendZero(_intervalController.text)}");
+    print("Time ${AppendZero(_timeForControler.text)}");
+  }
+
   Future<void> _handelProgramDataSubmit() async {
+    String programString =
+        "QP${AppendZero(programNo().toString())}${int.parse(_radioValueFlushType != null ? _radioValueFlushType.toString() : "0") + _radioValueIrrigation}${_NoOfValves.text == "1" ? 0 : _NoOfValves.text == "2" ? 1 : _NoOfValves.text == "3" ? 2 : _NoOfValves.text == "4" ? 2 : null}${AppendZero(_intervalController.text)}${AppendZero(_timeForControler.text)}>";
+
+    /*db.saveProgramString(widget.controllerId);
+    await db.getStrings(widget.controllerId);
+    await db.getStringData(widget.controllerId);
+    //saveUpdateStringData(widget.controllerId, programString);
+
+    if(_oldString == null){
+      StringModel saveStringData = new StringModel(
+          widget.controllerId,
+          programString,
+          dateFormatted());
+      await db.saveStrings(saveStringData);
+      await db.getStrings(widget.controllerId);
+      await db.getStringData(widget.controllerId);
+    }else{
+      StringModel saveStringData = new StringModel(
+          widget.controllerId,
+          programString,
+          dateFormatted(),
+          _oldString.stringId
+      );
+      await db.updateString(saveStringData);
+      await db.getStrings(widget.controllerId);
+      await db.getStringData(widget.controllerId);
+    }*/
+
     if (_oldProgram == null) {
       ProgramModel submitProgramData = new ProgramModel(
-          widget.controllerId,
-          _NoOfValves.text,
-          _valFlushMode.toString(),
-          _radioValueFlushType.toString(),
-          _intervalController.text,
-          _timeForControler.text,
-          _radioValueIrrigation.toString(),
-          _radioValueFertilization.toString(),
-          _radioValueSensor.toString(),
-          dateFormatted());
+        widget.controllerId,
+        _NoOfValves.text,
+        _valFlushMode.toString(),
+        _radioValueFlushType.toString(),
+        _intervalController.text,
+        _timeForControler.text,
+        _radioValueIrrigation.toString(),
+        _radioValueFertilization.toString(),
+        _radioValueSensor.toString(),
+        dateFormatted(),
+        programString,
+      );
       print("saved");
       await db.saveProgramData(submitProgramData);
       await db.getProgramData(widget.controllerId, widget.programIndex);
+      await db.getProgramString(widget.controllerId);
+
+      saveStringData(widget.controllerId, "PROG", '${widget.programIndex}', '0', programString);
+
     } else {
       ProgramModel submitProgramData = new ProgramModel(
         widget.controllerId,
@@ -215,12 +280,79 @@ class _ProgramOptionState extends State<_ProgramOption> {
         _radioValueFertilization.toString(),
         _radioValueSensor.toString(),
         dateFormatted(),
+        programString,
         _oldProgram.programID,
       );
-
-      print("updated");
       await db.updateProgramData(submitProgramData);
       await db.getProgramData(widget.controllerId, widget.programIndex);
+
+      updateStringData(widget.controllerId, "PROG", '${widget.programIndex}', '0', programString);
+      //print('Updated String Item: $savedString');
+
+      List pS = await db.getProgramString(widget.controllerId);
+      List pS2 = await db.getProgramString(widget.controllerId);
+      print("ps: ${pS.length}");
+      print("ps: $pS2");
+      String retVL = getStringFromList(pS);
+      String retVL2 = getStringFromList(pS2);
+      print("All List: $retVL");
+      print("All List: $retVL2");
+
+      //dynamic ab = json.decode(pS.toString());
+      //print(ab);
+     /* await db.getProgramString(widget.controllerId).then((pString){
+        setState(() {
+          List pS = pString;
+          print("ps: $pS");
+          for(int i =0; i<= pString.length; i++){
+            //final pData = pString[i];
+            //var pS = pData.program_String;
+            //print("ps: $pS && $pData");
+          }
+        });
+      });*/
+    }
+  }
+
+  void valdateRadio(){
+    if (_radioValueIrrigation == null) {
+      setState(() {
+        irrError = true;
+      });
+    } else {
+      setState(() {
+        irrError = false;
+      });
+    }
+
+    if (_radioValueFertilization == null) {
+      setState(() {
+        fertError = true;
+      });
+    } else {
+      setState(() {
+        fertError = false;
+      });
+    }
+
+    if (_radioValueSensor == null) {
+      setState(() {
+        senserError = true;
+      });
+    } else {
+      setState(() {
+        senserError = false;
+      });
+    }
+
+    if (_radioValueFlushType == null && _valFlushMode == true) {
+      setState(() {
+        backflushError = true;
+      });
+    } else {
+      setState(() {
+        backflushError = false;
+      });
     }
   }
 
@@ -246,7 +378,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
       switch (_radioValueIrrigation) {
         case 0:
           break;
-        case 1:
+        case 2:
           //_result = ...
           break;
       }
@@ -281,10 +413,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
     });
   }
 
-  paddingforText() {
-    return const EdgeInsets.only(bottom: 8.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
@@ -313,11 +441,10 @@ class _ProgramOptionState extends State<_ProgramOption> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Center(
-                  child: Text(widget.controllerName,style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                  ),),
+                  child: Text(
+                    widget.controllerName,
+                    style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 commonDivider(),
                 Row(
@@ -363,18 +490,13 @@ class _ProgramOptionState extends State<_ProgramOption> {
                     ),
                   ),
                 ),
-                CommonTextField(
-                  _NoOfValves,
-                      (value) {
-                    if (validateEmpty(value)) {
-                      return "Please enter the Max output"; //showSnackBar(context, "Please enter the Max program");
-                    }else if (int.parse(value) > 4) {
-                      return "You cannot enter more then 4";
-                    }
-                  },
-                    TextAlign.start,
-                    "(Max 4)"
-                ),
+                CommonTextField(_NoOfValves, (value) {
+                  if (validateEmpty(value)) {
+                    return "Please enter the Max output"; //showSnackBar(context, "Please enter the Max program");
+                  } else if (int.parse(value) > 4) {
+                    return "You cannot enter more then 4";
+                  }
+                }, TextAlign.start, "(Max 4)"),
                 /*TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _NoOfValves,
@@ -409,7 +531,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                             style: TextStyle(fontSize: 20.0),
                           ),
                           Radio(
-                            value: 1,
+                            value: 0,
                             groupValue: _radioValueIrrigation,
                             onChanged: _handleIrrigationValueChange,
                           ),
@@ -421,7 +543,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                       child: Row(
                         children: <Widget>[
                           Radio(
-                            value: 0,
+                            value: 2,
                             groupValue: _radioValueIrrigation,
                             onChanged: _handleIrrigationValueChange,
                           ),
@@ -629,14 +751,14 @@ class _ProgramOptionState extends State<_ProgramOption> {
                               ),
                               Flexible(
                                 flex: 5,
-                                child:CommonTextField(
+                                child: CommonTextField(
                                   _intervalController,
-                                        (value) {
-                                      if (validateEmpty(value)) {
-                                        return "Please enter Interval";
-                                      }
-                                    },
-                                    TextAlign.center,
+                                  (value) {
+                                    if (validateEmpty(value)) {
+                                      return "Please enter Interval";
+                                    }
+                                  },
+                                  TextAlign.center,
                                 ),
 
                                 /*TextFormField(
@@ -685,9 +807,9 @@ class _ProgramOptionState extends State<_ProgramOption> {
                               ),
                               Expanded(
                                 flex: 5,
-                                child:CommonTextField(
+                                child: CommonTextField(
                                   _timeForControler,
-                                      (value) {
+                                  (value) {
                                     if (validateEmpty(value)) {
                                       return "Please enter the mins";
                                     }
@@ -731,62 +853,43 @@ class _ProgramOptionState extends State<_ProgramOption> {
                         height: 0.0,
                       ),
                 commonDivider(),
-                Center(
-                  child: RawMaterialButton(
-                    textStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                    ),
-                    onPressed: () {
-                      if (_radioValueIrrigation == null) {
-                        setState(() {
-                          irrError = true;
-                        });
-                      } else {
-                        setState(() {
-                          irrError = false;
-                        });
-                      }
-
-                      if (_radioValueFertilization == null) {
-                        setState(() {
-                          fertError = true;
-                        });
-                      } else {
-                        setState(() {
-                          fertError = false;
-                        });
-                      }
-
-                      if (_radioValueSensor == null) {
-                        setState(() {
-                          senserError = true;
-                        });
-                      } else {
-                        setState(() {
-                          senserError = false;
-                        });
-                      }
-
-                      if (_radioValueFlushType == null && _valFlushMode == true) {
-                        setState(() {
-                          backflushError = true;
-                        });
-                      } else {
-                        setState(() {
-                          backflushError = false;
-                        });
-                      }
-
-
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    commonButton(
+                            () {
+                              valdateRadio();
+                          setState(() {
+                            if (_programKey.currentState.validate() &&
+                                _radioValueIrrigation != null &&
+                                _radioValueFertilization != null &&
+                                _radioValueSensor != null &&
+                                backflushError == false
+                            ) {
+                              _loading = stringForProgram().then((_) {
+                                if (mounted) {
+                                  _handelProgramDataSubmit();
+                                  sendSmsForAndroid(programString, widget.controllerId);
+                                  Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                                  showPositiveToast("sms sent successfully");
+                                }
+                              });
+                            } else {
+                              showColoredToast("Please enter the valid value");
+                            }
+                          });
+                        },
+                    "Send"),
+                    commonButton(() {
+                      valdateRadio();
                       setState(() {
                         if (_programKey.currentState.validate() &&
-                            _radioValueIrrigation != null &&
-                            _radioValueFertilization != null &&
-                            _radioValueSensor != null &&
-                            backflushError == false
-                           // (_radioValueFlushType == null && _valFlushMode == false)
-                        ) {
+                                _radioValueIrrigation != null &&
+                                _radioValueFertilization != null &&
+                                _radioValueSensor != null &&
+                                backflushError == false
+                            // (_radioValueFlushType == null && _valFlushMode == false)
+                            ) {
                           //irrError = false;
 
                           /*ProgramModel submitProgramData = new ProgramModel(
@@ -803,46 +906,39 @@ class _ProgramOptionState extends State<_ProgramOption> {
         _oldProgram.programID,
       );*/
                           print("Flush on Value $_valFlushMode,");
-                          apiMethods.saveAndUpdateProgramDataOnServer(
-                              "${widget.programIndex + 1}",
-                              _NoOfValves.text,
-                              _radioValueIrrigation.toString(),
-                              _radioValueFertilization.toString(),
-                              _radioValueSensor.toString(),
-                              _valFlushMode == true ? "1" : "0",
-                              _radioValueFlushType.toString(),
-                            _intervalController.text,
-                            _timeForControler.text,
-                            "${widget.controllerId}"
-                          );
+                          /* apiMethods.saveAndUpdateProgramDataOnServer(
+                                  "${widget.programIndex + 1}",
+                                  _NoOfValves.text,
+                                  _radioValueIrrigation.toString(),
+                                  _radioValueFertilization.toString(),
+                                  _radioValueSensor.toString(),
+                                  _valFlushMode == true ? "1" : "0",
+                                  _radioValueFlushType.toString(),
+                                _intervalController.text,
+                                _timeForControler.text,
+                                "${widget.controllerId}"
+                              );*/
                           _handelProgramDataSubmit();
                           final int nextIndex = widget.programIndex + 1;
                           if (nextIndex < widget.maxIndex) {
                             /*Navigator.of(context).pushReplacement(
-                          _ProgramOption.route(nextIndex, widget.maxIndex, widget.controllerId),
-                        );*/
+                              _ProgramOption.route(nextIndex, widget.maxIndex, widget.controllerId),
+                            );*/
                             //Navigator.of(context).pop();
                             Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                            _oldProgram != null ? showPositiveToast("Data is updated successfully") : showPositiveToast("Data is saved successfully");
+                            _oldProgram != null
+                                ? showPositiveToast("Data is updated successfully")
+                                : showPositiveToast("Data is saved successfully");
                           } else {
-                            ControllerDetails.navigateToPage(context, ControllerDetailsPageId.PROGRAM.nextPageId);
+                            //ControllerDetails.navigateToPage(context, ControllerDetailsPageId.PROGRAM.nextPageId);
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                           }
-                        }else{
+                        } else {
                           showColoredToast("Please enter the valid value");
                         }
                       });
-                    },
-                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                    splashColor: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(
-                        _oldProgram != null ? "Update" : "Save",
-                        style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    shape: const StadiumBorder(),
-                  ),
+                    }, _oldProgram != null ? "Update" : "Save"),
+                  ],
                 ),
                 SizedBox.fromSize(
                   size: Size(10.0, 10.0),
@@ -853,5 +949,9 @@ class _ProgramOptionState extends State<_ProgramOption> {
         ],
       ),
     );
+  }
+
+  String getStringFromList(List pS) {
+    return pS.join(', ').substring(8, pS.join(',').length - 1);
   }
 }

@@ -157,6 +157,7 @@ class _ValveOptionState extends State<_ValveOption> {
   final TextEditingController _ctrl_PHSetp = new TextEditingController();
 
   APIMethods apiMethods = new APIMethods();
+  String valveString;
 
   Future<void> getDataToDisplay() async {
     final maxSeq = await dbh.getConfigDataForController(widget.controllerId);
@@ -168,7 +169,7 @@ class _ValveOptionState extends State<_ValveOption> {
 
     final programData = await dbh.getProgramData(widget.controllerId, widget.valveIndex);
     if (programData != null) {
-      noOfValves = programData.program_mode != "null" ? int.parse(programData.program_mode) : 0;
+      noOfValves = programData.program_mode != null ? int.parse(programData.program_mode) : 0;
       integrationType = programData.program_irrigationtype;
       fertlizationType = programData.program_fertilizationtype;
     }
@@ -180,21 +181,36 @@ class _ValveOptionState extends State<_ValveOption> {
 
     _oldValveModel = valvesData;
     if (valvesData != null) {
-      final List<String> valveNoList =[valvesData.valves_VolveNo1,valvesData.valves_VolveNo2, valvesData.valves_VolveNo3,valvesData.valves_VolveNo4];
-      final List<String> valveFieldList =[valvesData.valves_fieldNo_1, valvesData.valves_fieldNo_2, valvesData.valves_fieldNo_3, valvesData.valves_fieldNo_4];
-      final List<String> tankList = [valvesData.valves_tank_1,valvesData.valves_tank_2,valvesData.valves_tank_3,valvesData.valves_tank_4];
+      final List<String> valveNoList = [
+        valvesData.valves_VolveNo1,
+        valvesData.valves_VolveNo2,
+        valvesData.valves_VolveNo3,
+        valvesData.valves_VolveNo4
+      ];
+      final List<String> valveFieldList = [
+        valvesData.valves_fieldNo_1,
+        valvesData.valves_fieldNo_2,
+        valvesData.valves_fieldNo_3,
+        valvesData.valves_fieldNo_4
+      ];
+      final List<String> tankList = [
+        valvesData.valves_tank_1,
+        valvesData.valves_tank_2,
+        valvesData.valves_tank_3,
+        valvesData.valves_tank_4
+      ];
 
-      for(int i = 0; i < noOfValves; i++){
-          _ctrl_ValveNo[i].text = valveNoList[i];
-          _ctrl_FieldNo[i].text = valveFieldList[i];
+      for (int i = 0; i < noOfValves; i++) {
+        _ctrl_ValveNo[i].text = valveNoList[i];
+        _ctrl_FieldNo[i].text = valveFieldList[i];
       }
-      for(int i = 0; i < _maxTanks; i++){
+      for (int i = 0; i < _maxTanks; i++) {
         setState(() {
           _ctrl_Tank[i].text = tankList[i];
         });
       }
 
-   /*_ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
+      /*_ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
       noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
       noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
       noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
@@ -213,9 +229,19 @@ class _ValveOptionState extends State<_ValveOption> {
       _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
     }
 
-   /* if (mounted) {
+    /* if (mounted) {
       setState(() {});
     }*/
+  }
+
+  //Retun Program No for String.
+  int programNo() {
+    return widget.valveIndex + 1;
+  }
+
+  //Retun Program No for String.
+  int seqNo() {
+    return widget.sequenceIndex + 1;
   }
 
   @override
@@ -226,7 +252,33 @@ class _ValveOptionState extends State<_ValveOption> {
   }
 
   var _db = DataBaseHelper();
+
+  Future<void> _stringForValves() async {
+    valveString =
+        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}$_radioFertilizerProgrammingValue${AppendZero(_ctrl_PHSetp.text)}>";
+
+    print("Valve String: $valveString");
+    print("Out1: ${AppendZero(_ctrl_ValveNo[0].text)}");
+    print("Out2: ${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}");
+    print("Out3: ${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}");
+    print("Out4: ${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}");
+    print("Ontime1: ${AppendSixZero(_ctrl_FieldNo[0].text)}");
+    print("Ontime2: ${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}");
+    print("Ontime3: ${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}");
+    print("Ontime4: ${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}");
+    print("fert1: ${AppendFourDigit(_ctrl_Tank[0].text)}");
+    print("fert2: ${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}");
+    print("fert3: ${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}");
+    print("fert4: ${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}");
+    print("fdelay: ${AppendZero(_ctrl_FertlizerDelay.text)}");
+    print("fertMode: $_radioFertilizerProgrammingValue");
+    print("pHLim: ${AppendZero(_ctrl_PHSetp.text)}");
+  }
+
   Future<void> _handelValvesDataSubmit() async {
+    valveString =
+        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}$_radioFertilizerProgrammingValue${AppendZero(_ctrl_PHSetp.text)}>";
+
     if (_oldValveModel == null) {
       ValvesModel submitValvesData = new ValvesModel(
           widget.controllerId,
@@ -234,9 +286,9 @@ class _ValveOptionState extends State<_ValveOption> {
           widget.sequenceIndex,
           integrationType == "0" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
-          noOfValves > 1 ? _ctrl_ValveNo[1].text : "",
-          noOfValves > 2 ? _ctrl_ValveNo[2].text : "",
-          noOfValves > 3 ? _ctrl_ValveNo[3].text : "",
+          noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
+          noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
+          noOfValves > 3 ? _ctrl_ValveNo[3].text : null,
           _ctrl_FieldNo[0].text,
           noOfValves > 1 ? _ctrl_FieldNo[1].text : null,
           noOfValves > 2 ? _ctrl_FieldNo[2].text : null,
@@ -250,10 +302,13 @@ class _ValveOptionState extends State<_ValveOption> {
           _postdelayController.text,
           _ctrl_ECSetp.text,
           _ctrl_PHSetp.text,
+          valveString,
           dateFormatted());
 
       await _db.saveValvesData(submitValvesData);
       await _db.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex);
+
+      saveStringData(widget.controllerId, "VALVES", '${widget.valveIndex}', '${widget.sequenceIndex}', valveString);
     } else {
       ValvesModel updateValvesData = new ValvesModel(
           widget.controllerId,
@@ -277,10 +332,12 @@ class _ValveOptionState extends State<_ValveOption> {
           _postdelayController.text,
           _ctrl_ECSetp.text,
           _ctrl_PHSetp.text,
+          valveString,
           dateFormatted());
 
       await _db.updateValvesData(updateValvesData);
       await _db.getValvesData(widget.controllerId, widget.valveIndex, widget.sequenceIndex);
+      updateStringData(widget.controllerId, "VALVES", '${widget.valveIndex}', '${widget.sequenceIndex}', valveString);
     }
   }
 
@@ -375,7 +432,7 @@ class _ValveOptionState extends State<_ValveOption> {
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
             ),
-            integrationType == "0" || integrationType == "1"
+            (noOfValves > 0)
                 ? Column(
                     children: <Widget>[
                       Row(
@@ -752,21 +809,13 @@ class _ValveOptionState extends State<_ValveOption> {
                     height: 0.0,
                   ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                RawMaterialButton(
-                    child: Text(
-                      "Back",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    shape: const StadiumBorder(),
-                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                    onPressed: () {
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: commonButton((){
                       if (widget.sequenceIndex < 1) {
                         Navigator.of(context).pop();
                       } else {
@@ -780,19 +829,30 @@ class _ValveOptionState extends State<_ValveOption> {
                           ),
                         );
                       }
-                    }),
-                RawMaterialButton(
-                    child: Text(
-                      "Update",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    shape: const StadiumBorder(),
-                    fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                    onPressed: () {
+                    }, "<"),
+                  ),
+                  SizedBox(width: 5.0,),
+                  Expanded(flex: 3,child: commonButton(() {
+                    setState(() {
+                      if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
+                        _handelValvesDataSubmit();
+                        _stringForValves().then((_){
+                          if(mounted){
+                            _handelValvesDataSubmit();
+                            sendSmsForAndroid(valveString, widget.controllerId);
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                            showPositiveToast("SMS send successfully");
+                          }
+                        });
+                      } else {
+                        showColoredToast("Please check the values");
+                      }
+                    });
+                  }, "Send")),
+                  SizedBox(width: 5.0,),
+                  Expanded(
+                    flex: 3,
+                    child: commonButton((){
                       if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
                         _handelValvesDataSubmit();
                         _oldValveModel != null
@@ -802,87 +862,81 @@ class _ValveOptionState extends State<_ValveOption> {
                       } else {
                         showColoredToast("Please check the values");
                       }
-                    }),
-                RawMaterialButton(
-                  onPressed: () {
-                    if (_radioFertilizerProgrammingValue == null) {
-                      showFertProgErrorMsg = true;
-                    } else {
-                      showFertProgErrorMsg = false;
-                    }
+                    }, _oldValveModel != null ? "Update" : "Save"),
+                  ),
+                  SizedBox(width: 5.0,),
+                  Expanded(
+                    flex: 2,
+                    child: commonButton((){
+                      if (_radioFertilizerProgrammingValue == null) {
+                        showFertProgErrorMsg = true;
+                      } else {
+                        showFertProgErrorMsg = false;
+                      }
 
-                    setState(() {
-                      if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
-                        apiMethods.saveAndUpdateValvesDataOnServer(
-                            "${widget.valveIndex + 1}",
-                            "${widget.sequenceIndex + 1}",
-                            integrationType == "0" ? "Ltr" : integrationType == "1" ? "Time" : "NULL",
-                            fertlizationType == "0" ? "Ltr" : fertlizationType == "1" ? "Time" : "NULL",
-                            _ctrl_ValveNo[0].text,
-                            noOfValves > 1 ? _ctrl_ValveNo[1].text : "00",
-                            noOfValves > 2 ? _ctrl_ValveNo[2].text : "00",
-                            noOfValves > 3 ? _ctrl_ValveNo[3].text : "00",
-                            _ctrl_FieldNo[0].text,
-                            noOfValves > 1 ? _ctrl_FieldNo[1].text : "00",
-                            noOfValves > 2 ? _ctrl_FieldNo[2].text : "00",
-                            noOfValves > 3 ? _ctrl_FieldNo[3].text : "00",
-                            "$_radioFertilizerProgrammingValue",
-                            _ctrl_FertlizerDelay.text,
-                            _postdelayController.text,
-                            _ctrl_Tank[0].text,
-                            _maxTanks > 1 ? _ctrl_Tank[1].text : "00",
-                            _maxTanks > 2 ? _ctrl_Tank[2].text : "00",
-                            _maxTanks > 3 ? _ctrl_Tank[3].text : "00",
-                            _ctrl_ECSetp.text,
-                            _ctrl_PHSetp.text,
-                            "${widget.controllerId}");
-                        _loading = _handelValvesDataSubmit().then((_) {
-                          if (mounted) {
-                            if (widget.sequenceIndex < _maxSequence - 1) {
-                              Navigator.of(context).pushReplacement(
-                                _ValveOption.route(
-                                  widget.controllerId,
-                                  widget.valveIndex,
-                                  widget.maxIndex,
-                                  widget.sequenceIndex + 1,
-                                  widget.controllerName,
-                                ),
-                              );
-                            } else {
-                              int nextIndex = widget.valveIndex + 1;
-                              if (nextIndex < widget.maxIndex) {
+                      setState(() {
+                        if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
+                          /* apiMethods.saveAndUpdateValvesDataOnServer(
+                                "${widget.valveIndex + 1}",
+                                "${widget.sequenceIndex + 1}",
+                                integrationType == "0" ? "Ltr" : integrationType == "1" ? "Time" : "NULL",
+                                fertlizationType == "0" ? "Ltr" : fertlizationType == "1" ? "Time" : "NULL",
+                                _ctrl_ValveNo[0].text,
+                                noOfValves > 1 ? _ctrl_ValveNo[1].text : "00",
+                                noOfValves > 2 ? _ctrl_ValveNo[2].text : "00",
+                                noOfValves > 3 ? _ctrl_ValveNo[3].text : "00",
+                                _ctrl_FieldNo[0].text,
+                                noOfValves > 1 ? _ctrl_FieldNo[1].text : "00",
+                                noOfValves > 2 ? _ctrl_FieldNo[2].text : "00",
+                                noOfValves > 3 ? _ctrl_FieldNo[3].text : "00",
+                                "$_radioFertilizerProgrammingValue",
+                                _ctrl_FertlizerDelay.text,
+                                _postdelayController.text,
+                                _ctrl_Tank[0].text,
+                                _maxTanks > 1 ? _ctrl_Tank[1].text : "00",
+                                _maxTanks > 2 ? _ctrl_Tank[2].text : "00",
+                                _maxTanks > 3 ? _ctrl_Tank[3].text : "00",
+                                _ctrl_ECSetp.text,
+                                _ctrl_PHSetp.text,
+                                "${widget.controllerId}");*/
+                          _loading = _handelValvesDataSubmit().then((_) {
+                            if (mounted) {
+                              if (widget.sequenceIndex < _maxSequence - 1) {
                                 Navigator.of(context).pushReplacement(
                                   _ValveOption.route(
                                     widget.controllerId,
-                                    nextIndex,
+                                    widget.valveIndex,
                                     widget.maxIndex,
-                                    0,
+                                    widget.sequenceIndex + 1,
                                     widget.controllerName,
                                   ),
                                 );
                               } else {
-                                ControllerDetails.navigateToPage(context, ControllerDetailsPageId.VALVES.nextPageId);
+                                int nextIndex = widget.valveIndex + 1;
+                                if (nextIndex < widget.maxIndex) {
+                                  Navigator.of(context).pushReplacement(
+                                    _ValveOption.route(
+                                      widget.controllerId,
+                                      nextIndex,
+                                      widget.maxIndex,
+                                      0,
+                                      widget.controllerName,
+                                    ),
+                                  );
+                                } else {
+                                  ControllerDetails.navigateToPage(context, ControllerDetailsPageId.VALVES.nextPageId);
+                                }
                               }
                             }
-                          }
-                        });
-                      } else {
-                        showColoredToast("Please check the values");
-                      }
-                    });
-                  },
-                  fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                  splashColor: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      _oldValveModel != null ? "Next" : "Next",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
-                    ),
+                          });
+                        } else {
+                          showColoredToast("Please check the values");
+                        }
+                      });
+                    }, ">"),
                   ),
-                  shape: const StadiumBorder(),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -955,11 +1009,11 @@ class _ValveOptionState extends State<_ValveOption> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                        maxLength: integrationType == "0" ? 6 : integrationType == "1" ? 3 : null,
+                        maxLength: integrationType == "2" ? 6 : integrationType == "0" ? 3 : null,
                         decoration: InputDecoration(
                           counterText: "",
                           border: OutlineInputBorder(),
-                          suffixText: integrationType == "0" ? " Ltr" : integrationType == "1" ? " Mins" : " ",
+                          suffixText: integrationType == "2" ? " Ltr" : integrationType == "0" ? " Mins" : " ",
                         ),
                         textAlign: TextAlign.center,
                         validator: (value) {
@@ -1016,7 +1070,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 6,
                     child: TextFormField(
-                      maxLength: fertlizationType == "0" ? 6 : 3,
+                      maxLength: fertlizationType == "0" ? 3 : 2,
                       decoration: InputDecoration(
                         counterText: "",
                         border: OutlineInputBorder(),

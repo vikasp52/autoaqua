@@ -59,12 +59,20 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
     var yearFormatter = new DateFormat("yyyy");
     var hrsFormatter = new DateFormat("HH");
     var minFormatter = new DateFormat("m");
+    var yearNum = new DateFormat("yy");
+    var monthNum = new DateFormat("M");
     String dayFormate = dayFormatter.format(now);
     String monthFormate = monthFormatter.format(now);
     String dateFormate = dateFormatter.format(now);
     String yearFormate = yearFormatter.format(now);
     String hrsFormate = hrsFormatter.format(now);
     String minFormate = minFormatter.format(now);
+
+    //Parameters for String
+    String month = monthNum.format(now);
+    String year = yearNum.format(now);
+
+    String clockString = "QK${AppendZero(hrsFormate)}${AppendZero(minFormate)}${AppendZero(dateFormate)}${AppendZero(monthFormate)}${AppendZero(yearFormate)}";
     return ControllerDetailsPageFrame(
       hasBackground: false,
       child: Column(
@@ -118,7 +126,8 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
                       ),
                     ),
                     Text(
-                      " $dayFormate",
+                      //" $dayFormate",
+                      ":$month",
                       style: TextStyle(
                           fontSize: 50.0,
                           color: Colors.white,

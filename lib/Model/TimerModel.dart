@@ -18,6 +18,7 @@ class TimerModel {
   String _timer_FertDay_Fri;
   String _timer_FertDay_Sat;
   String _timer_FertDay_Sun;
+  String _timer_String;
   String _timer_DateCreated;
 
   TimerModel(
@@ -39,6 +40,7 @@ class TimerModel {
       this._timer_FertDay_Fri,
       this._timer_FertDay_Sat,
       this._timer_FertDay_Sun,
+      this._timer_String,
       this._timer_DateCreated,
       [this._timerId]
       );
@@ -63,7 +65,7 @@ class TimerModel {
     this._timer_FertDay_Fri = obj["timer_FertDay_Fri"];
     this._timer_FertDay_Sat = obj["timer_FertDay_Sat"];
     this._timer_FertDay_Sun = obj["timer_FertDay_Sun"];
-    this._timer_DateCreated = obj["timer_DateCreated"];
+    this._timer_String = obj["timer_String"];
     this._timer_DateCreated = obj["timer_DateCreated"];
   }
 
@@ -86,6 +88,7 @@ class TimerModel {
   String get timer_FertDay_Fri => _timer_FertDay_Fri;
   String get timer_FertDay_Sat => _timer_FertDay_Sat;
   String get timer_FertDay_Sun => _timer_FertDay_Sun;
+  String get timer_String => _timer_String;
   String get timer_DateCreated => _timer_DateCreated;
 
   Map<String, dynamic> toMap_Timer(){
@@ -112,6 +115,7 @@ class TimerModel {
       mapTimer["timer_FertDay_Fri"] = _timer_FertDay_Fri;
       mapTimer["timer_FertDay_Sat"] = _timer_FertDay_Sat;
       mapTimer["timer_FertDay_Sun"] = _timer_FertDay_Sun;
+      mapTimer["timer_String"] = _timer_String;
       mapTimer["timer_DateCreated"] = _timer_DateCreated;
 
       return mapTimer;
@@ -137,6 +141,7 @@ class TimerModel {
     this._timer_FertDay_Fri = mapTimer["timer_FertDay_Fri"];
     this._timer_FertDay_Sat = mapTimer["timer_FertDay_Sat"];
     this._timer_FertDay_Sun = mapTimer["timer_FertDay_Sun"];
+    this._timer_String = mapTimer["timer_String"];
     this._timer_DateCreated = mapTimer["timer_DateCreated"];
   }
 

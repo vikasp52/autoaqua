@@ -125,7 +125,7 @@ class _MyAppSMSState extends State<MyAppSMS> {
               ),
             ),
             Divider(),
-            ListTile(
+            /*ListTile(
               leading: Icon(Icons.text_fields),
               title: Text(body ?? "No Message Set"),
               subtitle: people == null || people.isEmpty ? null : Text(people.toString()),
@@ -139,7 +139,7 @@ class _MyAppSMSState extends State<MyAppSMS> {
                   }
                 },
               ),
-            ),
+            ),*/
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

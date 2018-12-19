@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
-
+import 'package:sms/sms.dart';
 import 'package:autoaqua/UI/Controller.dart';
 import 'package:autoaqua/UI/ControllerDetails/ConfigurationPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/EditNumberPage.dart';
@@ -13,22 +14,19 @@ import 'package:autoaqua/UI/ControllerDetails/SetClockTimePage.dart';
 import 'package:autoaqua/UI/ControllerDetails/StatusPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/TimerPage.dart';
 import 'package:autoaqua/Utils/APICallMethods.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/TestMsg.dart';
 import 'package:flutter/material.dart';
 
 class ControllerDetails extends StatefulWidget {
-
   static Route<dynamic> route(int controllerId, String controllerName) {
     return MaterialPageRoute(
-      builder: (context) => ControllerDetails(
-        controllerId: controllerId,
-          controllerName: controllerName
-      ),
+      builder: (context) => ControllerDetails(controllerId: controllerId, controllerName: controllerName),
     );
   }
 
-   const ControllerDetails({
+  const ControllerDetails({
     Key key,
     @required this.controllerId,
     @required this.controllerName,
@@ -43,6 +41,7 @@ class ControllerDetails extends StatefulWidget {
   static void navigateToNext(BuildContext context) {
     navigateToPage(context, ControllerDetailsPageRoute.of(context)?.pageId?.nextPageId);
   }
+
   static void navigateToPage(BuildContext context, ControllerDetailsPageId pageId) {
     _currentState(context)?.navigateToPage(pageId);
   }
@@ -58,7 +57,6 @@ class ControllerDetailsState extends State<ControllerDetails> {
   String _title;
   List<Widget> _actions;
 
-
   void navigateToPage(ControllerDetailsPageId pageId) {
     final nav = _navigatorKey.currentState;
     nav.popUntil((route) => route is ControllerDetailsMainRoute);
@@ -68,25 +66,23 @@ class ControllerDetailsState extends State<ControllerDetails> {
   }
 
   void setCurrentPageId(ControllerDetailsPageId pageId) {
-
     scheduleMicrotask(() => _setAppBarState(() {
-      //_title = pageId?.name + '-${widget.controllerName}'?? '${widget.controllerName} - DETAILS';
-      _title = pageId?.name?? '${widget.controllerName} - DETAILS';
+          //_title = pageId?.name + '-${widget.controllerName}'?? '${widget.controllerName} - DETAILS';
+          _title = pageId?.name ?? '${widget.controllerName} - DETAILS';
 
-      final nextPageId = pageId?.nextPageId;
-      if(nextPageId != null){
-        _actions = <Widget>[
-          IconButton(
-            onPressed: () => navigateToPage(nextPageId),
-            icon: Icon(Icons.arrow_forward_ios),
-            //icon: Icon(nextPageId != null ? nextPageId.icon : Icons.arrow_forward_ios),
-          )
-        ];
-      }else{
-        _actions = null;
-      }
-    }));
-
+          final nextPageId = pageId?.nextPageId;
+          if (nextPageId != null) {
+            _actions = <Widget>[
+              IconButton(
+                onPressed: () => navigateToPage(nextPageId),
+                icon: Icon(Icons.arrow_forward_ios),
+                //icon: Icon(nextPageId != null ? nextPageId.icon : Icons.arrow_forward_ios),
+              )
+            ];
+          } else {
+            _actions = null;
+          }
+        }));
   }
 
   @override
@@ -104,7 +100,7 @@ class ControllerDetailsState extends State<ControllerDetails> {
                 tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () async {
                   final poped = await _navigatorKey.currentState.maybePop();
-                  if(!poped){
+                  if (!poped) {
                     Navigator.of(context).pop();
                   }
                 },
@@ -125,9 +121,9 @@ class ControllerDetailsState extends State<ControllerDetails> {
                 fit: BoxFit.cover,
               ),
             ),
-            child:  BackdropFilter(
+            child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-              child:  Container(
+              child: Container(
                 //you can change opacity with color here(I used black) for background.
                 decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
               ),
@@ -135,10 +131,9 @@ class ControllerDetailsState extends State<ControllerDetails> {
           ),
           Navigator(
             key: _navigatorKey,
-            observers: [ _ControllerDetailsNavObserver(this) ],
-            onGenerateRoute: (RouteSettings settings) => (settings.isInitialRoute
-                ? ControllerDetailsMainRoute(widget.controllerId)
-                : null),
+            observers: [_ControllerDetailsNavObserver(this)],
+            onGenerateRoute: (RouteSettings settings) =>
+                (settings.isInitialRoute ? ControllerDetailsMainRoute(widget.controllerId) : null),
           ),
         ],
       ),
@@ -146,12 +141,9 @@ class ControllerDetailsState extends State<ControllerDetails> {
         tag: 'controller-details-bottom-nav',
         child: Container(
           //color: Color.fromRGBO(0, 84, 179, 1.0),
-          decoration: BoxDecoration(
-              color: Color.fromRGBO(0, 84, 179, 1.0),
-              boxShadow: [
-                BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 16.0, spreadRadius: 0.0),
-              ]
-          ),
+          decoration: BoxDecoration(color: Color.fromRGBO(0, 84, 179, 1.0), boxShadow: [
+            BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 16.0, spreadRadius: 0.0),
+          ]),
           child: Material(
             type: MaterialType.transparency,
             child: Padding(
@@ -161,17 +153,25 @@ class ControllerDetailsState extends State<ControllerDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.menu, color: Colors.white,),
+                    icon: Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                    ),
                     onPressed: showPopupDrawer,
                   ),
                   IconButton(
-                      icon: Icon(Icons.home, color: Colors.white,),
+                      icon: Icon(
+                        Icons.home,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         _navigatorKey.currentState.popUntil((route) => route is ControllerDetailsMainRoute);
-                      }
-                  ),
+                      }),
                   IconButton(
-                    icon: Icon(Icons.dashboard, color: Colors.white,),
+                    icon: Icon(
+                      Icons.dashboard,
+                      color: Colors.white,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   //IconButton(icon: Icon(Icons.search), onPressed: () {},),
@@ -196,13 +196,13 @@ class ControllerDetailsState extends State<ControllerDetails> {
               return Container(
                 color: Colors.lightBlueAccent,
                 child: ListTile(
-                    onTap: (){
-                      Navigator.of(context).pop();
-                      navigateToPage(pageId);
-                    },
-                    leading: pageId.icon,
-                    title: Text(pageId.name),
-                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    navigateToPage(pageId);
+                  },
+                  leading: pageId.icon,
+                  title: Text(pageId.name),
+                ),
               );
             },
           ),
@@ -230,18 +230,17 @@ class _ControllerDetailsNavObserver extends NavigatorObserver {
   }
 
   void _updateByRoute(Route route) {
-    if(route is ControllerDetailsPageRoute){
+    if (route is ControllerDetailsPageRoute) {
       state.setCurrentPageId(route.pageId);
-    }
-    else if(route is ControllerDetailsMainRoute){
+    } else if (route is ControllerDetailsMainRoute) {
       state.setCurrentPageId(null);
     }
   }
 }
 
-class _ControllerDetailsMainPage extends StatefulWidget {
 
-  int controllerID;
+class _ControllerDetailsMainPage extends StatefulWidget {
+  final int controllerID;
   _ControllerDetailsMainPage(this.controllerID);
 
   @override
@@ -249,7 +248,6 @@ class _ControllerDetailsMainPage extends StatefulWidget {
 }
 
 class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> {
-
   APIMethods apiMethods = new APIMethods();
 
   @override
@@ -266,24 +264,23 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
                 mainAxisSpacing: 20.0,
                 crossAxisSpacing: 5.0,
                 padding: const EdgeInsets.all(4.0),
-                children: ControllerDetailsPageId.ids
-                    .map((pageId){
+                children: ControllerDetailsPageId.ids.map((pageId) {
                   return _ControllerDetailsButton(
                     icon: pageId.icon,
                     text: pageId.name,
                     onPressed: () => ControllerDetails.navigateToPage(context, pageId),
                   );
-                })
-                    .toList(growable: false),
+                }).toList(growable: false),
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(86.0, 0.0, 86.0, 70.0),
+          padding: const EdgeInsets.fromLTRB(70.0, 10.0, 70.0, 20.0),
           child: RawMaterialButton(
             onPressed: () {
-              //Navigator.of(context).pop();
+              _showDialog();
+              /*//Navigator.of(context).pop();
               //msgString.getDataforConfiguration(1);
               //getFoggerData();
               //Navigator.of(context).push(MaterialPageRoute(builder: (_)=> MyAppSMS()));
@@ -291,16 +288,18 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
                 widget.controllerID,
                 "1"
               );
-              print("Controller Id is ${widget.controllerID}");
+              print("Controller Id is ${widget.controllerID}");*/
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Submit",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),),
+              child: Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             fillColor: Color.fromRGBO(0, 84, 179, 1.0),
             shape: StadiumBorder(),
@@ -309,20 +308,166 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
       ],
     );
   }
+
   var _configuration;
   var fmax;
   DataBaseHelper dataBaseHelper = new DataBaseHelper();
-  void getFoggerData(){
-    dataBaseHelper.getFoggerDetailsforConfig(1).then((data){
+  void getFoggerData() {
+    dataBaseHelper.getFoggerDetailsforConfig(1).then((data) {
       fmax = data.fogger_maxRTU;
       _configuration = data.fogger_foggerDelay;
 
       print("MaxFogger: $fmax \n FDelay: $_configuration");
     });
+  }
 
+  Widget Dialog(){
+    bool notprogress = true;
+
+    status(bool status) {
+      setState(() {
+        notprogress = status;
+      });
+    }
+
+    return AlertDialog(
+      title: Text(
+        "SEND STRING",
+        textAlign: TextAlign.center,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          notprogress?Text("Not in Progress"):Text("In Progress"),
+          notprogress
+              ? RaisedButton(
+            onPressed: () {},
+            color: Colors.indigo,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.cloud_done,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "Cloud",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25.0,
+                    ),
+                  ),
+                  Text(
+                    "NOTE: This will send all values together via Internet.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+              : Text("Progress"),
+          SizedBox(
+            height: 10.0,
+          ),
+          RaisedButton(
+            onPressed: () {
+              setState(() {
+                status(false);
+              });
+              var db = new DataBaseHelper();
+              db.getStringData(widget.controllerID).then((stringData) {
+                if (stringData != null) {
+                  Timer(Duration(seconds: 3), () {
+                    print("Timer Delay");
+                  });
+                  for (int i = 0; i < stringData.length; i++) {
+                    final model = stringData[i];
+                    //print("Model1: $model");
+                    sleep(const Duration(seconds: 2));
+                    print("String is ${model.controllerString}");
+                    //sendSmsForAndroid(model.controllerString, widget.controllerID);
+                    //showPositiveToast("SMS sent");
+                  }
+                  setState(() {
+                    status(true);
+                  });
+                  print("Status true");
+                } else {
+                  showPositiveToast("No data avaliable to send sms.");
+                }
+              });
+              //Navigator.of(context).pop();
+              //List a = [1,2];
+              /*for (var i=0;i<a.length;i++){
+                    SmsSender sender = new SmsSender();
+                  SmsMessage message = new SmsMessage("+${918097250905}", a[i].toString());
+                  message.onStateChanged.listen((state) {
+                  if (state == SmsMessageState.Sending) {
+                  print("SMS is Sending!");
+                  CircularProgressIndicator();
+                  } else if (state == SmsMessageState.Sent) {
+                  print("SMS is Sent!");
+                  CircularProgressIndicator();
+                  } else if(state == SmsMessageState.Delivered){
+                    print("SMS is Delivered!");
+                  }else if(state == SmsMessageState.Fail){
+                    print("SMS is Fail!");
+                  }
+                  });
+                  sender.sendSms(message);
+
+                    const oneSec = const Duration(seconds:3);
+                    new Timer.periodic(oneSec, (Timer t) => sendSmsForAndroid(a[i].toString(), 1));
+                    print("SMS NO: $i & ${a[i]}");
+                    showPositiveToast("SMS Sent Successfully");
+                  }*/
+            },
+            color: Colors.green,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.textsms,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "Mobile SMS",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25.0,
+                    ),
+                  ),
+                  Text(
+                    "NOTE: This will send all values one by on via sms.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog();
+        });
   }
 }
-
 
 class _ControllerDetailsButton extends StatelessWidget {
   const _ControllerDetailsButton({
@@ -348,15 +493,11 @@ class _ControllerDetailsButton extends StatelessWidget {
           Expanded(
             flex: 8,
             child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color.fromRGBO(0, 84, 179, 1.0),
-                  width: 2.0,
-                  style: BorderStyle.solid
-                ),
-                shape: BoxShape.circle,
-                color: Colors.transparent//Color.fromRGBO(0, 84, 179, 1.0),
-              ),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Color.fromRGBO(0, 84, 179, 1.0), width: 2.0, style: BorderStyle.solid),
+                    shape: BoxShape.circle,
+                    color: Colors.transparent //Color.fromRGBO(0, 84, 179, 1.0),
+                    ),
                 child: Padding(
                   padding: const EdgeInsets.all(18.0),
                   child: this.icon,
@@ -367,9 +508,7 @@ class _ControllerDetailsButton extends StatelessWidget {
             flex: 2,
             child: Text(
               this.text,
-              style: TextStyle(
-                fontSize: 15.0
-              ),
+              style: TextStyle(fontSize: 15.0),
               textAlign: TextAlign.center,
               textScaleFactor: 0.85,
             ),
@@ -398,7 +537,6 @@ class ControllerDetailsPageFrame extends StatefulWidget {
 }
 
 class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame> {
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -410,9 +548,9 @@ class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame>
               fit: BoxFit.cover,
             ),
           ),
-          child:  BackdropFilter(
+          child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-            child:  Container(
+            child: Container(
               //you can change opacity with color here(I used black) for background.
               decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
             ),
@@ -425,15 +563,14 @@ class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame>
 }
 
 class ControllerDetailsMainRoute extends MaterialPageRoute {
-
   final int controllerID;
-  ControllerDetailsMainRoute(this.controllerID) : super(
-    builder: (context) => _ControllerDetailsMainPage(controllerID),
-  );
+  ControllerDetailsMainRoute(this.controllerID)
+      : super(
+          builder: (context) => _ControllerDetailsMainPage(controllerID),
+        );
 }
 
 class ControllerDetailsPageRoute extends MaterialPageRoute {
-
   ControllerDetailsPageRoute({
     @required this.pageId,
     @required WidgetBuilder builder,
@@ -443,7 +580,7 @@ class ControllerDetailsPageRoute extends MaterialPageRoute {
 
   static ControllerDetailsPageRoute of(BuildContext context) {
     final route = ModalRoute.of(context);
-    if(route is ControllerDetailsPageRoute){
+    if (route is ControllerDetailsPageRoute) {
       return route;
     }
     return null;
@@ -452,58 +589,93 @@ class ControllerDetailsPageRoute extends MaterialPageRoute {
 
 typedef ControllerDetailsRouteBuilder = Route<dynamic> Function(int controllerId, String controllerName);
 
-class ControllerDetailsPageId{
-
+class ControllerDetailsPageId {
   static const CONFIGURATION = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/settings.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/settings.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'CONFIGURATION',
     ConfigurationPage.route,
   );
 
   static const PROGRAM = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/menu.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0, ),
+    ImageIcon(
+      AssetImage('Images/menu.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'PROGRAM',
     ProgramPage.route,
   );
 
   static const VALVES = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/valve_1.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/valve_1.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'VALVES',
     ValvesPage.route,
   );
 
   static const TIMER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/recycle.png'),  color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/recycle.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'SCHEDULES',
     TimerPage.route,
   );
 
   static const FOGGER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/sprinkler.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/sprinkler.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'FOGGER',
     FoggerPage.route,
   );
 
   static const STATUS = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/flag.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/flag.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'STATUS',
     StatusPage.route,
   );
 
   static const IRR_STOP = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/irrstop.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/irrstop.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'IRR STOP',
     IRRPage.route,
   );
 
   static const SET_TIME = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/setclock.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/setclock.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'SET CLOCK TIME',
     SetClockTimePage.route,
   );
 
   static const EDIT_NUMBER = const ControllerDetailsPageId(
-    ImageIcon(AssetImage('Images/changenumber_icon.png'), color: Color.fromRGBO(0, 84, 179, 1.0), size: 40.0,),
+    ImageIcon(
+      AssetImage('Images/changenumber_icon.png'),
+      color: Color.fromRGBO(0, 84, 179, 1.0),
+      size: 40.0,
+    ),
     'SET NUMBER',
     EditNumberPage.route,
   );

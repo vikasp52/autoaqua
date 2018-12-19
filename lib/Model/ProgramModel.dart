@@ -11,6 +11,7 @@ class ProgramModel{
   String _program_fertilizationtype;
   String _program_sensorOverride;
   String _programDateCreated;
+  String _program_String;
 
   ProgramModel(
       this.program_Controller_Id,
@@ -23,6 +24,7 @@ class ProgramModel{
       this._program_fertilizationtype,
       this._program_sensorOverride,
       this._programDateCreated,
+      this._program_String,
       [this._programID]
       );
 
@@ -38,6 +40,7 @@ class ProgramModel{
     this._program_fertilizationtype = obj["program_fertilizationtype"];
     this._program_sensorOverride = obj["program_sensorOverride"];
     this._programDateCreated = obj["program_DateCreated"];
+    this._program_String = obj["program_String"];
   }
 
   int get programID => _programID;
@@ -51,6 +54,7 @@ class ProgramModel{
   String get program_fertilizationtype => _program_fertilizationtype;
   String get program_sensorOverride => _program_sensorOverride;
   String get program_DateCreated => _programDateCreated;
+  String get program_String => _program_String;
 
   Map<String, dynamic> toMap_program(){
     var map_program = new Map<String, dynamic>();
@@ -67,6 +71,7 @@ class ProgramModel{
     map_program["program_fertilizationtype"] = _program_fertilizationtype;
     map_program["program_sensorOverride"] = _program_sensorOverride;
     map_program["program_DateCreated"] = _programDateCreated;
+    map_program["program_String"] = _program_String;
     return map_program;
   }
 
@@ -82,6 +87,7 @@ class ProgramModel{
     this._program_fertilizationtype = map["program_fertilizationtype"];
     this._program_sensorOverride = map["program_sensorOverride"];
     this._programDateCreated = map["program_DateCreated"];
+    this._program_String = map["program_String"];
   }
 
 

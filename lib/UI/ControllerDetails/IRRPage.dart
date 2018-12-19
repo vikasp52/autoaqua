@@ -123,7 +123,9 @@ class _IRRPageState extends State<IRRPage> {
                 ],
               ),
               onPressed: () {
-                apiMethods.onOffPouseController(widget.controllerId, "0");
+                //apiMethods.onOffPouseController(widget.controllerId, "0");
+                sendSmsForAndroid("QA", widget.controllerId);
+                showPositiveToast("SMS Sent Successfully");
                 Navigator.of(context).pop();
               },
             ),
@@ -157,7 +159,9 @@ class _IRRPageState extends State<IRRPage> {
               child: new Text("Yes",style: TextStyle(
           fontSize: 20.0,fontWeight: FontWeight.bold,)),
               onPressed: () {
-                apiMethods.onOffPouseController(widget.controllerId, "2");
+                //apiMethods.onOffPouseController(widget.controllerId, "2");
+                sendSmsForAndroid("QW", widget.controllerId);
+                showPositiveToast("SMS Sent Successfully");
                 Navigator.of(context).pop();
               },
             ),

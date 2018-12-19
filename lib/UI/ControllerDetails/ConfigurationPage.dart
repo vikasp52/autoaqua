@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:autoaqua/Model/StringModel.dart';
 import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
 import 'package:autoaqua/Model/ConfigurationModel.dart';
+import 'package:autoaqua/UI/ControllerDetails/FoggerPage.dart';
 import 'package:autoaqua/UI/ControllerDetails/ProgramPage.dart';
 import 'package:autoaqua/Utils/APICallMethods.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
@@ -53,11 +55,15 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   int _foggerValves = 0;
   int _totalValves = 0;
   int _remaningValves = 0;
+  String _fDelay;
+  String configString;
 
   APIMethods apiMethods = new APIMethods();
 
+
   Future _loading;
   ConfigurationModel _oldConfig;
+  StringModel _oldString;
 
   //Bool Value for error message
   bool errorMsgRTU = false;
@@ -83,12 +89,25 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   }
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     print("Controller Name : ${widget.controllerName}");
-
     print("THis is database table for Configuration ${db.getConfigItems()}");
     _errorMsg = false;
+    db.getFoggerDetailsforConfig(widget.controllerId).then((foggerData){
+      if(foggerData != null){
+        setState(() {
+          _fDelay = foggerData.fogger_foggerDelay;
+        });
+      }else{
+        _fDelay = "00";
+      }
+      print("_fDelay is ${_fDelay}");
+    });
+
+    _loading = db.getStrings(widget.controllerId).then((sData){
+      _oldString = sData;
+    });
 
     _loading = db.getConfigDataForController(widget.controllerId).then((config) {
       _oldConfig = config;
@@ -132,8 +151,51 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     );
   }
 
-  Future<void> _handleSave() async {
+  //Get the data to generate String
+  Future<String> stringforConfig()async{
     print("id here: ${widget.controllerId}");
+    print('Max Program ${AppendZero(_MaxProgController.text)}');
+    print('Max OP ${AppendZero(_MaxOutputController.text)}');
+    print('Max RTU ${AppendZero(_MaxRTUController.text)}');
+    print('Max Fogger ${_TotalFoggerController.text}');
+    print('Fogger Delay ${AppendZero(_fDelay)}');
+    print('pH Delay ${AppendZero(_phDelayController.text)}');
+    print("ConfigString: $configString");
+    return configString = "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxOutputController.text) + AppendZero(_MaxRTUController.text) + _TotalFoggerController.text + AppendZero(_fDelay) + AppendZero(_phDelayController.text)}>";
+
+  }
+
+  Future<void> _handleSave() async {
+    configString = "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxOutputController.text) + AppendZero(_MaxRTUController.text) + _TotalFoggerController.text + AppendZero(_fDelay) + AppendZero(_phDelayController.text)}>";
+    //saveUpdateStringData(widget.controllerId, configString);
+
+   /* if(_oldString == null){
+          StringModel saveStringData = new StringModel(
+          widget.controllerId,
+          configString,
+          dateFormatted());
+          await db.saveStrings(saveStringData);
+          await db.getStrings(widget.controllerId);
+          await db.getStringData(widget.controllerId);
+    }else{
+      StringModel saveStringData = new StringModel(
+          widget.controllerId,
+          configString,
+          dateFormatted(),
+        _oldString.stringId
+      );
+      await db.updateString(saveStringData);
+      await db.getStrings(widget.controllerId);
+      await db.getStringData(widget.controllerId);
+    }*/
+
+   /* //Method the save the String in StringTable
+    saveUpdateStringData(controllerId, string) async {
+      final db = new DataBaseHelper();
+      StringModel saveStringData = new StringModel(controllerId, string, dateFormatted());
+      await db.saveStrings(saveStringData);
+      await db.getStringData(controllerId);
+    }*/
 
     if (_oldConfig == null) {
       ConfigurationModel newConfig = new ConfigurationModel(
@@ -147,18 +209,25 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
           _remaningValves.toString(),
           _valECpHType.toString(),
           _valRTU.toString(),
-          AppendZero(_phDelayController.text),
+          _phDelayController.text,
           _MaxRTUController.text,
           _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false),
           dateFormatted(),
-          "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxProgController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>"
+          configString
           //_oldConfig.configid
           );
 
       int saveItemId = await db.saveConfigurationItem(newConfig);
       var addedItem = await db.getConfigDataForController(widget.controllerId);
-      print('Added Item: $saveItemId: $addedItem');
-      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
+      saveStringData(widget.controllerId, "CONFIG", '${widget.controllerId}', '0', configString);
+      /*db.saveStrings(widget.controllerId);
+      await db.getStrings(widget.controllerId);
+      await db.getStringData(widget.controllerId);*/
+     /* StringModel saveStringData = new StringModel(widget.controllerId, configString, dateFormatted());
+      await db.saveStrings(saveStringData);
+      await db.getStringData(widget.controllerId);
+      print('Added Item: $saveItemId: $saveStringData');*/
+      //Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
     } else {
       ConfigurationModel newConfig = new ConfigurationModel(
           widget.controllerId,
@@ -171,18 +240,38 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
           _remaningValves.toString(),
           _valECpHType.toString(),
           _valRTU.toString(),
-          AppendZero(_phDelayController.text),
+          _phDelayController.text,
           _MaxRTUController.text,
           _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false),
           dateFormatted(),
-          "QD${AppendZero(_MaxProgController.text) + AppendZero(_MaxOutputController.text) + AppendZero(_MaxRTUController.text) + AppendZero(_phDelayController.text)}>",
+          configString,
           _oldConfig.configid);
 
       int saveItemId = await db.updateConfigurationItems(newConfig);
       var addedItem = await db.getConfigDataForController(widget.controllerId);
       print('Added Item: $saveItemId: $addedItem');
 
-      Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
+      updateStringData(widget.controllerId, "CONFIG", '${widget.controllerId}', '0', configString);
+      /*db.updateConfigString(widget.controllerId);
+      await db.getStrings(widget.controllerId);
+      await db.getStringData(widget.controllerId);
+      StringModel updateStringData = new StringModel(widget.controllerId, configString, dateFormatted());
+      var savedString = await db.updateString(updateStringData);
+      await db.getStringData(widget.controllerId);
+      print('Added String Item: $saveItemId: $savedString');*/
+     // Navigator.of(context).pushReplacement(ProgramPage.route(widget.controllerId, widget.controllerName));
+    }
+  }
+
+  void validation(){
+    if (_MaxRTUController.text.isEmpty && _valRTU == true) {
+      setState(() {
+        errorMsgRTU = true;
+      });
+    } else {
+      setState(() {
+        errorMsgRTU = false;
+      });
     }
   }
 
@@ -348,11 +437,11 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                       },
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                       maxLength: 2,
-                      */ /*validator: (value) {
+                      validator: (value) {
                         if (value.isEmpty) {
                           return "Please enter the maximum valves";
                         }
-                      },*/ /*
+                      },
                       decoration: new InputDecoration(
                         counterText: "",
                         hintText: "Irrigation",
@@ -497,8 +586,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                               }
                             },
                               TextAlign.center,
-                            "Every",
-                            "mins"
+                              "mins",
+                            "Every"
                           ),
 
 
@@ -598,77 +687,82 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               SizedBox(
                 height: 10.0,
               ),
-              Center(
-                child: RawMaterialButton(
-                  textStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
-                  onPressed: () {
-                    /*int _maxControllerData;
-                    if(_MaxRTUController.text != null){
-                      _maxControllerData = int.parse(_MaxRTUController.text);
-                    }*/
-                    if (_MaxRTUController.text.isEmpty && _valRTU == true) {
-                      setState(() {
-                        errorMsgRTU = true;
-                      });
-                    } else {
-                      setState(() {
-                        errorMsgRTU = false;
-                      });
-                    }
 
-                    CalculateTotalandremaningValves();
-                    List<String> MobNo =
-                        _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false);
-                    String slaveMoNo = MobNo.join(',');
-                    print("Mob No is $MobNo");
-                    print("slave No is $slaveMoNo");
-                    apiMethods.saveAndUpdateConfigDataOnServer(
-                        _MaxProgController.text,
-                        _MaxOutputController.text,
-                        //slaveMoNo,
-                        _MaxRTUController.text,
-                        _MaxInjectorController.text,
-                        _TotalIrrigationController.text,
-                        _TotalFoggerController.text,
-                        _totalValves.toString(),
-                        _remaningValves.toString(),
-                        _valECpHType == true ? "1" : "0",
-                        _valRTU == true ? "1" : "0",
-                        _phDelayController.text,
-                        slaveMoNo,
-                        //"00",
-                        widget.controllerId.toString());
-                    setState(() {
-                      if (_configurationformkey.currentState.validate() &&
-                          errorMsgRTU == false &&
-                          (_totalValves <= _totalControllerOutput)) {
-                        _loading = _handleSave().then((_) {
-                          if (mounted) {
-                            //ControllerDetails.navigateToNext(context);
-                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                            _oldConfig != null
-                                ? showPositiveToast("Data is updated successfully")
-                                : showPositiveToast("Data is saved successfully");
-                          }
-                        });
-                      } else {
-                        showColoredToast("Please enter the valid value");
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      _oldConfig != null ? "Update" : "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  commonButton(
+                    (){
+                      validation();
+                      CalculateTotalandremaningValves();
+                      setState(() {
+                        if (_configurationformkey.currentState.validate() &&
+                            errorMsgRTU == false &&
+                            (_totalValves <= _totalControllerOutput)) {
+                          _loading = stringforConfig().then((_) {
+                            if (mounted) {
+                             /* _oldConfig != null
+                                  ? saveStringData(widget.controllerId, "CONFIG", '${widget.controllerId}', '0', configString)
+                                  : updateStringData(widget.controllerId, "CONFIG", '${widget.controllerId}', '0', configString);*/
+                              sendSmsForAndroid(configString, widget.controllerId);
+                              _handleSave();
+                              Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                              showPositiveToast("sms sent successfully");
+                            }
+                          });
+                        } else {
+                          showColoredToast("There is some problem");
+                        }
+                      });
+                    },
+                      "Send"
                   ),
-                  fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                  shape: StadiumBorder(),
-                ),
+                  commonButton(
+                        () {
+                     validation();
+                      CalculateTotalandremaningValves();
+                      List<String> MobNo =
+                      _slaveTextControllers.map((controller) => controller.value.text).toList(growable: false);
+                      String slaveMoNo = MobNo.join(',');
+                      print("Mob No is $MobNo");
+                      print("slave No is $slaveMoNo");
+                      /*apiMethods.saveAndUpdateConfigDataOnServer(
+                            _MaxProgController.text,
+                            _MaxOutputController.text,
+                            //slaveMoNo,
+                            _MaxRTUController.text,
+                            _MaxInjectorController.text,
+                            _TotalIrrigationController.text,
+                            _TotalFoggerController.text,
+                            _totalValves.toString(),
+                            _remaningValves.toString(),
+                            _valECpHType == true ? "1" : "0",
+                            _valRTU == true ? "1" : "0",
+                            _phDelayController.text,
+                            slaveMoNo,
+                            //"00",
+                            widget.controllerId.toString());*/
+                      setState(() {
+                        if (_configurationformkey.currentState.validate() &&
+                            errorMsgRTU == false &&
+                            (_totalValves <= _totalControllerOutput)) {
+
+                          _loading = _handleSave().then((_) {
+                            if (mounted) {
+                              //ControllerDetails.navigateToNext(context);
+                              Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                              _oldConfig != null
+                                  ? showPositiveToast("Data is updated successfully")
+                                  : showPositiveToast("Data is saved successfully");
+                            }
+                          });
+                        } else {
+                          showColoredToast("Please enter the valid value");
+                        }
+                      });
+                    },
+                    _oldConfig != null ? "Update" : "Save",),
+                ],
               ),
             ],
           ),

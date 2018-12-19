@@ -4,6 +4,7 @@ import 'package:autoaqua/Model/ControllerItems.dart';
 import 'package:autoaqua/Model/FoggerModel.dart';
 import 'package:autoaqua/Model/MobNoModel.dart';
 import 'package:autoaqua/Model/ProgramModel.dart';
+import 'package:autoaqua/Model/StringModel.dart';
 import 'package:autoaqua/Model/TimerModel.dart';
 import 'package:autoaqua/Model/ValvesModel.dart';
 import 'package:path/path.dart';
@@ -62,6 +63,7 @@ class DataBaseHelper {
   final String program_irrigationtypeCol = "program_irrigationtype";
   final String program_fertilizationtypeCol = "program_fertilizationtype";
   final String program_DateCreatedCol = "program_DateCreated";
+  final String program_StringCol = "program_String";
 
   //VALVES Variable
   final String tableValves = "Valves_Table";
@@ -88,6 +90,7 @@ class DataBaseHelper {
   final String valves_ECSetp_Col = "valves_ECSetp";
   final String valves_PHSetp_Col = "valves_PHSetp";
   final String valves_DateCreatedCol = "valves_DateCreated";
+  final String valves_StringCol = "valves_String";
 
   //Timer Variable
   final String tableTimer = "Timer_Table";
@@ -110,6 +113,7 @@ class DataBaseHelper {
   final String timer_FertDay_Fri_Col = "timer_FertDay_Fri";
   final String timer_FertDay_Sat_Col = "timer_FertDay_Sat";
   final String timer_FertDay_Sun_Col = "timer_FertDay_Sun";
+  final String timer_StringCol = "timer_String";
   final String timer_DateCreatedCol = "timer_DateCreated";
 
   //Phone No Variables
@@ -133,6 +137,15 @@ class DataBaseHelper {
   static String fogger_maxHumCol = "fogger_maxHum";
   static String fogger_dateCreated = "fogger_DateCreated";
   static String fogger_configStringCol = "fogger_configString";
+
+  //Strings variable
+  final String tableStrings = "tableStrings";
+  final String stringIdCol = "stringId";
+  final String stringControllerIdCol = "stringControllerId";
+  final String stringTypeCol = "stringType";
+  final String stringTypeIdCol = "stringTypeId";
+  final String stringValveSeqNoCol = "stringValveSeqNo";
+  final String controllerStringCol = "controllerString";
 
   static Database _db;
 
@@ -210,6 +223,7 @@ class DataBaseHelper {
         $program_irrigationtypeCol TEXT,
         $program_fertilizationtypeCol TEXT,
         $program_DateCreatedCol TEXT,
+        $program_StringCol TEXT,
         FOREIGN KEY ($program_controllerIdCol) REFERENCES $tableName(id))
         """);
     print("Program table is created");
@@ -240,6 +254,7 @@ class DataBaseHelper {
        $valves_ECSetp_Col TEXT,
        $valves_PHSetp_Col TEXT,
        $valves_DateCreatedCol TEXT,
+       $valves_StringCol TEXT,
        FOREIGN KEY ($valves_controllerIdCol) REFERENCES $tableName(id))
       """);
 
@@ -266,6 +281,7 @@ class DataBaseHelper {
       $timer_FertDay_Fri_Col TEXT,
       $timer_FertDay_Sat_Col TEXT,
       $timer_FertDay_Sun_Col TEXT,
+      $timer_StringCol TEXT,
       $timer_DateCreatedCol TEXT,
       FOREIGN KEY ($timer_ControllerIdCol) REFERENCES $tableName(id))
       """
@@ -300,6 +316,20 @@ class DataBaseHelper {
         $mobNoCol TEXT,
         $mobNo_DateCreatedCol TEXT,
         FOREIGN KEY ($mobNo_controllerIdCol) REFERENCES $tableName(id))
+        """
+        );
+
+    //Table String
+    await db.execute(
+        """
+        CREATE TABLE $tableStrings(
+        $stringIdCol INTEGER PRIMARY KEY,
+        $stringControllerIdCol INTEGER NOT NULL,
+        $stringTypeCol TEXT,
+        $stringTypeIdCol TEXT,
+        $stringValveSeqNoCol TEXT,
+        $controllerStringCol TEXT,
+        FOREIGN KEY ($stringControllerIdCol) REFERENCES $tableName(id))
         """
         );
   }
@@ -415,6 +445,59 @@ print("updated: $count");
     }
   }
 
+  //Insert String from every Controller Details
+  saveStrings(StringModel stringModel)async{
+    //print("Inserted String data ${stringModel.string_toMap()}");
+    /*var result = (await db).rawQuery(
+        'INSERT INTO $tableStrings(stringControllerId, controllerString,stringDateCreated ) SELECT controllerId, ConfigString, ConfigDateCreated FROM $tableConfigName WHERE controllerId = $controllerId');
+    print("resultString: $result");*/
+    return (await db).insert('$tableStrings', stringModel.string_toMap());
+    /*if(stringModel.stringId != null){
+      print("Inserted String data ${stringModel.string_toMap()}");
+      return (await db).update('$tableStrings', stringModel.string_toMap(),
+          where: "$stringIdCol = ?", whereArgs: [stringModel.stringId]);
+    }else{
+      print("Updating String data ${stringModel.string_toMap()}");
+      return (await db).insert('$tableStrings', stringModel.string_toMap());
+    }*/
+
+  }
+
+  updateConfigString(StringModel stringModel)async{
+
+    var result =  (await db).update('$tableStrings', stringModel.string_toMap(),
+        where: "$stringControllerIdCol = ? and $stringTypeCol = ? and $stringTypeIdCol = ? and $stringValveSeqNoCol = ?", whereArgs: [stringModel.stringControllerId, stringModel.stringType, stringModel.stringTypeId, stringModel.stringValveSeqNo]);
+    print("Res: $result");
+    return result;
+    /*var dbClient  = await db;
+    var result = await dbClient.rawQuery('SELECT controllerId, ConfigString, ConfigDateCreated FROM $tableConfigName WHERE controllerId = $controllerId');
+    print("Updated resultString1111: ${result[0]['ConfigDateCreated']}");
+    var a = ['1','2','3','1'];
+    var resultConfigUpdate = await dbClient.rawUpdate(
+        'UPDATE $tableStrings SET stringControllerId=?, controllerString=?, stringDateCreated=? WHERE stringControllerId = ?', a);
+//var result = await dbClient.rawQuery('SELECT controllerId, ConfigString, ConfigDateCreated FROM $tableConfigName WHERE controllerId = $controllerId');
+    //var resultConfigUpdate1 = await dbClient.rawUpdate(
+    //    'UPDATE $tableStrings SET stringControllerId=?, controllerString=?, stringDateCreated=?', ['1','QQQQq','12.090']);
+
+    //print("TEST: $resultConfigUpdate1");
+    //print("Updated resultString: $result");
+    //print("Updated resultString1: $resultConfigUpdate");
+    //return resultConfigUpdate;*/
+  }
+
+  saveProgramString(controllerId)async{
+    var result1 = (await db).rawQuery(
+        'INSERT INTO $tableStrings(stringControllerId, controllerString,stringDateCreated ) SELECT program_controller_id, program_String, program_DateCreated FROM $tableProgram WHERE program_controller_id = $controllerId');
+    print("resultStringProgram: $result1");
+  }
+
+  //Update String from every Controller Details
+  Future<int> updateString(StringModel stringModel)async{
+    print("Updated String data ${stringModel.string_toMap()}");
+    return (await db).update('$tableStrings', stringModel.string_toMap(),
+        where: "$stringIdCol = ?", whereArgs: [stringModel.stringId]);
+  }
+
   Future<bool> deleteFoggerData(int id) async {
     int result = await (await db).delete('$tableFogger',
         where: '$foggerIdCol = ?', whereArgs: [id]);
@@ -467,11 +550,18 @@ print("updated: $count");
   Future<ControllerItem> getItem(int id) async {
     var dbClient = await db;
     var result =
-        await dbClient.rawQuery("SELECT * FROM $tableName WHERE id = $id");
+        await dbClient.rawQuery("SELECT * FROM $tableName WHERE $columnId = $id");
     if (result.length == 0) return null;
     return new ControllerItem.fromMap(result.first);
   }
 
+  /*Future<int> getControllerNum(id)async{
+    var dbClient = await db;
+    var result = await dbClient.rawQuery("SELECT $columnItemNumber FROM $tableName WHERE $columnId = $id");
+    if(result.length == 0) return null;
+    return result;
+  }
+*/
   //Get Configuration Data
   Future<ConfigurationModel> getConfigDataForController(
       int controllerId) async {
@@ -480,6 +570,16 @@ print("updated: $count");
         "SELECT * FROM $tableConfigName WHERE $controllerIdCol = $controllerId");
     if (result.length == 0) return null;
     return new ConfigurationModel.fromDbMap(result.first);
+  }
+
+
+  //Get Config String
+  Future<ConfigurationModel> getConfigString(int controllerId)async{
+    var dbClient = await db;
+    var resultConfigString = await dbClient.rawQuery("SELECT $configStringCol FROM $tableConfigName WHERE $controllerIdCol = $controllerId");
+    if(resultConfigString.length == 0) return null;
+    print("Program String List: $resultConfigString");
+    return ConfigurationModel.fromDbMap(resultConfigString.first);
   }
 
   //Get Program Data
@@ -492,6 +592,28 @@ print("updated: $count");
       return null;
     };
     return ProgramModel.fromMap_program(result[programId]);
+  }
+
+  //Get Program String
+  Future getProgramString(int controllerId)async{
+    var dbClient = await db;
+    List data = await dbClient.query('$tableProgram', columns: ['$program_StringCol'], where: "$program_controllerIdCol = ?", whereArgs: [controllerId]);
+    List data1 = await dbClient.rawQuery(
+        "SELECT group_concat($program_StringCol, ',')AS Strings FROM $tableProgram WHERE $program_controllerIdCol = $controllerId");
+    //data1.toString().substring(10, data1);
+
+    //List data = await dbClient.rawQuery(
+    //    "SELECT $program_StringCol FROM $tableProgram WHERE $program_controllerIdCol = $controllerId");
+    print("Program String List: $data");
+    print("Program String List: $data1");
+    //print(data1.toString().substring(10, data1.length-2));
+    return data1;
+    /*var resultProgramString = await dbClient.rawQuery(
+        "SELECT $program_StringCol FROM $tableProgram WHERE $program_controllerIdCol = $controllerId");
+    if(resultProgramString == 0)return null;
+    print("Program String List: $resultProgramString");
+    return resultProgramString.map((pString) => ProgramModel.fromMap_program(pString)).toList(growable: false);
+*/
   }
 
   //Get Valves Data
@@ -552,12 +674,36 @@ print("updated: $count");
   Future<FoggerModel> getFoggerDetailsforConfig(int controllerId)async{
     var dbClient = await db;
     var foggerResult = await dbClient.rawQuery(
-        "SELECT $foggingTypeCol, $fogger_foggerDelayCol FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
+        "SELECT $fogger_foggerDelayCol FROM $tableFogger WHERE $fogger_controllerCol = $controllerId"
     );
     if(foggerResult.length == 0){
       return null;
     }
     return FoggerModel.fromMap_Fogger(foggerResult.first);
+  }
+
+
+  //Get the String data
+  Future<StringModel> getStrings(controllerId)async{
+    var dbClient = await db;
+    var stringResult = await dbClient.rawQuery(
+        "SELECT * FROM $tableStrings");
+    print("String ersult: $stringResult");
+    if(stringResult.length == 0) return null;
+    return StringModel.string_fromMap(stringResult.first);
+  }
+
+
+  //Get ALl the Strings
+  Future<List<StringModel>> getStringData(int controllerId)async{
+    var dbClient = await db;
+    var stringResult = await dbClient.rawQuery(
+        "SELECT * FROM $tableStrings WHERE $stringControllerIdCol = $controllerId");
+    print("String Data is $stringResult");
+    if(stringResult.length == 0)return null;
+    return stringResult
+        .map((data)=> StringModel.string_fromMap(data))
+        .toList(growable: false);
   }
 
   //Delete Items

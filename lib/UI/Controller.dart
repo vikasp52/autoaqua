@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 
 
-
-
 class Controller extends StatefulWidget {
   @override
   _ControllerState createState() => _ControllerState();
@@ -232,7 +230,7 @@ class _ControllerState extends State<Controller> {
               if (_formKey.currentState.validate()) {
                 _handleSubmitted(_textEditingControler.text, _textEditingControlerNumber.text);
                 await print("LoginToken ${SharedPref().getToken()}");
-                apiMethods.saveDataToServer(_textEditingControler.text, _textEditingControlerNumber.text);
+                //apiMethods.saveDataToServer(_textEditingControler.text, _textEditingControlerNumber.text);
                 _textEditingControler.clear();
                 _textEditingControlerNumber.clear();
                 Navigator.pop(context);

@@ -5,6 +5,8 @@ import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
+
+int fDelayValue = 00;
 class FoggerPage extends StatefulWidget {
   static Route<dynamic> route(int controllerId, String controllerName) {
     return ControllerDetailsPageRoute(
@@ -99,7 +101,7 @@ class _FoggerPageState extends State<FoggerPage> {
             _minHumController[i].text = model.fogger_hum;
             _maxHumController[i].text = model.fogger_maxHum;
             _foggerDelayController.value = TextEditingValue(text: model.fogger_foggerDelay);
-            _radioFoggingType = int.parse(model.fogger_maxRTU);
+            _radioFoggingType = model.fogger_maxRTU != "null"?int.parse(model.fogger_maxRTU):null;
           }
         });
       }
@@ -135,6 +137,8 @@ class _FoggerPageState extends State<FoggerPage> {
   }*/
 
   Future<void> _handelFoggerDataSubmit() async {
+    print("Fogger Delay ${fDelayValue}");
+
     for (int i = 0; i < _count; i++) {
       final model = FoggerModel(
           widget.controllerId,
@@ -196,6 +200,9 @@ class _FoggerPageState extends State<FoggerPage> {
                         child: CommonTextField(
                           _foggerDelayController,
                               (value) {
+                            setState(() {
+                              fDelayValue = value.isNotEmpty?int.parse(value):00;
+                            });
                             if (validateEmpty(value)) {
                               return "";
                             }

@@ -146,6 +146,10 @@ class _TimerOptionState extends State<_TimerOption> {
 
   bool errorMsg = false;
 
+  String iDay;
+  String fday;
+  String timerString;
+
   TimerModel _oldTimerData;
   DataBaseHelper db = new DataBaseHelper();
   Future loading;
@@ -183,7 +187,48 @@ class _TimerOptionState extends State<_TimerOption> {
     });
   }
 
+  void _validate() {
+    if (_hrsController.text.isNotEmpty
+        ? int.parse(_hrsController.text) > 23
+        : false || _minController.text.isNotEmpty ? int.parse(_minController.text) > 59 : false) {
+      setState(() {
+        errorMsg = true;
+      });
+    } else if ((_hrsController.text.isNotEmpty ? int.parse(_hrsController.text) == 00 : false) &&
+        (_minController.text.isNotEmpty ? int.parse(_minController.text) == 00 : false)) {
+      setState(() {
+        errorMsg = true;
+      });
+    } else {
+      setState(() {
+        errorMsg = false;
+      });
+    }
+  }
+
+  //String Generation
+  Future<void> _stringForSchedule() async {
+    iDay =
+        "${(checkboxIntegrationDay_Sun == true ? 64 : 0) + (checkboxIntegrationDay_Mon == true ? 1 : 0) + (checkboxIntegrationDay_Tues == true ? 2 : 0) + (checkboxIntegrationDay_Wed == true ? 4 : 0) + (checkboxIntegrationDay_Thurs == true ? 8 : 0) + (checkboxIntegrationDay_Friday == true ? 16 : 0) + (checkboxIntegrationDay_Sat == true ? 32 : 0)}";
+    fday =
+        "${(checkboxFertDay_Sun == true ? 64 : 0) + (checkboxFertDay_Mon == true ? 1 : 0) + (checkboxFertDay_Tues == true ? 2 : 0) + (checkboxFertDay_Wed == true ? 4 : 0) + (checkboxFertDay_Thurs == true ? 8 : 0) + (checkboxFertDay_Fri == true ? 16 : 0) + (checkboxFertDay_Sat == true ? 32 : 0)}";
+    timerString =
+        "QS${AppendZero(_hrsController.text)}${AppendZero(_minController.text)}${AppendThreeDigit(iDay)}${AppendThreeDigit(fday)}>";
+    print("Time String: $timerString");
+    print("Hrs: ${AppendZero(_hrsController.text)}");
+    print("Hrs: ${AppendZero(_minController.text)}");
+    print("IRRDAY: ${AppendThreeDigit(iDay)}");
+    print("FERTDAY: ${AppendThreeDigit(fday)}");
+  }
+
   Future<void> _saveTimerData() async {
+    iDay =
+        "${(checkboxIntegrationDay_Sun == true ? 64 : 0) + (checkboxIntegrationDay_Mon == true ? 1 : 0) + (checkboxIntegrationDay_Tues == true ? 2 : 0) + (checkboxIntegrationDay_Wed == true ? 4 : 0) + (checkboxIntegrationDay_Thurs == true ? 8 : 0) + (checkboxIntegrationDay_Friday == true ? 16 : 0) + (checkboxIntegrationDay_Sat == true ? 32 : 0)}";
+    fday =
+        "${(checkboxFertDay_Sun == true ? 64 : 0) + (checkboxFertDay_Mon == true ? 1 : 0) + (checkboxFertDay_Tues == true ? 2 : 0) + (checkboxFertDay_Wed == true ? 4 : 0) + (checkboxFertDay_Thurs == true ? 8 : 0) + (checkboxFertDay_Fri == true ? 16 : 0) + (checkboxFertDay_Sat == true ? 32 : 0)}";
+    timerString =
+        "QS${AppendZero(_hrsController.text)}${AppendZero(_minController.text)}${AppendThreeDigit(iDay)}${AppendThreeDigit(fday)}>";
+
     if (_oldTimerData == null) {
       TimerModel submitTimerData = new TimerModel(
         widget.controllerId,
@@ -204,10 +249,12 @@ class _TimerOptionState extends State<_TimerOption> {
         checkboxFertDay_Fri.toString(),
         checkboxFertDay_Sat.toString(),
         checkboxFertDay_Sun.toString(),
+        timerString,
         dateFormatted(),
       );
       await db.saveTimerData(submitTimerData);
       await db.getTimerData(widget.controllerId, widget.timerIndex);
+      saveStringData(widget.controllerId, "SCHEDULE", '${widget.timerIndex}', '0', timerString);
     } else {
       TimerModel updateTimerData = new TimerModel(
           widget.controllerId,
@@ -228,10 +275,12 @@ class _TimerOptionState extends State<_TimerOption> {
           checkboxFertDay_Fri.toString(),
           checkboxFertDay_Sat.toString(),
           checkboxFertDay_Sun.toString(),
+          timerString,
           dateFormatted(),
           _oldTimerData.timerId);
       await db.updateTimerData(updateTimerData);
       await db.getTimerData(widget.controllerId, widget.timerIndex);
+      updateStringData(widget.controllerId, "SCHEDULE", '${widget.timerIndex}', '0', timerString);
     }
   }
 
@@ -297,13 +346,13 @@ class _TimerOptionState extends State<_TimerOption> {
                     children: <Widget>[
                       Expanded(
                         flex: 5,
-                        child:CommonTextField(
+                        child: CommonTextField(
                           _hrsController,
-                              (value) {
+                          (value) {
                             if (value.isEmpty) {
                               return ""; //showSnackBar(context, "Please enter the Max program");
-                            }else if(int.parse(value) > 23){
-                              return"";
+                            } else if (int.parse(value) > 23) {
+                              return "";
                             }
                           },
                           TextAlign.center,
@@ -332,13 +381,13 @@ class _TimerOptionState extends State<_TimerOption> {
                       ),
                       Expanded(
                         flex: 5,
-                        child:CommonTextField(
+                        child: CommonTextField(
                           _minController,
-                              (value) {
+                          (value) {
                             if (value.isEmpty) {
                               return ""; //showSnackBar(context, "Please enter the Max program");
-                            }else if(int.parse(value) > 59){
-                              return"";
+                            } else if (int.parse(value) > 59) {
+                              return "";
                             }
                           },
                           TextAlign.center,
@@ -363,11 +412,14 @@ class _TimerOptionState extends State<_TimerOption> {
                   ),
                 ),
                 Center(
-                  child: errorMsg == true ?Text(
-                    "Please check the hrs or mins.",
-                    style: TextStyle(color: Colors.red),
-                  ):SizedBox(height: 0.0,)
-                ),
+                    child: errorMsg == true
+                        ? Text(
+                            "Please check the hrs or mins.",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : SizedBox(
+                            height: 0.0,
+                          )),
                 SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -680,28 +732,29 @@ class _TimerOptionState extends State<_TimerOption> {
                 ),
                 SizedBox(height: 20.0),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    RawMaterialButton(
-                      onPressed: () {
-                        if(_hrsController.text.isNotEmpty?int.parse(_hrsController.text) > 23:false || _minController.text.isNotEmpty?int.parse(_minController.text) > 59:false){
-                          setState(() {
-                            errorMsg = true;
-                          });
-                        }else if((_hrsController.text.isNotEmpty?int.parse(_hrsController.text) == 00:false) && (_minController.text.isNotEmpty?int.parse(_minController.text) == 00:false)){
-                          setState(() {
-                            errorMsg = true;
-                          });
-                        }
-                        else{
-                          setState(() {
-                            errorMsg = false;
-                          });
-                        }
-
-                        if(scheduleForm.currentState.validate() && errorMsg == false){
+                    commonButton((){
+                      _validate();
+                      if (scheduleForm.currentState.validate() && errorMsg == false) {
+                        _stringForSchedule().then((_){
+                          if(mounted){
+                            _saveTimerData();
+                            sendSmsForAndroid(timerString, widget.controllerId);
+                            showPositiveToast("SMS Send Successfully");
+                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                          }
+                        });
+                      } else {
+                        showColoredToast("There is some problem");
+                      }
+                    }, "Send"),
+                    commonButton(
+                      () {
+                        _validate();
+                        if (scheduleForm.currentState.validate() && errorMsg == false) {
                           _saveTimerData();
-                          apiMethods.saveAndUpdateTimerData(
+                          /*apiMethods.saveAndUpdateTimerData(
                               "${widget.controllerId}",
                               "${widget.timerIndex + 1}",
                               _hrsController.text,
@@ -719,13 +772,14 @@ class _TimerOptionState extends State<_TimerOption> {
                               checkboxFertDay_Wed.toString(),
                               checkboxFertDay_Thurs.toString(),
                               checkboxFertDay_Fri.toString(),
-                              checkboxFertDay_Sat.toString());
-                          int nextIndex = widget.timerIndex + 1;
+                              checkboxFertDay_Sat.toString()
+                          );*/
+                          //int nextIndex = widget.timerIndex + 1;
                           _oldTimerData != null
                               ? showPositiveToast("Data is updated successfully")
                               : showPositiveToast("Data is saved successfully");
                           Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                        }else{
+                        } else {
                           showColoredToast("There is some problem");
                         }
                         /*if (nextIndex < widget.maxIndex) {
@@ -736,19 +790,7 @@ class _TimerOptionState extends State<_TimerOption> {
                           ControllerDetails.navigateToPage(context, ControllerDetailsPageId.TIMER.nextPageId);
                         }*/
                       },
-                      fillColor: Color.fromRGBO(0, 84, 179, 1.0),
-                      splashColor: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          _oldTimerData != null ? "Update" : "Save",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
-                        ),
-                      ),
-                      shape: const StadiumBorder(),
-                    ),
-                    SizedBox.fromSize(
-                      size: Size(10.0, 10.0),
+                      _oldTimerData != null ? "Update" : "Save",
                     ),
                   ],
                 ),

@@ -95,6 +95,7 @@ class _StatusPageState extends State<StatusPage> {
                       style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
+                      sendSmsForAndroid("QC", widget.controllerId);
                       Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                     },
                   ),
@@ -109,6 +110,7 @@ class _StatusPageState extends State<StatusPage> {
                           ),
                           onPressed: () {
                             //ControllerDetails.navigateToNext(context);
+                            //sendSmsForAndroid("QE", widget.controllerId);
                             Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                           },
                         )
@@ -124,6 +126,7 @@ class _StatusPageState extends State<StatusPage> {
                       style: TextStyle(fontSize: 20.0,color: Colors.white),
                     ),
                     onPressed: () {
+                      sendSmsForAndroid("QE", widget.controllerId);
                       Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                     },
                   ):SizedBox(

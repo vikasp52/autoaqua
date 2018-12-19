@@ -192,11 +192,13 @@ class _LoginState extends State<Login> {
                                 ),
                                 splashColor: Colors.amber,
                                 onPressed: () {
-                                  if (loginForm.currentState.validate()) {
-                                    _userValidation();
+                                  /*if (loginForm.currentState.validate()) {
+                                    //_userValidation();
+                                    Navigator.of(context).pushReplacement(HomePage.route());
                                   } else {
                                     showColoredToast("There is some problem with login");
-                                  }
+                                  }*/
+                                  Navigator.of(context).pushReplacement(HomePage.route());
                                 }),
                             FlatButton(
                                 onPressed: null,

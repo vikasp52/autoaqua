@@ -21,7 +21,9 @@ class ValvesModel {
   String _valves_FertlizerPostDelay;
   String _valves_ECSetp;
   String _valves_PHSetp;
+  String _valves_String;
   String _valves_DateCreated;
+
 
   ValvesModel(
       this.valves_controllerId,
@@ -45,6 +47,7 @@ class ValvesModel {
       this._valves_FertlizerPostDelay,
       this._valves_ECSetp,
       this._valves_PHSetp,
+      this._valves_String,
       this._valves_DateCreated);
 
   ValvesModel.map(dynamic obj) {
@@ -70,6 +73,7 @@ class ValvesModel {
     this._valves_FertlizerPostDelay = obj["valves_FertlizerPostDelay"];
     this._valves_ECSetp = obj["valves_ECSetp"];
     this._valves_PHSetp = obj["valves_PHSetp"];
+    this._valves_String = obj["valves_String"];
     this._valves_DateCreated = obj["valves_DateCreated"];
   }
 
@@ -97,6 +101,7 @@ class ValvesModel {
   String get valves_FertlizerPostDelay => _valves_FertlizerPostDelay;
   String get valves_ECSetp => _valves_ECSetp;
   String get valves_PHSetp => _valves_PHSetp;
+  String get valves_String => _valves_String;
   String get valves_DateCreated => _valves_DateCreated;
 
   Map<String, dynamic> toMap_Valves() {
@@ -122,6 +127,7 @@ class ValvesModel {
     map_Valves["valves_FertlizerPostDelay"] = _valves_FertlizerPostDelay;
     map_Valves["valves_ECSetp"] = _valves_ECSetp;
     map_Valves["valves_PHSetp"] = _valves_PHSetp;
+    map_Valves["valves_String"] = _valves_String;
     map_Valves["valves_DateCreated"] = _valves_DateCreated;
 
     if (_valvesId != null) {
@@ -153,6 +159,7 @@ class ValvesModel {
     this._valves_FertlizerPostDelay = map["valves_FertlizerPostDelay"];
     this._valves_ECSetp = map["valves_ECSetp"];
     this._valves_PHSetp = map["valves_PHSetp"];
+    this._valves_String = map["valves_String"];
     this._valves_DateCreated = map["valves_DateCreated"];
   }
 }
