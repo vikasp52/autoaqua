@@ -55,13 +55,7 @@ class _ValvesPageState extends State<ValvesPage> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Flexible(
-            child: Center(
-          child: Text(
-            widget.controllerName,
-            style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        )),
+        controllerName(widget.controllerName),
         Expanded(
           flex: 9,
           child: _maxProgramforValves == null || _maxProgramforValves == 0
@@ -75,17 +69,7 @@ class _ValvesPageState extends State<ValvesPage> {
                       itemCount: _maxProgramforValves,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          title: Card(
-                              color: Colors.lightBlueAccent.shade100,
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Text(
-                                  "PROGRAM ${index + 1}",
-                                  style: TextStyle(
-                                      //fontWeight: FontWeight.bold,
-                                      fontSize: 20.0),
-                                ),
-                              )),
+                          title: CommonList(index),
                           onTap: () => Navigator.of(context).push(
                                 _ValveOption.route(
                                     widget.controllerId, index, _maxProgramforValves, 0, widget.controllerName),
@@ -383,7 +367,7 @@ class _ValveOptionState extends State<_ValveOption> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   widget.controllerName,
-                  style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -455,14 +439,14 @@ class _ValveOptionState extends State<_ValveOption> {
                           Expanded(
                             flex: 5,
                             child: Center(
-                              child: integrationType == "0"
+                              child: integrationType == "2"
                                   ? Image.asset(
                                       "Images/ltr.png",
                                       height: 50.0,
                                       color: Color.fromRGBO(0, 84, 179, 1.0),
                                       width: 50.0,
                                     )
-                                  : integrationType == "1"
+                                  : integrationType == "0"
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Image.asset(

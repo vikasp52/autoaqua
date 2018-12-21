@@ -112,30 +112,19 @@ class ControllerDetailsState extends State<ControllerDetails> {
           },
         ),
       ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("Images/dashboardbackgroung.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-              child: Container(
-                //you can change opacity with color here(I used black) for background.
-                decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
-              ),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("Images/dashboardbackgroung.jpg"),
+            fit: BoxFit.cover,
           ),
-          Navigator(
-            key: _navigatorKey,
-            observers: [_ControllerDetailsNavObserver(this)],
-            onGenerateRoute: (RouteSettings settings) =>
-                (settings.isInitialRoute ? ControllerDetailsMainRoute(widget.controllerId) : null),
-          ),
-        ],
+        ),
+        child: Navigator(
+          key: _navigatorKey,
+          observers: [_ControllerDetailsNavObserver(this)],
+          onGenerateRoute: (RouteSettings settings) =>
+          (settings.isInitialRoute ? ControllerDetailsMainRoute(widget.controllerId) : null),
+        ),
       ),
       bottomNavigationBar: Hero(
         tag: 'controller-details-bottom-nav',
@@ -238,6 +227,147 @@ class _ControllerDetailsNavObserver extends NavigatorObserver {
   }
 }
 
+class SubmitPage extends StatefulWidget {
+
+  final int controllerID;
+  SubmitPage(this.controllerID);
+
+  @override
+  _SubmitPageState createState() => new _SubmitPageState();
+}
+
+class _SubmitPageState extends State<SubmitPage> {
+  bool submitting = false;
+  double progress = 0.0;
+
+  void toggleSubmitState() {
+    setState(() {
+      submitting = !submitting;
+    });
+  }
+
+  onChange(double val){
+    setState(() {
+      progress = val;
+      print("Val is : $val");
+    });
+  }
+
+  Future<void> _onSMSButtonPress() {
+    double _progress = 50.0;
+    var db = new DataBaseHelper();
+    return db.getStringData(widget.controllerID).then((stringData) {
+      if (stringData != null) {
+        for (int i = 0; i < stringData.length; i++) {
+          onChange(_progress + i);
+          print("Val is : $progress");
+          final model = stringData[i];
+          sleep(const Duration(seconds: 5));
+          print("String is ${model.controllerString}");
+          sendSmsForAndroid(model.controllerString, widget.controllerID);
+          showPositiveToast("SMS sent for ${model.stringType}");
+        }
+      } else {
+        showPositiveToast("No data avaliable to send sms.") ;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        "SEND STRING",
+        textAlign: TextAlign.center,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          RaisedButton(
+            onPressed: (){
+              toggleSubmitState();
+              sleep(const Duration(seconds: 1));
+              _onSMSButtonPress();
+              Navigator.of(context).pop();
+            },
+            color: Colors.green,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.textsms,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "Mobile SMS",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25.0,
+                    ),
+                  ),
+                  Text(
+                    "NOTE: This will send all values one by on via sms.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          //Image(image: new AssetImage("Images/loading.gif"),height: 40.0,width: 90.0,),
+          !submitting
+              ? RaisedButton(
+                  onPressed: () {},
+                  color: Colors.indigo,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.cloud_done,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "Cloud",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25.0,
+                          ),
+                        ),
+                        Text(
+                          "NOTE: This will send all values together via Internet.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
+            mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text("Please wait while we are sending the SMS...",textAlign: TextAlign.center,style: TextStyle(
+                      //color: Colors.indigo
+                    ),),
+                    Icon(Icons.textsms,color: Colors.indigo,),
+                    //Image(image: new AssetImage("Images/loading.gif"),height: 40.0,width: 90.0,)
+                  ],
+                )
+        ],
+      ),
+    );
+  }
+}
 
 class _ControllerDetailsMainPage extends StatefulWidget {
   final int controllerID;
@@ -321,150 +451,11 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
     });
   }
 
-  Widget Dialog(){
-    bool notprogress = true;
-
-    status(bool status) {
-      setState(() {
-        notprogress = status;
-      });
-    }
-
-    return AlertDialog(
-      title: Text(
-        "SEND STRING",
-        textAlign: TextAlign.center,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          notprogress?Text("Not in Progress"):Text("In Progress"),
-          notprogress
-              ? RaisedButton(
-            onPressed: () {},
-            color: Colors.indigo,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Icon(
-                    Icons.cloud_done,
-                    color: Colors.white,
-                  ),
-                  Text(
-                    "Cloud",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25.0,
-                    ),
-                  ),
-                  Text(
-                    "NOTE: This will send all values together via Internet.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-              : Text("Progress"),
-          SizedBox(
-            height: 10.0,
-          ),
-          RaisedButton(
-            onPressed: () {
-              setState(() {
-                status(false);
-              });
-              var db = new DataBaseHelper();
-              db.getStringData(widget.controllerID).then((stringData) {
-                if (stringData != null) {
-                  Timer(Duration(seconds: 3), () {
-                    print("Timer Delay");
-                  });
-                  for (int i = 0; i < stringData.length; i++) {
-                    final model = stringData[i];
-                    //print("Model1: $model");
-                    sleep(const Duration(seconds: 2));
-                    print("String is ${model.controllerString}");
-                    //sendSmsForAndroid(model.controllerString, widget.controllerID);
-                    //showPositiveToast("SMS sent");
-                  }
-                  setState(() {
-                    status(true);
-                  });
-                  print("Status true");
-                } else {
-                  showPositiveToast("No data avaliable to send sms.");
-                }
-              });
-              //Navigator.of(context).pop();
-              //List a = [1,2];
-              /*for (var i=0;i<a.length;i++){
-                    SmsSender sender = new SmsSender();
-                  SmsMessage message = new SmsMessage("+${918097250905}", a[i].toString());
-                  message.onStateChanged.listen((state) {
-                  if (state == SmsMessageState.Sending) {
-                  print("SMS is Sending!");
-                  CircularProgressIndicator();
-                  } else if (state == SmsMessageState.Sent) {
-                  print("SMS is Sent!");
-                  CircularProgressIndicator();
-                  } else if(state == SmsMessageState.Delivered){
-                    print("SMS is Delivered!");
-                  }else if(state == SmsMessageState.Fail){
-                    print("SMS is Fail!");
-                  }
-                  });
-                  sender.sendSms(message);
-
-                    const oneSec = const Duration(seconds:3);
-                    new Timer.periodic(oneSec, (Timer t) => sendSmsForAndroid(a[i].toString(), 1));
-                    print("SMS NO: $i & ${a[i]}");
-                    showPositiveToast("SMS Sent Successfully");
-                  }*/
-            },
-            color: Colors.green,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Icon(
-                    Icons.textsms,
-                    color: Colors.white,
-                  ),
-                  Text(
-                    "Mobile SMS",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25.0,
-                    ),
-                  ),
-                  Text(
-                    "NOTE: This will send all values one by on via sms.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialog();
+          return SubmitPage(widget.controllerID);
         });
   }
 }
@@ -539,25 +530,14 @@ class ControllerDetailsPageFrame extends StatefulWidget {
 class _ControllerDetailsPageFrameState extends State<ControllerDetailsPageFrame> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("Images/dashboardbackgroung.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-            child: Container(
-              //you can change opacity with color here(I used black) for background.
-              decoration: new BoxDecoration(color: Colors.white.withOpacity(0.2)),
-            ),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("Images/dashboardbackgroung.jpg"),
+          fit: BoxFit.cover,
         ),
-        widget.child
-      ],
+      ),
+      child: widget.child
     );
   }
 }

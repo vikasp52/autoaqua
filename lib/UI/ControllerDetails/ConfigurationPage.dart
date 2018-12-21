@@ -319,7 +319,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               Center(
                 child: Text(
                   widget.controllerName,
-                  style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                 ),
               ),
               commonDivider(),

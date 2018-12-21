@@ -1,3 +1,4 @@
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:flutter/material.dart';
 
 class ControllerItem extends StatelessWidget {
@@ -46,24 +47,17 @@ class ControllerItem extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return new ListTile(
-      leading: new CircleAvatar(
-        backgroundColor: Colors.cyan,
-        child: new Text(
+      leading: CircleAvatar(
+        backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
+        child:  Text(
           _itemName[0],
-          //"V",
-          style: new TextStyle(color: Colors.black),
+          style: new TextStyle(color: Colors.white),
         ),
       ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          new Text(_itemName, style: TextStyle(
-              color: Colors.black, fontWeight: FontWeight.bold
-          ),),
-
-        ],
-      ),
-      subtitle: new Text(_itemNumber, style: TextStyle(
+      title: Text(_itemName, style: TextStyle(
+          color: Colors.black, fontWeight: FontWeight.bold
+      ),),
+      subtitle: Text(_itemNumber, style: TextStyle(
           color: Colors.black, fontWeight: FontWeight.bold
       ),),
     );

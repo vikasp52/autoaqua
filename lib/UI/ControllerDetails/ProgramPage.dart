@@ -56,47 +56,32 @@ class _ProgramPageState extends State<ProgramPage> {
   Widget build(BuildContext context) {
     return ControllerDetailsPageFrame(
         child: Column(
-      children: <Widget>[
-        Flexible(
-            child: Center(
-          child: Text(
-            widget.controllerName,
-            style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        )),
-        Expanded(
-          flex: 8,
-          child: maxnumber == null || maxnumber == 0
-              ? Center(
-                  child: Text(
-                    "No program is added",
-                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: maxnumber,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Card(
-                          color: Colors.lightBlueAccent.shade100,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Text(
-                              "PROGRAM ${index + 1}",
-                              style: TextStyle(
-                                  //fontWeight: FontWeight.bold,
-                                  fontSize: 20.0),
-                            ),
-                          )),
-                      onTap: () => Navigator.of(context).push(
-                            _ProgramOption.route(index, maxnumber, widget.controllerId, widget.controllerName),
-                          ),
-                    );
-                  },
+          children: <Widget>[
+            controllerName(widget.controllerName),
+            Expanded(
+              flex: 8,
+              child: maxnumber == null || maxnumber == 0
+                  ? Center(
+                child: Text(
+                  "No program is added",
+                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                 ),
-        )
-      ],
-    ));
+              )
+                  : ListView.builder(
+                itemCount: maxnumber,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
+                    title:CommonList(index),
+                    onTap: () => Navigator.of(context).push(
+                      _ProgramOption.route(index, maxnumber, widget.controllerId, widget.controllerName),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        ));
   }
 }
 
@@ -443,7 +428,7 @@ class _ProgramOptionState extends State<_ProgramOption> {
                 Center(
                   child: Text(
                     widget.controllerName,
-                    style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                   ),
                 ),
                 commonDivider(),

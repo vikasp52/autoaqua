@@ -50,13 +50,7 @@ class _TimerPageState extends State<TimerPage> {
     return ControllerDetailsPageFrame(
       child: Column(
         children: <Widget>[
-          Flexible(
-              child: Center(
-            child: Text(
-              widget.controllerName,
-              style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          )),
+          controllerName(widget.controllerName),
           Expanded(
             flex: 9,
             child: _maxProgram == null || _maxProgram == 0
@@ -69,17 +63,7 @@ class _TimerPageState extends State<TimerPage> {
                     itemCount: _maxProgram,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        title: Card(
-                            color: Colors.lightBlueAccent.shade100,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Text(
-                                "PROGRAM ${index + 1}",
-                                style: TextStyle(
-                                    //fontWeight: FontWeight.bold,
-                                    fontSize: 20.0),
-                              ),
-                            )),
+                        title: CommonList(index),
                         onTap: () => Navigator.of(context).push(
                               _TimerOption.route(widget.controllerId, index, _maxProgram, widget.controllerName),
                             ),
@@ -300,7 +284,7 @@ class _TimerOptionState extends State<_TimerOption> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       widget.controllerName,
-                      style: TextStyle(fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

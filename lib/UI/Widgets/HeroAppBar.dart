@@ -29,7 +29,7 @@ class HeroAppBar extends StatelessWidget implements PreferredSizeWidget {
       tag: 'app-bar',
       child: Material(
         elevation: 4.0,
-        color: theme.primaryColor,
+        color: Color.fromRGBO(0, 84, 179, 1.0),
         child: Padding(
           padding: padding,
           child: MediaQuery.removePadding(

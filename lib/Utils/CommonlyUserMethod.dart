@@ -41,6 +41,40 @@ AppendThreeDigit(String eController) {
   return eController.padLeft(3, '0');
 }
 
+//Common list for Programs
+Widget CommonList(int index){
+  return Card(
+      color: Colors.blue,
+      shape: StadiumBorder(),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Text(
+          "PROGRAM ${index + 1}",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0),
+        ),
+      ));
+}
+
+//Controller Name
+Widget controllerName(name){
+  return Flexible(
+    child: Column(
+      children: <Widget>[
+        Flexible(
+            child: Center(
+              child: Text(
+                name,
+                style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
+              ),
+            )),
+      ],
+    ),
+  );
+}
+
 Widget LabelForTextBoxes(String label) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8.0),
@@ -96,7 +130,7 @@ void showColoredToast(String errormessage) {
 
 void showPositiveToast(String errormessage) {
   Fluttertoast.showToast(
-      msg: errormessage, timeInSecForIos: 4, toastLength: Toast.LENGTH_SHORT, bgcolor: "#008000", textcolor: '#ffffff');
+      msg: errormessage, timeInSecForIos: 4, toastLength: Toast.LENGTH_SHORT, bgcolor: "#ffffff", textcolor: '#000000');
 }
 
 //Close the App on back press

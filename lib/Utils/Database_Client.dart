@@ -161,7 +161,7 @@ class DataBaseHelper {
   initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentDirectory.path, "AutoAquaDB.db");
-    var ourDb = await openDatabase(path, version: 3, onCreate: _onConfigure);
+    var ourDb = await openDatabase(path, version: 1, onCreate: _onConfigure);
     return ourDb;
   }
 
@@ -171,8 +171,6 @@ class DataBaseHelper {
     // Controller Table
     await db.execute(
         "CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $columnItemName TEXT, $columnItemNumber TEXT, $columnDateCreated TEXT)");
-
-    print("Created " + tableName);
 
     // Configuration Table
     await db.execute("""
@@ -194,7 +192,7 @@ class DataBaseHelper {
         $configTotalValvesCol TEXT,
         $configRemaningValvesCol TEXT,
         $configfoggerDelayCol TEXT,
-        FOREIGN KEY (controllerId) REFERENCES $tableName (id))
+        CONSTRAINT controllerId_FK FOREIGN KEY (controllerId) REFERENCES $tableName(id) ON DELETE CASCADE)
         """);
     print("Table is created for Config");
 
@@ -205,7 +203,7 @@ class DataBaseHelper {
       $slave_controllerIdCol INTEGER NOT NULL,
       $slave_mobnoCol TEXT,
       $slave_datecreatedCol TEXT,
-      FOREIGN KEY ($slave_controllerIdCol) REFERENCES $tableName (id))
+      FOREIGN KEY ($slave_controllerIdCol) REFERENCES $tableName (id) ON DELETE CASCADE)
       """);
     print("Slave table is created");
 
@@ -224,7 +222,7 @@ class DataBaseHelper {
         $program_fertilizationtypeCol TEXT,
         $program_DateCreatedCol TEXT,
         $program_StringCol TEXT,
-        FOREIGN KEY ($program_controllerIdCol) REFERENCES $tableName(id))
+        FOREIGN KEY ($program_controllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
         """);
     print("Program table is created");
 
@@ -255,7 +253,7 @@ class DataBaseHelper {
        $valves_PHSetp_Col TEXT,
        $valves_DateCreatedCol TEXT,
        $valves_StringCol TEXT,
-       FOREIGN KEY ($valves_controllerIdCol) REFERENCES $tableName(id))
+       FOREIGN KEY ($valves_controllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
       """);
 
     //Timer Table
@@ -283,7 +281,7 @@ class DataBaseHelper {
       $timer_FertDay_Sun_Col TEXT,
       $timer_StringCol TEXT,
       $timer_DateCreatedCol TEXT,
-      FOREIGN KEY ($timer_ControllerIdCol) REFERENCES $tableName(id))
+      FOREIGN KEY ($timer_ControllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
       """
     );
 
@@ -303,7 +301,7 @@ class DataBaseHelper {
       $fogger_maxHumCol TEXT,
       $fogger_dateCreated TEXT,
       $fogger_configStringCol TEXT,
-      FOREIGN KEY ($fogger_controllerCol) REFERENCES $tableName(id))
+      FOREIGN KEY ($fogger_controllerCol) REFERENCES $tableName(id) ON DELETE CASCADE)
       """
     );
 
@@ -315,7 +313,7 @@ class DataBaseHelper {
         $mobNo_controllerIdCol INTEGER NOT NULL,
         $mobNoCol TEXT,
         $mobNo_DateCreatedCol TEXT,
-        FOREIGN KEY ($mobNo_controllerIdCol) REFERENCES $tableName(id))
+        FOREIGN KEY ($mobNo_controllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
         """
         );
 
@@ -329,7 +327,7 @@ class DataBaseHelper {
         $stringTypeIdCol TEXT,
         $stringValveSeqNoCol TEXT,
         $controllerStringCol TEXT,
-        FOREIGN KEY ($stringControllerIdCol) REFERENCES $tableName(id))
+        FOREIGN KEY ($stringControllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
         """
         );
   }
@@ -709,6 +707,7 @@ print("updated: $count");
   //Delete Items
   Future<int> deleteItems(int id) async {
     var dbClient = await db;
+    await dbClient.execute("PRAGMA foreign_keys = ON");
     return await dbClient
         .delete(tableName, where: "$columnId = ?", whereArgs: [id]);
   }

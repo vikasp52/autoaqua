@@ -78,14 +78,7 @@ class _SetClockTimePageState extends State<SetClockTimePage> {
       child: Column(
         //mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(widget.controllerName,style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-            fontWeight: FontWeight.bold
-        ),),
-      ),
+          controllerName(widget.controllerName),
       commonDivider(),
       Expanded(
         flex: 9,

@@ -46,27 +46,29 @@ class _HomePageState extends State<HomePage> {
       onWillPop: () => willPop(context),
       child: Scaffold(
           appBar: AppBar(
-            iconTheme: new IconThemeData(color: Color.fromRGBO(0, 84, 179, 1.0)),
+            iconTheme: new IconThemeData(color: Colors.white),
             title: new Text(
               "Welcome",
               textAlign: TextAlign.left,
-              style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromRGBO(0, 84, 179, 1.0)),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
             actions: <Widget>[
               IconButton(
-                icon: Image.asset(
+                icon: Icon(Icons.notifications,color: Colors.white,),
+                /*Image.asset(
                   "Images/notify.png",
                   width: 25.0,
-                ),
+                ),*/
                 onPressed: null,
-                color: Colors.blueAccent,
+                //color: Colors.blueAccent,
               ),
               IconButton(
-                icon: Image.asset(
+                icon: Icon(Icons.exit_to_app,color: Colors.white,),
+                /*Image.asset(
                   "Images/exit.png",
                   width: 25.0,
-                ),
+                ),*/
                 onPressed: (){
                   SharedPref().clearUserStatus();
                   //SharedPref().setUserStatus(false);
@@ -240,7 +242,7 @@ class _HomePageState extends State<HomePage> {
           bottomNavigationBar: new Theme(
             data: Theme.of(context).copyWith(
                 // sets the background color of the `BottomNavigationBar`
-                canvasColor: Color.fromRGBO(0, 73, 186, 1.0),
+                canvasColor: Color.fromRGBO(0, 84, 179, 1.0),
                 // sets the active color of the `BottomNavigationBar` if `Brightness` is light
                 primaryColor: Colors.green,
                 textTheme: Theme.of(context).textTheme.copyWith(
@@ -257,7 +259,7 @@ class _HomePageState extends State<HomePage> {
               },
               items: [
                 BottomNavigationBarItem(
-                    icon: new Icon(Icons.dashboard), title: new Text('Dashboard'), backgroundColor: Colors.blue),
+                    icon: new Icon(Icons.dashboard), title: new Text('Dashboard'), backgroundColor: Color.fromRGBO(0, 84, 179, 1.0)),
                 BottomNavigationBarItem(
                   icon: new Icon(Icons.control_point_duplicate),
                   title: new Text('Controller'),

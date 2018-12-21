@@ -48,6 +48,48 @@ class _ControllerState extends State<Controller> {
     });
   }
 
+  //Method to delete the controller
+  deleteController(index){
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Row(
+            children: <Widget>[
+              Icon(Icons.delete),
+              Text("Delete Controller")
+            ],
+          ),
+          content: new Text("Are you sure you want to delete this controller?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+             FlatButton(
+              child: new Text("OK",style: TextStyle(
+                color: Colors.white
+              ),),
+              color: Colors.redAccent,
+              onPressed: () {
+                _deleteToDo(_itemList[index].id, index);
+                Navigator.of(context).pop();
+                showPositiveToast("Deleted Succesfully");
+              },
+            ),
+             FlatButton(
+               child: new Text("CLOSE",style: TextStyle(
+                   color: Colors.white
+               ),),
+               color: Colors.green,
+               onPressed: () {
+                 Navigator.of(context).pop();
+               },
+             ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -99,49 +141,22 @@ class _ControllerState extends State<Controller> {
                                   return new Card(
                                       color: Colors.white,
                                       child: InkWell(
-                                        onDoubleTap:  (){
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              // return object of type Dialog
-                                              return AlertDialog(
-                                                title: new Text("Delete Controller"),
-                                                content: new Text("Are you sure you want to delete this controller?"),
-                                                actions: <Widget>[
-                                                  // usually buttons at the bottom of the dialog
-                                                  new FlatButton(
-                                                    child: new Text("Close"),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                  new FlatButton(
-                                                    child: new Text("Ok"),
-                                                    onPressed: () {
-                                                      _deleteToDo(_itemList[index].id, index);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                          //_showDialog();
-                                          //_deleteToDo(_itemList[index].id, index);
-                                        },
                                         child: new ListTile(
                                           title: _itemList[index],
-                                          onLongPress: () =>
-                                              _updateItem(context, _itemList[index], index),
-                                          /*trailing: new Listener(
-                                      //key: new Key(_itemList[index].itemName),
-                                      child: new Icon(
-                                        Icons.delete,
-                                        color: Colors.redAccent,
-                                      ),
-                                      onPointerDown: (pointerEvent) => {}
-                                         // _deleteToDo(_itemList[index].id, index),
-                                    ),*/
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              IconButton(icon: Icon(Icons.edit,color: Color.fromRGBO(0, 84, 179, 1.0),), onPressed: (){
+                                                print("Edit Click");
+                                                _updateItem(context, _itemList[index], index);
+                                              }),
+                                              //SizedBox(width: 20.0,),
+                                              IconButton(icon: Icon(Icons.delete,color: Color.fromRGBO(0, 84, 179, 1.0),), onPressed: (){
+                                                print("Delete Click");
+                                                deleteController(index);
+                                              })
+                                            ],
+                                          ),
                                           onTap: () => Navigator.of(context).push(
                                               ControllerDetails.route(_itemList[index].id,_itemList[index].itemName)
                                           ),
@@ -165,7 +180,12 @@ class _ControllerState extends State<Controller> {
 
   void _showFormDialog() {
     var alert = new AlertDialog(
-      title: Text("Add new Controller"),
+      title: Row(
+        children: <Widget>[
+          Icon(Icons.add),
+          Text("Add new Controller"),
+        ],
+      ),
       content: Row(
         children: <Widget>[
           new Expanded(
@@ -237,7 +257,7 @@ class _ControllerState extends State<Controller> {
               }
             },
             fillColor: Colors.green,
-            child: Text("Save",style: TextStyle(
+            child: Text("SAVE",style: TextStyle(
               color: Colors.white
             ),
             )
@@ -245,7 +265,7 @@ class _ControllerState extends State<Controller> {
          RawMaterialButton(
             onPressed: () => Navigator.pop(context),
             fillColor: Colors.red,
-            child: Text("Cancel",style: TextStyle(
+            child: Text("CANCEL",style: TextStyle(
               color: Colors.white
             ),
             )
@@ -263,7 +283,12 @@ class _ControllerState extends State<Controller> {
     _textEditingControler.text = itemList.itemName;
     _textEditingControlerNumber.text = itemList.itemNumber;
     var alertUpdate = new AlertDialog(
-      title: new Text("Update Controller"),
+      title: Row(
+        children: <Widget>[
+          Icon(Icons.edit),
+          Text("Update Controller"),
+        ],
+      ),
       content: Row(
         children: <Widget>[
           new Expanded(
@@ -343,11 +368,12 @@ class _ControllerState extends State<Controller> {
                 _textEditingControler.clear();
                 _textEditingControlerNumber.clear();
                 Navigator.pop(context);
+                showPositiveToast("Updated Succesfully");
 
               }
             },
             fillColor: Colors.green,
-            child: Text("Save",style: TextStyle(
+            child: Text("SAVE",style: TextStyle(
                 color: Colors.white
             ),
             )
@@ -359,7 +385,7 @@ class _ControllerState extends State<Controller> {
               _textEditingControlerNumber.clear();
             },
              fillColor: Colors.red,
-             child: Text("Cancel",style: TextStyle(
+             child: Text("CANCEL",style: TextStyle(
                  color: Colors.white
              ),
              )

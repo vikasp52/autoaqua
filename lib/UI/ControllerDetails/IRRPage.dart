@@ -38,15 +38,7 @@ class _IRRPageState extends State<IRRPage> {
       hasBackground: false,
       child: Column(
         children: <Widget>[
-          Flexible(
-            child: Center(
-              child: Text(widget.controllerName,style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),),
-            ),
-          ),
+          controllerName(widget.controllerName),
           commonDivider(),
           Expanded(
             flex: 9,

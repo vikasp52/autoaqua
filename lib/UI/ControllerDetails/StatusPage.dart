@@ -61,22 +61,11 @@ class _StatusPageState extends State<StatusPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return ControllerDetailsPageFrame(
       child: Column(
         children: <Widget>[
-          Flexible(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(widget.controllerName,style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold
-                ),),
-              ),
-            ),
-          ),
+          controllerName(widget.controllerName),
           commonDivider(),
           Expanded(
             flex: 8,

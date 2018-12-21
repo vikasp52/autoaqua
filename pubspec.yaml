@@ -74,6 +74,7 @@ flutter:
      - Images/jjlogo.png
      - Images/AutoAquaLogo.gif
      - Images/splashbackground.jpeg
+     - Images/loading.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

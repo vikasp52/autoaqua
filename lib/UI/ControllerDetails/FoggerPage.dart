@@ -175,8 +175,8 @@ class _FoggerPageState extends State<FoggerPage> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(widget.controllerName,style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+                    fontSize: 30.0,
+                    color: Color.fromRGBO(0, 84, 179, 1.0),
                     fontWeight: FontWeight.bold
                 ),),
               ),
