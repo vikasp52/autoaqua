@@ -1,10 +1,9 @@
-import 'package:autoaqua/UI/Controller.dart';
 import 'package:autoaqua/UI/DashBoardPage.dart';
+import 'package:autoaqua/UI/HeadUnit.dart';
 import 'package:autoaqua/UI/TopLevel/LoginPage.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/sharedPref.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 class HomePageRoute extends MaterialPageRoute {
   HomePageRoute()
@@ -25,7 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currenTab = 0;
   DashboardPage one;
-  Controller two;
+  HeadUnit two;
   Profile three;
   List<Widget> pages;
   Widget currentPage;
@@ -33,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     one = DashboardPage();
-    two = Controller();
+    two = HeadUnit();
     three = Profile();
     pages = [one, two, three];
     currentPage = one;
@@ -262,7 +261,7 @@ class _HomePageState extends State<HomePage> {
                     icon: new Icon(Icons.dashboard), title: new Text('Dashboard'), backgroundColor: Color.fromRGBO(0, 84, 179, 1.0)),
                 BottomNavigationBarItem(
                   icon: new Icon(Icons.control_point_duplicate),
-                  title: new Text('Controller'),
+                  title: new Text('Head Unit'),
                 ),
                 BottomNavigationBarItem(
                   icon: new Icon(Icons.repeat_one),
@@ -308,17 +307,6 @@ class _HomePageState extends State<HomePage> {
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(18.0),
-      child: Container(
-        color: Colors.green,
-        child: Center(
-          child: Text(
-            "Under Development",
-            style: TextStyle(fontSize: 30.0),
-          ),
-        ),
-      ),
-    );
+    return Container();
   }
 }

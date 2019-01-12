@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:autoaqua/Model/ConfigurationModel.dart';
 import 'package:autoaqua/Model/ControllerItems.dart';
 import 'package:autoaqua/Model/FoggerModel.dart';
+import 'package:autoaqua/Model/HeadUnitModel.dart';
 import 'package:autoaqua/Model/MobNoModel.dart';
 import 'package:autoaqua/Model/ProgramModel.dart';
 import 'package:autoaqua/Model/StringModel.dart';
@@ -16,9 +17,16 @@ class DataBaseHelper {
   static final DataBaseHelper _instance = new DataBaseHelper.internal();
   factory DataBaseHelper() => _instance;
 
+  //Head Unit variable
+  final String tableHeadUnit = "HeadUnitTable";
+  final String HUIdcol = "HUId";
+  final String HUNameCol = "HUName";
+  final String HUCreatedDateCol = "HUCreatedDate";
+
   //Controller Variable
   final String tableName = "ControllerTable";
   final String columnId = "id";
+  final String columnHUId = "columnHUId";
   final String columnItemName = "itemName";
   final String columnItemNumber = "itemNumber";
   final String columnDateCreated = "dateCreated";
@@ -168,9 +176,25 @@ class DataBaseHelper {
   void _onConfigure(Database db, int version) async {
     await db.execute("PRAGMA foreign_keys = ON");
 
+    //Head Unit Table
+    await db.execute("""
+    CREATE TABLE $tableHeadUnit(
+    $HUIdcol INTEGER PRIMARY KEY AUTOINCREMENT,
+    $HUNameCol TEXT,
+    $HUCreatedDateCol TEXT)
+    """
+    );
+
     // Controller Table
     await db.execute(
-        "CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $columnItemName TEXT, $columnItemNumber TEXT, $columnDateCreated TEXT)");
+        """
+        CREATE TABLE $tableName(
+        id INTEGER PRIMARY KEY, 
+        $columnHUId INTEGER NOT NULL, 
+        $columnItemName TEXT, 
+        $columnItemNumber TEXT, 
+        $columnDateCreated TEXT)
+        """);
 
     // Configuration Table
     await db.execute("""
@@ -330,6 +354,13 @@ class DataBaseHelper {
         FOREIGN KEY ($stringControllerIdCol) REFERENCES $tableName(id) ON DELETE CASCADE)
         """
         );
+  }
+
+  // Insertion into HeadUnit
+  Future<int> saveHUItem(HUModel item) async {
+    var dbClient = await db;
+    int res = await dbClient.insert("$tableHeadUnit", item.toMap());
+    return res;
   }
 
   // Insertion into Controller
@@ -503,10 +534,18 @@ print("updated: $count");
   }
 
 //Get data for Controller
-  Future<List> getItems() async {
+  Future<List> getItems(int HUId) async {
+    var dbClient = await db;
+    var result = await dbClient.rawQuery("SELECT * FROM $tableName WHERE $columnHUId = $HUId");
+    print("DataBase Table \n $result");
+    return result.toList();
+  }
+
+  //Get data for Controller
+  Future<List> getALLItems() async {
     var dbClient = await db;
     var result = await dbClient.rawQuery("SELECT * FROM $tableName");
-    print("DataBase Table \n $result");
+    print("ALL Data for Controller Table \n $result");
     return result.toList();
   }
 
@@ -520,6 +559,14 @@ print("updated: $count");
     return maxprogramcount;
   }
 */
+
+  //Get data for Hub Unit
+  Future<List> getHeadUnitItems() async {
+    var dbClient = await db;
+    var result = await dbClient.rawQuery("SELECT * FROM $tableHeadUnit");
+    print("Configuration DataBase Table \n $result");
+    return result.toList();
+  }
 
   //Get data for Configuration
   Future<List> getConfigItems() async {
@@ -542,6 +589,15 @@ print("updated: $count");
     var dbClient = await db;
     return Sqflite.firstIntValue(
         await dbClient.rawQuery("SELECT COUNT(*) FROM $tableName"));
+  }
+
+  // GET HUData
+  Future<HUModel> getHubUnitItem(int id) async {
+    var dbClient = await db;
+    var result =
+    await dbClient.rawQuery("SELECT * FROM $tableHeadUnit WHERE $HUIdcol = $id");
+    if (result.length == 0) return null;
+    return HUModel.fromMap(result.first);
   }
 
   // GET CONTROLLERDATA
@@ -704,6 +760,21 @@ print("updated: $count");
         .toList(growable: false);
   }
 
+  //Delete HU Items
+  Future<int> deleteHUItems(int id) async {
+    var dbClient = await db;
+    return await dbClient
+        .delete(tableHeadUnit, where: "$HUIdcol = ?", whereArgs: [id]);
+  }
+
+  //Call this method if Item is deleted from HU
+  Future<int> deleteControllerItems(int id) async {
+    var dbClient = await db;
+    await dbClient.execute("PRAGMA foreign_keys = ON");
+    return await dbClient
+        .delete(tableName, where: "$columnHUId = ?", whereArgs: [id]);
+  }
+
   //Delete Items
   Future<int> deleteItems(int id) async {
     var dbClient = await db;
@@ -712,10 +783,40 @@ print("updated: $count");
         .delete(tableName, where: "$columnId = ?", whereArgs: [id]);
   }
 
+  //Update HU Item
+  Future<int> updateHUItems(HUModel item) async {
+    var dbClient = await db;
+    return await dbClient.update("$tableHeadUnit", item.toMap(),
+        where: "$HUIdcol = ?", whereArgs: [item.HUId]);
+  }
+
+  //Update controller Item
   Future<int> updateItems(ControllerItem item) async {
     var dbClient = await db;
     return await dbClient.update("$tableName", item.toMap(),
         where: "$columnId = ?", whereArgs: [item.id]);
+  }
+
+  //Get the HU data to shoe in dropdown
+  Future<List<String>> getHUDataAsString() async {
+    var dbClient = await db;
+
+    var results = await dbClient.rawQuery('SELECT $HUNameCol FROM $tableHeadUnit');
+
+    return results.map((Map<String, dynamic> row) {
+      return row["$HUNameCol"] as String;
+    }).toList();
+  }
+
+  //Get the Controller data to shoe in dropdown
+  Future<List<String>> getControllerDataAsString(String selectedHU) async {
+    var dbClient = await db;
+
+    var results = await dbClient.rawQuery('SELECT $columnItemName FROM $tableName WHERE $columnHUId = $selectedHU');
+
+    return results.map((Map<String, dynamic> row) {
+      return row["$columnItemName"] as String;
+    }).toList();
   }
 
   Future close() async {

@@ -1,33 +1,22 @@
-import 'dart:ui';
-import 'package:autoaqua/Utils/APICallMethods.dart';
-import 'package:autoaqua/Utils/sharedPref.dart';
-import 'package:http/http.dart' as http;
-import 'package:autoaqua/Model/ControllerItems.dart';
-import 'package:autoaqua/UI/ControllerDetails/ControllerDetails.dart';
+import 'package:autoaqua/Model/HeadUnitModel.dart';
+import 'package:autoaqua/UI/Controller.dart';
+import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/Database_Client.dart';
 import 'package:flutter/material.dart';
-import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 
-class Controller extends StatefulWidget {
-
-  const Controller({
-    Key key,
-    @required this.HUId,
-  }) : super(key: key);
-
-  final int HUId;
-
+class HeadUnit extends StatefulWidget {
   @override
-  _ControllerState createState() => _ControllerState();
+  _HeadUnitState createState() => _HeadUnitState();
 }
 
-class _ControllerState extends State<Controller> {
+class _HeadUnitState extends State<HeadUnit> {
+
   final TextEditingController _textEditingControler = new TextEditingController();
   final TextEditingController _textEditingControlerNumber = new TextEditingController();
   var db = new DataBaseHelper();
-  final List<ControllerItem> _itemList = <ControllerItem>[];
+  final List<HUModel> _itemHUList = <HUModel>[];
+  int saveItemId;
 
-  APIMethods apiMethods = APIMethods();
   Future _loading;
 
   final _formKey = GlobalKey<FormState>();
@@ -38,17 +27,16 @@ class _ControllerState extends State<Controller> {
     _readTodoList();
   }
 
-  void _handleSubmitted(int HUId,String text, String number) async {
+  void _handleSubmitted(String text, String number) async {
 //    _textEditingControler.clear();
 //    _textEditingControlerNumber.clear();
 
-    ControllerItem doItems = new ControllerItem(HUId, text, number, dateFormatted());
-    int saveItemId = await db.saveItem(doItems);
-
-    ControllerItem addedItems = await db.getItem(saveItemId);
+    HUModel doItems = new HUModel(text, dateFormatted());
+    saveItemId = await db.saveHUItem(doItems);
+    HUModel addedItems = await db.getHubUnitItem(saveItemId);
 
     setState(() {
-      _itemList.add(addedItems);
+      _itemHUList.add(addedItems);
     });
   }
 
@@ -72,7 +60,7 @@ class _ControllerState extends State<Controller> {
               ),
               color: Colors.redAccent,
               onPressed: () {
-                _deleteToDo(_itemList[index].id, index);
+                _deleteToDo(_itemHUList[index].HUId, index);
                 Navigator.of(context).pop();
                 showPositiveToast("Deleted Succesfully");
               },
@@ -95,11 +83,21 @@ class _ControllerState extends State<Controller> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text("New Controller"),
-        backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
-      ),
+
+    return buildHUContent(context);
+    /*return FutureBuilder(
+      future: _readTodoList(),
+        builder: (context, snapshot){
+          if(snapshot.connectionState == ConnectionState.done){
+            return buildHUContent(context);
+          }else{
+            return Center(child: CircularProgressIndicator());
+          }
+        });*/
+  }
+
+  Widget buildHUContent(BuildContext context){
+    return Scaffold(
       backgroundColor: Colors.grey.shade200.withOpacity(0.8),
       body: Container(
         decoration: BoxDecoration(
@@ -109,7 +107,7 @@ class _ControllerState extends State<Controller> {
           ),
         ),
         child: Center(
-          child: _itemList.length == 0?Column(
+          child: _itemHUList.length == 0?Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -125,7 +123,7 @@ class _ControllerState extends State<Controller> {
                 //color: Colors.blueAccent,
                 child: IconButton(icon: Icon(Icons.add,size: 30.0,color: Colors.white,), onPressed: ()=>_showFormDialog()),
               ),
-              Text("Add new Controller to get started.",style: TextStyle(
+              Text("Add new HeadUnit to get started.",style: TextStyle(
                   color: Colors.black
               ),)
             ],
@@ -154,7 +152,7 @@ class _ControllerState extends State<Controller> {
                     label: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(
-                        "ADD NEW CONTROLLER",
+                        "ADD NEW HEAD UNIT",
                         style: TextStyle(fontSize: 20.0, color: Colors.white),
                       ),
                     )),
@@ -169,44 +167,46 @@ class _ControllerState extends State<Controller> {
                       Flexible(
                         child:ListView.builder(
                             reverse: false,
-                            itemCount: _itemList.length,
+                            itemCount: _itemHUList.length,
                             itemBuilder: (_, int index) {
                               return new Card(
                                   color: Colors.white,
                                   child: InkWell(
                                     child: new ListTile(
-                                      title: _itemList[index],
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          IconButton(
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Color.fromRGBO(0, 84, 179, 1.0),
-                                              ),
-                                              onPressed: () {
-                                                print("Edit Click");
-                                                _updateItem(context, _itemList[index], index);
-                                              }),
-                                          //SizedBox(width: 20.0,),
-                                          IconButton(
-                                              icon: Icon(
-                                                Icons.delete,
-                                                color: Color.fromRGBO(0, 84, 179, 1.0),
-                                              ),
-                                              onPressed: () {
-                                                print("Delete Click");
-                                                deleteController(index);
-                                              })
-                                        ],
-                                      ),
-                                      onTap: () => Navigator.of(context).push(
-                                          ControllerDetails.route(_itemList[index].id, _itemList[index].itemName)),
+                                        title: _itemHUList[index],
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            IconButton(
+                                                icon: Icon(
+                                                  Icons.edit,
+                                                  color: Color.fromRGBO(0, 84, 179, 1.0),
+                                                ),
+                                                onPressed: () {
+                                                  print("Edit Click");
+                                                  _updateItem(context, _itemHUList[index], index);
+                                                }),
+                                            //SizedBox(width: 20.0,),
+                                            IconButton(
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Color.fromRGBO(0, 84, 179, 1.0),
+                                                ),
+                                                onPressed: () {
+                                                  print("Delete Click");
+                                                  deleteController(index);
+                                                })
+                                          ],
+                                        ),
+                                        onTap: () async{
+                                          await print("Saved item id of HU: ${_itemHUList[index].HUId}");
+                                          await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Controller(HUId: _itemHUList[index].HUId)));
+                                        }
                                     ),
                                   ));
                             }),
                       ),
-                      new Divider(
+                      Divider(
                         height: 1.0,
                       )
                     ],
@@ -221,6 +221,7 @@ class _ControllerState extends State<Controller> {
           onPressed: _showFormDialog,
         )*/
     );
+
   }
 
   void _showFormDialog() {
@@ -228,7 +229,7 @@ class _ControllerState extends State<Controller> {
       title: Row(
         children: <Widget>[
           Icon(Icons.add),
-          Text("Add new Controller"),
+          Text("Add new Head Unit"),
         ],
       ),
       content: Row(
@@ -242,7 +243,7 @@ class _ControllerState extends State<Controller> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Controller Name",
+                      "HeadUnit Name",
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -259,27 +260,6 @@ class _ControllerState extends State<Controller> {
                       autofocus: true,
                       decoration: new InputDecoration(border: OutlineInputBorder()),
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Controller Mob No.",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    TextFormField(
-                      style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Please enter Controller Number";
-                        }
-                      },
-                      controller: _textEditingControlerNumber,
-                      autofocus: true,
-                      decoration: new InputDecoration(border: OutlineInputBorder()),
-                    ),
                   ],
                 ),
               ),
@@ -291,8 +271,9 @@ class _ControllerState extends State<Controller> {
         RawMaterialButton(
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                _handleSubmitted(widget.HUId,_textEditingControler.text, _textEditingControlerNumber.text);
-                await print("LoginToken ${SharedPref().getToken()}");
+                _handleSubmitted(_textEditingControler.text, _textEditingControlerNumber.text);
+                //await print("LoginToken ${SharedPref().getToken()}");
+                print("Saved item id of HU: $saveItemId");
                 //apiMethods.saveDataToServer(_textEditingControler.text, _textEditingControlerNumber.text);
                 _textEditingControler.clear();
                 _textEditingControlerNumber.clear();
@@ -320,9 +301,8 @@ class _ControllerState extends State<Controller> {
         });
   }
 
-  _updateItem(_, ControllerItem itemList, int index) {
-    _textEditingControler.text = itemList.itemName;
-    _textEditingControlerNumber.text = itemList.itemNumber;
+  _updateItem(_, HUModel itemList, int index) {
+    _textEditingControler.text = itemList.HUName;
     var alertUpdate = new AlertDialog(
       title: Row(
         children: <Widget>[
@@ -358,27 +338,6 @@ class _ControllerState extends State<Controller> {
                       autofocus: true,
                       decoration: new InputDecoration(border: OutlineInputBorder()),
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Controller Mob No.",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    TextFormField(
-                      style: TextStyle(fontSize: 20.0, color: Colors.black),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Please enter Controller Number";
-                        }
-                      },
-                      controller: _textEditingControlerNumber,
-                      autofocus: true,
-                      decoration: new InputDecoration(border: OutlineInputBorder()),
-                    ),
                   ],
                 ),
               ),
@@ -390,18 +349,16 @@ class _ControllerState extends State<Controller> {
         RawMaterialButton(
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                ControllerItem newItemUpdated = ControllerItem.fromMap({
-                  "columnHUId":widget.HUId,
-                  "itemName": _textEditingControler.text,
-                  "itemNumber": _textEditingControlerNumber.text,
-                  "dateCreated": dateFormatted(),
-                  "id": itemList.id
+                HUModel newItemUpdated = HUModel.fromMap({
+                  "HUName": _textEditingControler.text,
+                  "HUCreatedDate": dateFormatted(),
+                  "HUId": itemList.HUId
                 });
 
                 //Redrawing the Screen
                 //apiMethods.updateControllerOnServer(_textEditingControler.text, _textEditingControlerNumber.text,itemList.id);
                 _handelSubmittedUpdate(index, newItemUpdated);
-                await db.updateItems(newItemUpdated); // Updating the Item*/
+                await db.updateHUItems(newItemUpdated); // Updating the Item*/
                 setState(() {
                   _readTodoList(); // Redrawing the screen with all item saved in db
                 });
@@ -437,97 +394,34 @@ class _ControllerState extends State<Controller> {
   }
 
   _readTodoList() async {
-    List items = await db.getItems(widget.HUId);
-    await db.getALLItems();
+    List items = await db.getHeadUnitItems();
     items.forEach((addedItems) {
-      ControllerItem todoitems = ControllerItem.fromMap(addedItems);
+      HUModel todoitems = HUModel.fromMap(addedItems);
 
       setState(() {
-        _itemList.add(todoitems);
+        _itemHUList.add(todoitems);
       });
-
-      print("DB items: ${todoitems.itemName}");
-      print("DB items: ${todoitems.itemNumber}");
+      print("DB items: ${todoitems.HUName}");
+      print("DB items: ${todoitems.HUCreatedDate}");
     });
   }
 
   _deleteToDo(int id, int index) async {
-    await db.deleteItems(id);
+    await db.deleteHUItems(id);
+    await db.deleteControllerItems(id);
+    print("Deleted is $id");
     setState(() {
-      _itemList.removeAt(index);
+      _itemHUList.removeAt(index);
     });
   }
 
-  void _handelSubmittedUpdate(int index, ControllerItem todoItemList) async {
+  void _handelSubmittedUpdate(int index, HUModel todoItemList) async {
     setState(() {
-      _itemList.removeWhere((element) {
-        _itemList[index].itemName == todoItemList.itemName;
-        _itemList[index].itemNumber == todoItemList.itemNumber;
+      _itemHUList.removeWhere((element) {
+        _itemHUList[index].HUName == todoItemList.HUName;
+        _itemHUList[index].HUCreatedDate == todoItemList.HUCreatedDate;
       });
       //_readTodoList();
     });
   }
-
-// Delete Controller
-/*void _showDialog() {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Delete Controller"),
-          content: new Text("Are you sure you want to delete this controller?"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            new FlatButton(
-              child: new Text("Ok"),
-              onPressed: () {
-                _deleteToDo(_itemList[index].id, index),
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }*/
 }
-
-//Custom Floating Button
-/*class CustomFloatingButton extends StatelessWidget {
-  CustomFloatingButton({@required this.onPressed});
-
-  final GestureTapCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-      fillColor: Colors.cyan,
-      splashColor: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 13.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const <Widget>[
-            Icon(Icons.add),
-            SizedBox(
-              width: 8.0,
-            ),
-            Text(
-              "ADD CONTROLLER",
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-      ),
-      onPressed: onPressed,
-      shape: const StadiumBorder(),
-    );
-  }
-}*/

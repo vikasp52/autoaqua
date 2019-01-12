@@ -110,9 +110,13 @@ class _EditNumberPageState extends State<EditNumberPage> {
             Center(
               child: RawMaterialButton(
                 onPressed: () {
-                  _saveMobNo();
-                  _oldnoModel != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
-                  ControllerDetails.navigateToNext(context);
+                  if(_mobNoController.text.length < 10){
+                    showColoredToast("Please enter valid mobile no");
+                  }else{
+                    _saveMobNo();
+                    _oldnoModel != null ? showPositiveToast("Data is updated successfully") : showColoredToast("Data is saved successfully");
+                    ControllerDetails.navigateToNext(context);
+                  }
                 },
                 fillColor: Color.fromRGBO(0, 84, 179, 1.0),
                 splashColor: Colors.white,

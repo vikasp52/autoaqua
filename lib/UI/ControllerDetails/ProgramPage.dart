@@ -207,31 +207,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
     String programString =
         "QP${AppendZero(programNo().toString())}${int.parse(_radioValueFlushType != null ? _radioValueFlushType.toString() : "0") + _radioValueIrrigation}${_NoOfValves.text == "1" ? 0 : _NoOfValves.text == "2" ? 1 : _NoOfValves.text == "3" ? 2 : _NoOfValves.text == "4" ? 2 : null}${AppendZero(_intervalController.text)}${AppendZero(_timeForControler.text)}>";
 
-    /*db.saveProgramString(widget.controllerId);
-    await db.getStrings(widget.controllerId);
-    await db.getStringData(widget.controllerId);
-    //saveUpdateStringData(widget.controllerId, programString);
-
-    if(_oldString == null){
-      StringModel saveStringData = new StringModel(
-          widget.controllerId,
-          programString,
-          dateFormatted());
-      await db.saveStrings(saveStringData);
-      await db.getStrings(widget.controllerId);
-      await db.getStringData(widget.controllerId);
-    }else{
-      StringModel saveStringData = new StringModel(
-          widget.controllerId,
-          programString,
-          dateFormatted(),
-          _oldString.stringId
-      );
-      await db.updateString(saveStringData);
-      await db.getStrings(widget.controllerId);
-      await db.getStringData(widget.controllerId);
-    }*/
-
     if (_oldProgram == null) {
       ProgramModel submitProgramData = new ProgramModel(
         widget.controllerId,
@@ -282,20 +257,6 @@ class _ProgramOptionState extends State<_ProgramOption> {
       String retVL2 = getStringFromList(pS2);
       print("All List: $retVL");
       print("All List: $retVL2");
-
-      //dynamic ab = json.decode(pS.toString());
-      //print(ab);
-     /* await db.getProgramString(widget.controllerId).then((pString){
-        setState(() {
-          List pS = pString;
-          print("ps: $pS");
-          for(int i =0; i<= pString.length; i++){
-            //final pData = pString[i];
-            //var pS = pData.program_String;
-            //print("ps: $pS && $pData");
-          }
-        });
-      });*/
     }
   }
 

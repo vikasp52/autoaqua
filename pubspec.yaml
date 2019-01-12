@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.4.3
   encrypt: ^0.2.0+2
   sms: ^0.2.4
+  charts_flutter: ^0.5.0
 
 dev_dependencies:
   flutter_test:

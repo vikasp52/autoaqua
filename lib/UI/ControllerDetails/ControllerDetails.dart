@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:autoaqua/UI/TopLevel/HomePage.dart';
 import 'package:sms/sms.dart';
 import 'package:autoaqua/UI/Controller.dart';
 import 'package:autoaqua/UI/ControllerDetails/ConfigurationPage.dart';
@@ -161,7 +162,7 @@ class ControllerDetailsState extends State<ControllerDetails> {
                       Icons.dashboard,
                       color: Colors.white,
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.of(context).pushReplacement(HomePage.route()),//Navigator.of(context).pop(),
                   ),
                   //IconButton(icon: Icon(Icons.search), onPressed: () {},),
                 ],

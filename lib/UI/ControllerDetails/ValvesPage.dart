@@ -193,19 +193,6 @@ class _ValveOptionState extends State<_ValveOption> {
           _ctrl_Tank[i].text = tankList[i];
         });
       }
-
-      /*_ctrl_ValveNo[0].value = TextEditingValue(text: valvesData.valves_VolveNo1);
-      noOfValves > 1 ? _ctrl_ValveNo[1].value = TextEditingValue(text: valvesData.valves_VolveNo2) : null;
-      noOfValves > 2 ? _ctrl_ValveNo[2].value = TextEditingValue(text: valvesData.valves_VolveNo3) : null;
-      noOfValves > 3 ? _ctrl_FieldNo[3].value = TextEditingValue(text: valvesData.valves_fieldNo_4) : null;
-      _ctrl_FieldNo[0].value = TextEditingValue(text: valvesData.valves_fieldNo_1);
-      noOfValves > 1 ? _ctrl_FieldNo[1].value = TextEditingValue(text: valvesData.valves_fieldNo_2) : null;
-      noOfValves > 2 ? _ctrl_FieldNo[2].value = TextEditingValue(text: valvesData.valves_fieldNo_3) : null;
-      noOfValves > 3 ? _ctrl_ValveNo[3].value = TextEditingValue(text: valvesData.valves_VolveNo4) : null;
-      _ctrl_Tank[0].value = TextEditingValue(text: valvesData.valves_tank_1);
-      _maxTanks > 1 ? _ctrl_Tank[1].value = TextEditingValue(text: valvesData.valves_tank_2) : null;
-      _maxTanks > 2 ? _ctrl_Tank[2].value = TextEditingValue(text: valvesData.valves_tank_3) : null;
-      _maxTanks > 3 ? _ctrl_Tank[3].value = TextEditingValue(text: valvesData.valves_tank_4) : null;*/
       _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
       _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerPreDelay);
       _postdelayController.value = TextEditingValue(text: valvesData.valves_FertlizerPostDelay);
@@ -213,9 +200,9 @@ class _ValveOptionState extends State<_ValveOption> {
       _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
     }
 
-    /* if (mounted) {
+     if (mounted) {
       setState(() {});
-    }*/
+    }
   }
 
   //Retun Program No for String.
