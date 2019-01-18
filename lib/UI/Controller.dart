@@ -35,7 +35,7 @@ class _ControllerState extends State<Controller> {
   @override
   void initState() {
     super.initState();
-    _readTodoList();
+    _loading = _readTodoList();
   }
 
   void _handleSubmitted(int HUId,String text, String number) async {
@@ -95,7 +95,19 @@ class _ControllerState extends State<Controller> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return FutureBuilder(
+        future: _loading,
+        builder: (context, snapshot){
+          if(snapshot.connectionState == ConnectionState.done){
+            return BuildControllerContent(context);
+          }else{
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
+   Widget BuildControllerContent(BuildContext context){
+    return Scaffold(
       appBar: AppBar(
         title: Text("New Controller"),
         backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
@@ -103,8 +115,8 @@ class _ControllerState extends State<Controller> {
       backgroundColor: Colors.grey.shade200.withOpacity(0.8),
       body: Container(
         decoration: BoxDecoration(
-          image: new DecorationImage(
-            image: new AssetImage("Images/dashboardbackgroung.jpg"),
+          image:  DecorationImage(
+            image: AssetImage("Images/dashboardbackgroung.jpg"),
             fit: BoxFit.cover,
           ),
         ),

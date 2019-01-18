@@ -93,7 +93,7 @@ class ConfigurationModel {
   String get ConfigfoggerDelay => _ConfigfoggerDelay;
 
   Map<String, dynamic> toDbMap() {
-    final map = new Map<String, dynamic>();
+    final map = Map<String, dynamic>();
     if (_configId != null) {
       map["configid"] = _configId;
     }

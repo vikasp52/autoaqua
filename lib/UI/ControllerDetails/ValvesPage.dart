@@ -123,7 +123,7 @@ class _ValveOptionState extends State<_ValveOption> {
   int _radioFertilizerProgrammingValue;
   DataBaseHelper dbh = DataBaseHelper();
   int noOfValves = 0;
-  var integrationType;
+  var irigationType;
   var fertlizationType;
   Future _loading;
   int _maxSequence = 9999999;
@@ -143,6 +143,7 @@ class _ValveOptionState extends State<_ValveOption> {
   APIMethods apiMethods = new APIMethods();
   String valveString;
 
+  //Fetch data from database to display
   Future<void> getDataToDisplay() async {
     final maxSeq = await dbh.getConfigDataForController(widget.controllerId);
     if (maxSeq != null) {
@@ -154,7 +155,7 @@ class _ValveOptionState extends State<_ValveOption> {
     final programData = await dbh.getProgramData(widget.controllerId, widget.valveIndex);
     if (programData != null) {
       noOfValves = programData.program_mode != null ? int.parse(programData.program_mode) : 0;
-      integrationType = programData.program_irrigationtype;
+      irigationType = programData.program_irrigationtype;
       fertlizationType = programData.program_fertilizationtype;
     }
 
@@ -248,14 +249,14 @@ class _ValveOptionState extends State<_ValveOption> {
 
   Future<void> _handelValvesDataSubmit() async {
     valveString =
-        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}$_radioFertilizerProgrammingValue${AppendZero(_ctrl_PHSetp.text)}>";
+        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}1${AppendZero(_ctrl_PHSetp.text)}>";
 
     if (_oldValveModel == null) {
       ValvesModel submitValvesData = new ValvesModel(
           widget.controllerId,
           widget.valveIndex,
           widget.sequenceIndex,
-          integrationType == "0" ? "Ltr" : "Time",
+          irigationType == "0" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
@@ -285,7 +286,7 @@ class _ValveOptionState extends State<_ValveOption> {
           widget.controllerId,
           widget.valveIndex,
           widget.sequenceIndex,
-          integrationType == "0" ? "Ltr" : "Time",
+          irigationType == "0" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
@@ -426,14 +427,14 @@ class _ValveOptionState extends State<_ValveOption> {
                           Expanded(
                             flex: 5,
                             child: Center(
-                              child: integrationType == "2"
+                              child: irigationType == "2"
                                   ? Image.asset(
                                       "Images/ltr.png",
                                       height: 50.0,
                                       color: Color.fromRGBO(0, 84, 179, 1.0),
                                       width: 50.0,
                                     )
-                                  : integrationType == "0"
+                                  : irigationType == "0"
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Image.asset(
@@ -508,7 +509,7 @@ class _ValveOptionState extends State<_ValveOption> {
             SizedBox(
               height: 10.0,
             ),
-            Row(
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
@@ -541,7 +542,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   ],
                 ),
               ],
-            ),
+            ),*/
             Center(
               child: showFertProgErrorMsg
                   ? Text(
@@ -576,7 +577,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 4,
                     child: TextFormField(
-                      maxLength: 3,
+                      maxLength: 6,
                       decoration: InputDecoration(counterText: "", hintText: "PRE", border: OutlineInputBorder()),
                       textAlign: TextAlign.center,
                       validator: (value) {
@@ -597,14 +598,14 @@ class _ValveOptionState extends State<_ValveOption> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 30.0),
-                    child: integrationType == "0"
+                    child: irigationType == "2"
                         ? Image.asset(
                             "Images/ltr.png",
                             height: 50.0,
                             color: Color.fromRGBO(0, 84, 179, 1.0),
                             width: 50.0,
                           )
-                        : integrationType == "1"
+                        : irigationType == "0"
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Image.asset(
@@ -624,7 +625,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 4,
                     child: TextFormField(
-                      maxLength: 3,
+                      maxLength: 6,
                       controller: _postdelayController,
                       decoration: InputDecoration(counterText: "", hintText: "POST", border: OutlineInputBorder()),
                       textAlign: TextAlign.center,
@@ -980,11 +981,11 @@ class _ValveOptionState extends State<_ValveOption> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                        maxLength: integrationType == "2" ? 6 : integrationType == "0" ? 3 : null,
+                        maxLength: irigationType == "2" ? 6 : irigationType == "0" ? 3 : null,
                         decoration: InputDecoration(
                           counterText: "",
                           border: OutlineInputBorder(),
-                          suffixText: integrationType == "2" ? " Ltr" : integrationType == "0" ? " Mins" : " ",
+                          suffixText: irigationType == "2" ? " Ltr" : irigationType == "0" ? " Mins" : " ",
                         ),
                         textAlign: TextAlign.center,
                         validator: (value) {

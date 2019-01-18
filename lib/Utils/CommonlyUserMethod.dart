@@ -114,6 +114,30 @@ Widget CommonTextField(TextEditingController controller, FormFieldValidator<Stri
   );
 }
 
+Widget TextFieldForECpH(TextEditingController controller, FormFieldValidator<String> validator,
+    [TextAlign textAlign = TextAlign.start, String suffixText, String prefixText]) {
+  return TextFormField(
+    textAlign: textAlign,
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+      BlacklistingTextInputFormatter(new RegExp('[\\|\\,-]')),
+    ],
+    controller: controller,
+    style: TextStyle(fontSize: 20.0, color: Colors.black),
+    validator: validator,
+    maxLength: 4,
+    decoration: new InputDecoration(
+      //labelText: "Total Programs per Day",
+      counterText: "",
+      suffixText: suffixText,
+      prefixText: prefixText,
+      border: OutlineInputBorder(),
+      fillColor: Colors.black,
+    ),
+  );
+}
+
+
 commonDivider() {
   return Padding(
     padding: const EdgeInsets.all(8.0),
@@ -211,3 +235,207 @@ updateStringData(controllerId, stringType, stringTypeId,valSeq, string) async {
   await db.updateConfigString(saveStringData);
   await db.getStringData(controllerId);
 }
+
+//Common Drawer
+Widget commonDrawer(){
+  return Drawer(
+    elevation: 3.0,
+    child: ListView(
+      children: <Widget>[
+        UserAccountsDrawerHeader(
+          accountName: Text("Welcome to AutoAqua",
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.0)),
+          decoration: BoxDecoration(color: Colors.cyan),
+          accountEmail: Text(
+            "vikasp613@gmail.com",
+            style: TextStyle(color: Colors.black, fontStyle: FontStyle.italic),
+          ),
+          currentAccountPicture: CircleAvatar(
+            child: Icon(Icons.person),
+          ),
+        ),
+        ListTile(
+          title: Text("How to use"),
+          leading: Icon(Icons.call_split),
+          onTap: () {
+            /*showDialog(
+              builder: (_) => new AlertDialog(
+                content: Container(
+                  //color: Colors.cyan,
+                  decoration: BoxDecoration(
+                    //color: Colors.cyan,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(0.0),
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Text(
+                          "Step 1:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          "Click on Add Button at the bottom. Dialog will appear then add your task and save it. \n",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        new Text(
+                          "Step 2:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          "By mistake, entered wrong details. No problem. long press the task, then pop up will appear. Update it and save again. \n",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        new Text(
+                          "Step 3:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          "Done with task, delete it by pressing delete icon in that task. \n",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );*/
+          },
+        ),
+        ListTile(
+          title: Text("Share"),
+          leading: Icon(Icons.share),
+          onTap: () {},
+        ),
+        ListTile(
+          title: Text("Rate us"),
+          leading: Icon(Icons.stars),
+          onTap: () {},
+        ),
+        ListTile(
+          title: Text("About us"),
+          leading: Icon(Icons.account_box),
+          onTap: () {
+           // Navigator.of(context).pop();
+            /*showDialog(
+              //context: context,
+              builder: (_) => new AlertDialog(
+                title: new Text("About us"),
+                content: Container(
+                  //color: Colors.cyan,
+                  decoration: BoxDecoration(
+                    //color: Colors.cyan,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(0.0),
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Text(
+                          "MyTask",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          "This is a simple mobile application to manage your day to day task. \n"
+                              "You can add you task one by one and delete it once you are done with that task. \n"
+                              "You can also update it by long press on that task. \n"
+                              "\n"
+                              "Write us: vikasp613@gmail.com \n"
+                              "\n"
+                              "Regards \nVikas Pandey",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );*/
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+
+//Appbar for ECpH AndroidViewController
+Widget CommonAppbar(text){
+  return AppBar(
+    backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
+    title: Text(text),
+  );
+}
+
+
+class CommonBodyStrecture extends StatefulWidget {
+  const CommonBodyStrecture({
+    Key key,
+    this.title,
+    @required this.child,
+    this.text
+  }) : super(key: key);
+
+  final String title;
+  final Widget child;
+  final String text;
+
+  @override
+  _CommonBodyStrectureState createState() => _CommonBodyStrectureState();
+}
+
+class _CommonBodyStrectureState extends State<CommonBodyStrecture> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CommonAppbar(widget.text),
+      body: Container(
+        height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("Images/dashboardbackgroung.jpg"),
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: widget.child
+      ),
+    );
+  }
+}
+

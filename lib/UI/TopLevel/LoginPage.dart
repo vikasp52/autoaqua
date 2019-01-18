@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:autoaqua/ECpH_Controller/UI/HomePage.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/sharedPref.dart';
 import 'package:http/http.dart' as http;
@@ -58,21 +59,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 250.0,
               ),
             ),
-            /*ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                child: Container(
-                  width: 250.0,
-                  height: 250.0,
-                  decoration: new BoxDecoration(
-                      color: Colors.grey.shade200.withOpacity(0.5)
-                  ),
-                  child: Image.asset(
-                    "Images/AutoAquaLogo.png",
-                  ),
-                ),
-              ),
-            ),*/
           ),
         ],
       ),
@@ -97,10 +83,17 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = new TextEditingController();
 
   var loginForm = GlobalKey<FormState>();
+  int _radioFertilizerProgrammingValue;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _handleRadioValueChange(int value) {
+    setState(() {
+      _radioFertilizerProgrammingValue = value;
+    });
   }
 
   @override
@@ -183,6 +176,43 @@ class _LoginState extends State<Login> {
                             SizedBox(
                               height: 20.0,
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "ECpH",
+                                      style: TextStyle(color: Colors.black, fontSize: 20.0),
+                                    ),
+                                    Radio(
+                                      value: 0,
+                                      //activeColor: Colors.white,
+                                      groupValue: _radioFertilizerProgrammingValue,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 20.0),
+                                Row(
+                                  children: <Widget>[
+                                    Radio(
+                                      value: 1,
+                                      //activeColor: Colors.white,
+                                      groupValue: _radioFertilizerProgrammingValue,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                    Text(
+                                      "IRR",
+                                      style: TextStyle(color: Colors.black, fontSize: 20.0),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20.0,
+                            ),
                             MaterialButton(
                                 textColor: Colors.white,
                                 color: Color.fromRGBO(0, 84, 179, 1.0),
@@ -198,7 +228,7 @@ class _LoginState extends State<Login> {
                                   } else {
                                     showColoredToast("There is some problem with login");
                                   }*/
-                                  Navigator.of(context).pushReplacement(HomePage.route());
+                                  Navigator.of(context).pushReplacement(_radioFertilizerProgrammingValue == 0?ECpHome.route():HomePage.route());
                                 }),
                             FlatButton(
                                 onPressed: null,

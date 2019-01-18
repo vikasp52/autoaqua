@@ -31,6 +31,7 @@ class IRRPage extends StatefulWidget {
 class _IRRPageState extends State<IRRPage> {
 
   APIMethods apiMethods = new APIMethods();
+  bool pauseStart = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +74,9 @@ class _IRRPageState extends State<IRRPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          new Icon(Icons.pause,color: Colors.white,size: 40.0,),
+                          Icon(pauseStart?Icons.play_arrow:Icons.pause,color: Colors.white,size: 40.0,),
                           Text(
-                            "PAUSE",
+                            "${pauseStart? "START":"PAUSE"}",
                             style: TextStyle(fontSize: 20.0,color: Colors.white),
                           ),
                         ],
@@ -152,6 +153,9 @@ class _IRRPageState extends State<IRRPage> {
           fontSize: 20.0,fontWeight: FontWeight.bold,)),
               onPressed: () {
                 //apiMethods.onOffPouseController(widget.controllerId, "2");
+                setState(() {
+                  pauseStart = !pauseStart;
+                });
                 sendSmsForAndroid("QW", widget.controllerId);
                 showPositiveToast("SMS Sent Successfully");
                 Navigator.of(context).pop();

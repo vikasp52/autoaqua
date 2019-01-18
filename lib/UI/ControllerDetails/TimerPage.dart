@@ -436,6 +436,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Sun = value;
                                   });
+                                  if(checkboxIntegrationDay_Sun == false){
+                                    setState(() {
+                                      checkboxFertDay_Sun = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -454,6 +459,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Mon = value;
                                   });
+                                  if(checkboxIntegrationDay_Mon == false){
+                                    setState(() {
+                                      checkboxFertDay_Mon = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -472,6 +482,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Tues = value;
                                   });
+                                  if(checkboxIntegrationDay_Tues == false){
+                                    setState(() {
+                                      checkboxFertDay_Tues = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -490,6 +505,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Wed = value;
                                   });
+                                  if(checkboxIntegrationDay_Wed == false){
+                                    setState(() {
+                                      checkboxFertDay_Wed = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -508,6 +528,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Thurs = value;
                                   });
+                                  if(checkboxIntegrationDay_Thurs == false){
+                                    setState(() {
+                                      checkboxFertDay_Thurs = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -526,6 +551,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Friday = value;
                                   });
+                                  if(checkboxIntegrationDay_Friday == false){
+                                    setState(() {
+                                      checkboxFertDay_Fri = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -544,6 +574,11 @@ class _TimerOptionState extends State<_TimerOption> {
                                   setState(() {
                                     checkboxIntegrationDay_Sat = value;
                                   });
+                                  if(checkboxIntegrationDay_Sat == false){
+                                    setState(() {
+                                      checkboxFertDay_Sat = false;
+                                    });
+                                  }
                                 },
                               ),
                               Text(
@@ -594,10 +629,10 @@ class _TimerOptionState extends State<_TimerOption> {
                                     onChanged: checkboxIntegrationDay_Mon == false
                                         ? null
                                         : (bool value) {
-                                            setState(() {
-                                              checkboxFertDay_Mon = value;
-                                            });
-                                          },
+                                      setState(() {
+                                        checkboxFertDay_Mon = value;
+                                      });
+                                    },
                                   ),
                                   Text(
                                     "Mon",

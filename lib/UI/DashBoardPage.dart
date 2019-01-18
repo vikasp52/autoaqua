@@ -19,23 +19,15 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final db = new DataBaseHelper();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _loadHUData();
-    // _loadControllerData(1);
-  }
-
   Future<void> _loadHUData() async {
     var HUdata = await db.getHUDataAsString();
-    //var ControllerData = await db.getControllerDataAsString(_selectedHUIndex.toString());
-    setState(() {
+    var ControllerData = await db.getControllerDataAsString(widget._selectedHUIndex.toString());
+    /*setState(() {
       widget._HUName = HUdata;
       // _ControllerName = ControllerData;
       print("HU Data is $widget.widget._HUName");
       print("HU Data is $widget._ControllerName");
-    });
+    });*/
   }
 
   Future _loadControllerData(int HUid) async {
@@ -46,6 +38,14 @@ class _DashboardPageState extends State<DashboardPage> {
         print("HU Data is $widget._ControllerName");
       });
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadHUData();
+    // _loadControllerData(1);
   }
 
   @override

@@ -14,7 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DataBaseHelper {
-  static final DataBaseHelper _instance = new DataBaseHelper.internal();
+  static final DataBaseHelper _instance = DataBaseHelper.internal();
   factory DataBaseHelper() => _instance;
 
   //Head Unit variable
@@ -606,7 +606,7 @@ print("updated: $count");
     var result =
         await dbClient.rawQuery("SELECT * FROM $tableName WHERE $columnId = $id");
     if (result.length == 0) return null;
-    return new ControllerItem.fromMap(result.first);
+    return ControllerItem.fromMap(result.first);
   }
 
   /*Future<int> getControllerNum(id)async{
@@ -623,7 +623,7 @@ print("updated: $count");
     var result = await dbClient.rawQuery(
         "SELECT * FROM $tableConfigName WHERE $controllerIdCol = $controllerId");
     if (result.length == 0) return null;
-    return new ConfigurationModel.fromDbMap(result.first);
+    return  ConfigurationModel.fromDbMap(result.first);
   }
 
 

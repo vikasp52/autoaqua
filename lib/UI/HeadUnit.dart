@@ -24,7 +24,7 @@ class _HeadUnitState extends State<HeadUnit> {
   @override
   void initState() {
     super.initState();
-    _readTodoList();
+    _loading = _readTodoList();
   }
 
   void _handleSubmitted(String text, String number) async {
@@ -84,16 +84,16 @@ class _HeadUnitState extends State<HeadUnit> {
   @override
   Widget build(BuildContext context) {
 
-    return buildHUContent(context);
-    /*return FutureBuilder(
-      future: _readTodoList(),
+    //return buildHUContent(context);
+    return FutureBuilder(
+      future: _loading,
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.done){
             return buildHUContent(context);
           }else{
             return Center(child: CircularProgressIndicator());
           }
-        });*/
+        });
   }
 
   Widget buildHUContent(BuildContext context){
