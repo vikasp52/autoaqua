@@ -52,11 +52,11 @@ class HUModel extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
         child:  Text(
-          _HUName[0],
+          _HUName[0].toUpperCase(),
           style: new TextStyle(color: Colors.white),
         ),
       ),
-      title: Text(_HUName, style: TextStyle(
+      title: Text(_HUName.toUpperCase(), style: TextStyle(
           color: Colors.black, fontWeight: FontWeight.bold
       ),),
     );

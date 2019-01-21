@@ -83,7 +83,7 @@ class _EditNumberPageState extends State<EditNumberPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Center(
-                child: Text(widget.controllerName,style: TextStyle(
+                child: Text(widget.controllerName.toUpperCase(),style: TextStyle(
                     fontSize: 30.0,
                     color: Color.fromRGBO(0, 84, 179, 1.0),
                     fontWeight: FontWeight.bold

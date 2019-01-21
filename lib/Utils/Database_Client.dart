@@ -797,7 +797,7 @@ print("updated: $count");
         where: "$columnId = ?", whereArgs: [item.id]);
   }
 
-  //Get the HU data to shoe in dropdown
+  //Get the HU data to show in dropdown on Dashboard Page
   Future<List<String>> getHUDataAsString() async {
     var dbClient = await db;
 
@@ -808,7 +808,7 @@ print("updated: $count");
     }).toList();
   }
 
-  //Get the Controller data to shoe in dropdown
+  //Get the Controller data to show in dropdown on Dashboard Page
   Future<List<String>> getControllerDataAsString(String selectedHU) async {
     var dbClient = await db;
 
@@ -817,6 +817,15 @@ print("updated: $count");
     return results.map((Map<String, dynamic> row) {
       return row["$columnItemName"] as String;
     }).toList();
+  }
+
+  //Get the valves data to show on dashboard page
+  Future<int> getValvesLtrCount(int controllerId) async {
+    var dbClient = await db;
+    int total = Sqflite.firstIntValue(
+        await dbClient.rawQuery("SELECT SUM($valves_fieldNo1Col + ${valves_fieldNo2Col ?? 0}) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
+    print("Valves total is $total");
+    return total;
   }
 
   Future close() async {

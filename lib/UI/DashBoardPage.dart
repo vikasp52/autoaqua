@@ -18,31 +18,42 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final db = new DataBaseHelper();
+  int otherData = 0;
 
   Future<void> _loadHUData() async {
     var HUdata = await db.getHUDataAsString();
     var ControllerData = await db.getControllerDataAsString(widget._selectedHUIndex.toString());
-    /*setState(() {
-      widget._HUName = HUdata;
-      // _ControllerName = ControllerData;
-      print("HU Data is $widget.widget._HUName");
-      print("HU Data is $widget._ControllerName");
-    });*/
+    if(mounted){
+      setState(() {
+        widget._HUName = HUdata;
+        widget._ControllerName = ControllerData;
+      });
+    }
   }
 
   Future _loadControllerData(int HUid) async {
     var ControllerData = await db.getControllerDataAsString(HUid.toString());
     if (ControllerData != null) {
+      if(mounted){
+        setState(() {
+          widget._ControllerName = ControllerData;
+        });
+      }
+    }
+  }
+
+  Future _loadOtherData(int ctrlId)async{
+    var valveData = await db.getValvesLtrCount(ctrlId);
+    if(valveData != null){
       setState(() {
-        widget._ControllerName = ControllerData;
-        print("HU Data is $widget._ControllerName");
+        otherData = valveData;
+        print("Other data is $otherData");
       });
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadHUData();
     // _loadControllerData(1);
@@ -99,15 +110,16 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       value: widget.selectedController,
                       items: widget._ControllerName.map((String value) {
-                        return new DropdownMenuItem<String>(
+                        return DropdownMenuItem<String>(
                           value: value,
-                          child: new Text(value),
+                          child: Text(value),
                         );
                       }).toList(),
                       onChanged: (String hu) {
                         setState(() {
                           widget.selectedController = hu;
                           widget._selectedControllerIndex = widget._ControllerName.indexOf(hu) + 1;
+                          _loadOtherData(1);
                           print("Slected Controller index is ${widget._selectedControllerIndex}");
                         });
                       },
@@ -161,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  '100',
+                                  '$otherData',
                                   style: TextStyle(color: Colors.brown, fontSize: 20.0),
                                 ),
                                 Text(

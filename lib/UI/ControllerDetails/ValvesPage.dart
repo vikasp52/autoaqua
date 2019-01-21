@@ -135,6 +135,8 @@ class _ValveOptionState extends State<_ValveOption> {
   final _ctrl_FieldNo = <TextEditingController>[];
   final _ctrl_Tank = <TextEditingController>[];
   final _ctrl_ValveNo = <TextEditingController>[];
+  final TextEditingController ctrl_FirstFieldNo = new TextEditingController();
+  final TextEditingController ctrl_FirstValveNo = new TextEditingController();
   final TextEditingController _ctrl_FertlizerDelay = new TextEditingController();
   final TextEditingController _postdelayController = new TextEditingController();
   final TextEditingController _ctrl_ECSetp = new TextEditingController();
@@ -256,7 +258,7 @@ class _ValveOptionState extends State<_ValveOption> {
           widget.controllerId,
           widget.valveIndex,
           widget.sequenceIndex,
-          irigationType == "0" ? "Ltr" : "Time",
+          irigationType == "2" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
@@ -269,7 +271,7 @@ class _ValveOptionState extends State<_ValveOption> {
           _maxTanks > 1 ? _ctrl_Tank[1].text : null,
           _maxTanks > 2 ? _ctrl_Tank[2].text : null,
           _maxTanks > 3 ? _ctrl_Tank[3].text : null,
-          _radioFertilizerProgrammingValue.toString(),
+          "1",
           _ctrl_FertlizerDelay.text,
           _postdelayController.text,
           _ctrl_ECSetp.text,
@@ -286,7 +288,7 @@ class _ValveOptionState extends State<_ValveOption> {
           widget.controllerId,
           widget.valveIndex,
           widget.sequenceIndex,
-          irigationType == "0" ? "Ltr" : "Time",
+          irigationType == "2" ? "Ltr" : "Time",
           _ctrl_ValveNo[0].text,
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
@@ -299,7 +301,7 @@ class _ValveOptionState extends State<_ValveOption> {
           _maxTanks > 1 ? _ctrl_Tank[1].text : null,
           _maxTanks > 2 ? _ctrl_Tank[2].text : null,
           _maxTanks > 3 ? _ctrl_Tank[3].text : null,
-          _radioFertilizerProgrammingValue.toString(),
+          "1",
           _ctrl_FertlizerDelay.text,
           _postdelayController.text,
           _ctrl_ECSetp.text,
@@ -354,7 +356,7 @@ class _ValveOptionState extends State<_ValveOption> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  widget.controllerName,
+                  widget.controllerName.toUpperCase(),
                   style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                 ),
               ),
@@ -496,7 +498,7 @@ class _ValveOptionState extends State<_ValveOption> {
               ),
             ),
             //SizedBox(height: 30.0),
-            Row(
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
@@ -509,7 +511,7 @@ class _ValveOptionState extends State<_ValveOption> {
             SizedBox(
               height: 10.0,
             ),
-            /*Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
@@ -542,7 +544,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   ],
                 ),
               ],
-            ),*/
+            ),
             Center(
               child: showFertProgErrorMsg
                   ? Text(
@@ -558,7 +560,7 @@ class _ValveOptionState extends State<_ValveOption> {
               child: Divider(
                 height: 1.0,
               ),
-            ),
+            ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -806,7 +808,7 @@ class _ValveOptionState extends State<_ValveOption> {
                   SizedBox(width: 5.0,),
                   Expanded(flex: 3,child: commonButton(() {
                     setState(() {
-                      if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
+                      if (valvesFormKey.currentState.validate()) {
                         _handelValvesDataSubmit();
                         _stringForValves().then((_){
                           if(mounted){
@@ -825,14 +827,14 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 3,
                     child: commonButton((){
-                      if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
+                      if (valvesFormKey.currentState.validate()) {
                         _handelValvesDataSubmit();
                         _oldValveModel != null
                             ? showPositiveToast("Data is updated successfully")
                             : showPositiveToast("Data is saved successfully");
                         Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
                       } else {
-                        showColoredToast("Please check the values");
+                        showColoredToast("Please check values");
                       }
                     }, _oldValveModel != null ? "Update" : "Save"),
                   ),
@@ -840,14 +842,15 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 2,
                     child: commonButton((){
-                      if (_radioFertilizerProgrammingValue == null) {
+                      /*if (_radioFertilizerProgrammingValue == null) {
                         showFertProgErrorMsg = true;
                       } else {
                         showFertProgErrorMsg = false;
-                      }
+                      }*/
 
                       setState(() {
-                        if (valvesFormKey.currentState.validate() && _radioFertilizerProgrammingValue != null) {
+                        // && _radioFertilizerProgrammingValue != null
+                        if (valvesFormKey.currentState.validate()) {
                           /* apiMethods.saveAndUpdateValvesDataOnServer(
                                 "${widget.valveIndex + 1}",
                                 "${widget.sequenceIndex + 1}",
@@ -992,12 +995,17 @@ class _ValveOptionState extends State<_ValveOption> {
                           if (_ctrl_FieldNo[index].text.isEmpty) {
                             return "Enter valid value";
                           }
+                          if((noOfValves > 1 ?_ctrl_FieldNo[1].text != _ctrl_FieldNo[0].text:false) || (noOfValves > 2?_ctrl_FieldNo[2].text != _ctrl_FieldNo[0].text:false) || (noOfValves > 3?_ctrl_FieldNo[3].text != _ctrl_FieldNo[0].text:false)){
+                            return "All value must be same";
+                          }
                         },
                         style: TextStyle(
                           fontSize: 20.0,
                           color: Colors.black,
                         ),
                         controller: _ctrl_FieldNo[index],
+                        //initialValue: ctrl_FirstValveNo.toString(),
+                        //enabled: false,
                         keyboardType: TextInputType.number,
                       ),
                     ),

@@ -318,7 +318,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
             children: <Widget>[
               Center(
                 child: Text(
-                  widget.controllerName,
+                  widget.controllerName.toUpperCase(),
                   style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                 ),
               ),

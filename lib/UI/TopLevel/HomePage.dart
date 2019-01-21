@@ -1,6 +1,7 @@
 import 'package:autoaqua/UI/DashBoardPage.dart';
 import 'package:autoaqua/UI/HeadUnit.dart';
 import 'package:autoaqua/UI/TopLevel/LoginPage.dart';
+import 'package:autoaqua/UI/TopLevel/Reports.dart';
 import 'package:autoaqua/Utils/CommonlyUserMethod.dart';
 import 'package:autoaqua/Utils/sharedPref.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   int currenTab = 0;
   DashboardPage one;
   HeadUnit two;
-  Profile three;
+  MyHomePage three;
   List<Widget> pages;
   Widget currentPage;
 
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     one = DashboardPage();
     two = HeadUnit();
-    three = Profile();
+    three = MyHomePage();
     pages = [one, two, three];
     currentPage = one;
     super.initState();
@@ -147,6 +148,17 @@ class _HomePageState extends State<HomePage> {
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Center(
+      child: Container(
+        child: RaisedButton(
+          child: Text("Save"),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyHomePage()),
+              );
+        }),
+      ),
+    );
   }
 }

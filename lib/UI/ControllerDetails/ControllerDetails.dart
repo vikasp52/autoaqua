@@ -69,7 +69,7 @@ class ControllerDetailsState extends State<ControllerDetails> {
   void setCurrentPageId(ControllerDetailsPageId pageId) {
     scheduleMicrotask(() => _setAppBarState(() {
           //_title = pageId?.name + '-${widget.controllerName}'?? '${widget.controllerName} - DETAILS';
-          _title = pageId?.name ?? '${widget.controllerName} - DETAILS';
+          _title = pageId?.name ?? '${widget.controllerName.toUpperCase()} - DETAILS';
 
           final nextPageId = pageId?.nextPageId;
           if (nextPageId != null) {
@@ -424,7 +424,7 @@ class _ControllerDetailsMainPageState extends State<_ControllerDetailsMainPage> 
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Submit",
+                "SEND",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,

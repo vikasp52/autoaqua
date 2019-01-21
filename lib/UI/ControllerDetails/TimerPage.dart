@@ -283,7 +283,7 @@ class _TimerOptionState extends State<_TimerOption> {
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
-                      widget.controllerName,
+                      widget.controllerName.toUpperCase(),
                       style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
                     ),
                   ),

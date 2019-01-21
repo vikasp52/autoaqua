@@ -66,8 +66,13 @@ Widget controllerName(name){
         Flexible(
             child: Center(
               child: Text(
-                name,
-                style: TextStyle(fontSize: 30.0, color: Color.fromRGBO(0, 84, 179, 1.0), fontWeight: FontWeight.bold),
+                "$name".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 30.0,
+                  color: Color.fromRGBO(0, 84, 179, 1.0),
+                  fontWeight: FontWeight.bold,
+
+                ),
               ),
             )),
       ],

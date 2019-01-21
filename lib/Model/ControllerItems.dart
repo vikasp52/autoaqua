@@ -54,11 +54,11 @@ class ControllerItem extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: Color.fromRGBO(0, 84, 179, 1.0),
         child:  Text(
-          _itemName[0],
+          _itemName[0].toUpperCase(),
           style: new TextStyle(color: Colors.white),
         ),
       ),
-      title: Text(_itemName, style: TextStyle(
+      title: Text(_itemName.toUpperCase(), style: TextStyle(
           color: Colors.black, fontWeight: FontWeight.bold
       ),),
       subtitle: Text(_itemNumber, style: TextStyle(
