@@ -819,11 +819,46 @@ print("updated: $count");
     }).toList();
   }
 
+  //Get the Controller data to show in dropdown on Dashboard Page
+  Future<List<String>> getAllControllerDataAsString() async {
+    var dbClient = await db;
+
+    var results = await dbClient.rawQuery('SELECT $columnItemName FROM $tableName');
+
+    return results.map((Map<String, dynamic> row) {
+      return row["$columnItemName"] as String;
+    }).toList();
+  }
+
   //Get the valves data to show on dashboard page
-  Future<int> getValvesLtrCount(int controllerId) async {
+  Future<int> getValves1LtrCount(int controllerId) async {
     var dbClient = await db;
     int total = Sqflite.firstIntValue(
-        await dbClient.rawQuery("SELECT SUM($valves_fieldNo1Col + ${valves_fieldNo2Col ?? 0}) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
+        await dbClient.rawQuery("SELECT SUM($valves_fieldNo1Col) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
+    print("Valves total is $total");
+    return total;
+  }
+  //Get the valves data to show on dashboard page
+  Future<int> getValves2LtrCount(int controllerId) async {
+    var dbClient = await db;
+    int total = Sqflite.firstIntValue(
+        await dbClient.rawQuery("SELECT SUM($valves_fieldNo2Col) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
+    print("Valves total is $total");
+    return total;
+  }
+  //Get the valves data to show on dashboard page
+  Future<int> getValves3LtrCount(int controllerId) async {
+    var dbClient = await db;
+    int total = Sqflite.firstIntValue(
+        await dbClient.rawQuery("SELECT SUM($valves_fieldNo3Col) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
+    print("Valves total is $total");
+    return total;
+  }
+  //Get the valves data to show on dashboard page
+  Future<int> getValves4LtrCount(int controllerId) async {
+    var dbClient = await db;
+    int total = Sqflite.firstIntValue(
+        await dbClient.rawQuery("SELECT SUM($valves_fieldNo4Col) FROM $tableValves WHERE $valves_controllerIdCol = $controllerId and $valvesUniteTypeCol == 'Ltr'"));
     print("Valves total is $total");
     return total;
   }

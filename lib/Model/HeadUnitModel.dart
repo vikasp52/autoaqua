@@ -1,13 +1,4 @@
 import 'package:flutter/material.dart';
-/*
-  ControllerItem.fromMap(Map<String, dynamic> map){
-    this._itemName = map["itemName"];
-    this._itemNumber = map["itemNumber"];
-    this._dateCreated = map["dateCreated"];
-    this._id = map["id"];
-
-  }
-*/
 
 class HUModel extends StatelessWidget {
 

@@ -43,7 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future _loadOtherData(int ctrlId)async{
-    var valveData = await db.getValvesLtrCount(ctrlId);
+    var valveData = await db.getValves1LtrCount(ctrlId);
     if(valveData != null){
       setState(() {
         otherData = valveData;
@@ -129,6 +129,11 @@ class _DashboardPageState extends State<DashboardPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    RaisedButton(onPressed: null, shape: Border(
+                      left: BorderSide(
+
+                      )
+                    ),),
                     Container(
                       decoration: BoxDecoration(
                           color: Color.fromRGBO(0, 84, 179, 1.0),

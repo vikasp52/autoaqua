@@ -497,8 +497,8 @@ class _ValveOptionState extends State<_ValveOption> {
                 height: 1.0,
               ),
             ),
-            //SizedBox(height: 30.0),
-            /*Row(
+           SizedBox(height: 30.0),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
@@ -560,7 +560,7 @@ class _ValveOptionState extends State<_ValveOption> {
               child: Divider(
                 height: 1.0,
               ),
-            ),*/
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

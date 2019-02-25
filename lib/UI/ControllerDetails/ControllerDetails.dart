@@ -75,7 +75,7 @@ class ControllerDetailsState extends State<ControllerDetails> {
           if (nextPageId != null) {
             _actions = <Widget>[
               IconButton(
-                onPressed: () => navigateToPage(nextPageId),
+                onPressed:() => navigateToPage(nextPageId),
                 icon: Icon(Icons.arrow_forward_ios),
                 //icon: Icon(nextPageId != null ? nextPageId.icon : Icons.arrow_forward_ios),
               )

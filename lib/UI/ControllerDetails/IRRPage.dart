@@ -103,7 +103,7 @@ class _IRRPageState extends State<IRRPage> {
         // return object of type Dialog
         return AlertDialog(
           //title: new Text("Alert Dialog title"),
-          content: new Text("Do you really want to stop?",style: TextStyle(
+          content: new Text("Do you want to permanently stop the irrigation cycle?",style: TextStyle(
             fontWeight: FontWeight.bold,fontSize: 20.0)),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -143,7 +143,7 @@ class _IRRPageState extends State<IRRPage> {
         // return object of type Dialog
         return AlertDialog(
           //title: new Text("Alert Dialog title"),
-          content: new Text("Do you really want to Pause?",style: TextStyle(
+          content: new Text(pauseStart?"Do you want to Start?":"Do you want temporary Pause?",style: TextStyle(
             fontWeight: FontWeight.bold,fontSize: 20.0
           ),),
           actions: <Widget>[
@@ -156,6 +156,7 @@ class _IRRPageState extends State<IRRPage> {
                 setState(() {
                   pauseStart = !pauseStart;
                 });
+                print("pauseStart is $pauseStart");
                 sendSmsForAndroid("QW", widget.controllerId);
                 showPositiveToast("SMS Sent Successfully");
                 Navigator.of(context).pop();
