@@ -129,12 +129,18 @@ class _ValveOptionState extends State<_ValveOption> {
   int _maxSequence = 9999999;
   int _maxTanks = 0;
   int _maxIrrigationValves = 0;
+  int remaning = 0;
   String _showecPh;
   ValvesModel _oldValveModel;
   bool showFertProgErrorMsg = false;
+  bool showPrePostErrorMsg = false;
+  bool showTankErrorMsg = false;
+  bool enableTankTextBox = false;
+  var duplicate = false;
   final _ctrl_FieldNo = <TextEditingController>[];
   final _ctrl_Tank = <TextEditingController>[];
   final _ctrl_ValveNo = <TextEditingController>[];
+  final TextEditingController _signleCtrl_FieldNo = TextEditingController();
   final TextEditingController ctrl_FirstFieldNo = new TextEditingController();
   final TextEditingController ctrl_FirstValveNo = new TextEditingController();
   final TextEditingController _ctrl_FertlizerDelay = new TextEditingController();
@@ -196,6 +202,7 @@ class _ValveOptionState extends State<_ValveOption> {
           _ctrl_Tank[i].text = tankList[i];
         });
       }
+      _signleCtrl_FieldNo.value = TextEditingValue(text: valvesData.valves_fieldNo_1);
       _radioFertilizerProgrammingValue = int.parse(valvesData.valves_FertlizerProgramming);
       _ctrl_FertlizerDelay.value = TextEditingValue(text: valvesData.valves_FertlizerPreDelay);
       _postdelayController.value = TextEditingValue(text: valvesData.valves_FertlizerPostDelay);
@@ -203,7 +210,7 @@ class _ValveOptionState extends State<_ValveOption> {
       _ctrl_PHSetp.value = TextEditingValue(text: valvesData.valves_PHSetp);
     }
 
-     if (mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -229,7 +236,7 @@ class _ValveOptionState extends State<_ValveOption> {
 
   Future<void> _stringForValves() async {
     valveString =
-        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}$_radioFertilizerProgrammingValue${AppendZero(_ctrl_PHSetp.text)}>";
+        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_signleCtrl_FieldNo.text)}${noOfValves > 1 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${noOfValves > 2 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${noOfValves > 3 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}$_radioFertilizerProgrammingValue${AppendZero(_ctrl_PHSetp.text)}>";
 
     print("Valve String: $valveString");
     print("Out1: ${AppendZero(_ctrl_ValveNo[0].text)}");
@@ -251,7 +258,7 @@ class _ValveOptionState extends State<_ValveOption> {
 
   Future<void> _handelValvesDataSubmit() async {
     valveString =
-        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_ctrl_FieldNo[0].text)}${noOfValves > 1 ? AppendSixZero(_ctrl_FieldNo[1].text) : "000000"}${noOfValves > 2 ? AppendSixZero(_ctrl_FieldNo[2].text) : "000000"}${noOfValves > 3 ? AppendSixZero(_ctrl_FieldNo[3].text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}1${AppendZero(_ctrl_PHSetp.text)}>";
+        "QF${AppendZero(programNo().toString())}${AppendZero(seqNo().toString())}${AppendZero(_ctrl_ValveNo[0].text)}${noOfValves > 1 ? AppendZero(_ctrl_ValveNo[1].text) : "00"}${noOfValves > 2 ? AppendZero(_ctrl_ValveNo[2].text) : "00"}${noOfValves > 3 ? AppendZero(_ctrl_ValveNo[3].text) : "00"}${AppendSixZero(_signleCtrl_FieldNo.text)}${noOfValves > 1 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${noOfValves > 2 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${noOfValves > 3 ? AppendSixZero(_signleCtrl_FieldNo.text) : "000000"}${AppendFourDigit(_ctrl_Tank[0].text)}${_maxTanks > 1 ? AppendFourDigit(_ctrl_Tank[1].text) : "0000"}${_maxTanks > 2 ? AppendFourDigit(_ctrl_Tank[2].text) : "0000"}${_maxTanks > 3 ? AppendFourDigit(_ctrl_Tank[3].text) : "0000"}${AppendZero(_ctrl_FertlizerDelay.text)}1${AppendZero(_ctrl_PHSetp.text)}>";
 
     if (_oldValveModel == null) {
       ValvesModel submitValvesData = new ValvesModel(
@@ -263,15 +270,15 @@ class _ValveOptionState extends State<_ValveOption> {
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
           noOfValves > 3 ? _ctrl_ValveNo[3].text : null,
-          _ctrl_FieldNo[0].text,
-          noOfValves > 1 ? _ctrl_FieldNo[1].text : null,
-          noOfValves > 2 ? _ctrl_FieldNo[2].text : null,
-          noOfValves > 3 ? _ctrl_FieldNo[3].text : null,
+          _signleCtrl_FieldNo.text,
+          noOfValves > 1 ? _signleCtrl_FieldNo.text : null,
+          noOfValves > 2 ? _signleCtrl_FieldNo.text : null,
+          noOfValves > 3 ? _signleCtrl_FieldNo.text : null,
           _ctrl_Tank[0].text,
           _maxTanks > 1 ? _ctrl_Tank[1].text : null,
           _maxTanks > 2 ? _ctrl_Tank[2].text : null,
           _maxTanks > 3 ? _ctrl_Tank[3].text : null,
-          "1",
+          _radioFertilizerProgrammingValue.toString(),
           _ctrl_FertlizerDelay.text,
           _postdelayController.text,
           _ctrl_ECSetp.text,
@@ -293,15 +300,15 @@ class _ValveOptionState extends State<_ValveOption> {
           noOfValves > 1 ? _ctrl_ValveNo[1].text : null,
           noOfValves > 2 ? _ctrl_ValveNo[2].text : null,
           noOfValves > 3 ? _ctrl_ValveNo[3].text : null,
-          _ctrl_FieldNo[0].text,
-          noOfValves > 1 ? _ctrl_FieldNo[1].text : null,
-          noOfValves > 2 ? _ctrl_FieldNo[2].text : null,
-          noOfValves > 3 ? _ctrl_FieldNo[3].text : null,
+          _signleCtrl_FieldNo.text,//_ctrl_ValveNo[0].text,
+          noOfValves > 1 ? _signleCtrl_FieldNo.text:null, //_ctrl_ValveNo[1].text : null,
+          noOfValves > 2 ? _signleCtrl_FieldNo.text:null, //_ctrl_ValveNo[2].text : null,
+          noOfValves > 3 ? _signleCtrl_FieldNo.text:null, //_ctrl_ValveNo[3].text : null,
           _ctrl_Tank[0].text,
           _maxTanks > 1 ? _ctrl_Tank[1].text : null,
           _maxTanks > 2 ? _ctrl_Tank[2].text : null,
           _maxTanks > 3 ? _ctrl_Tank[3].text : null,
-          "1",
+          _radioFertilizerProgrammingValue.toString(),
           _ctrl_FertlizerDelay.text,
           _postdelayController.text,
           _ctrl_ECSetp.text,
@@ -318,6 +325,12 @@ class _ValveOptionState extends State<_ValveOption> {
   void _handleRadioValueChange(int value) {
     setState(() {
       _radioFertilizerProgrammingValue = value;
+      TankAutofill();
+      if(value == 0){
+        enableTankTextBox = true;
+      }else{
+        enableTankTextBox = false;
+      }
     });
   }
 
@@ -325,8 +338,95 @@ class _ValveOptionState extends State<_ValveOption> {
     return ShapeDecoration(shape: StadiumBorder(), color: Color.fromRGBO(0, 84, 179, 1.0));
   }
 
-  paddingforText() {
-    return const EdgeInsets.only(bottom: 8.0);
+  //Methdd to validate the tank
+  void ValidateTanks() {
+    int totalPrePost = int.parse(_ctrl_FertlizerDelay.text) + int.parse(_postdelayController.text);
+    double sumOfTanks = 0.0;
+    setState(() {
+      remaning = int.parse(_signleCtrl_FieldNo.text) - totalPrePost;
+    });
+    bool tank = false;
+    print("totalPrePost is $totalPrePost");
+    print("remaning is $remaning");
+    print("_ctrl_FieldNo 1 is ${_signleCtrl_FieldNo.text}");
+
+    _ctrl_Tank.length = _maxTanks;
+    for (int i = 0; i < _ctrl_Tank.length; i++) {
+      sumOfTanks = sumOfTanks + double.parse(_ctrl_Tank[i].text);
+      setState(() {
+        tank = sumOfTanks > remaning;
+      });
+    }
+    print("sumOfTanks is $sumOfTanks");
+    print("tank bool is $tank");
+
+    print("_radioFertilizerProgrammingValue is $_radioFertilizerProgrammingValue");
+    print("int.parse(_ctrl_Tank[0].text): ${double.parse(_ctrl_Tank[0].text)}");
+    print("remaning: $remaning");
+    print("int.parse(_ctrl_Tank[0].text) > remaning: ${double.parse(_ctrl_Tank[0].text) > remaning}");
+
+    print("Check bool for Tank ${_radioFertilizerProgrammingValue == 0 && tank}");
+    print("Check bool for Tank ${_radioFertilizerProgrammingValue == 1 && (double.parse(_ctrl_Tank[0].text) > remaning)}");
+
+    if (totalPrePost > double.parse(_signleCtrl_FieldNo.text)) {
+      print("totalPrePost should not be greater then ${_signleCtrl_FieldNo.text}");
+      setState(() {
+        showPrePostErrorMsg = true;
+      });
+      print("Show ERROR $showPrePostErrorMsg");
+    } else if ((_radioFertilizerProgrammingValue == 0 && tank) ||
+        (_radioFertilizerProgrammingValue == 1 && (double.parse(_ctrl_Tank[0].text) > remaning))) {
+      setState(() {
+        showTankErrorMsg = true;
+      });
+    } else {
+      setState(() {
+        showPrePostErrorMsg = false;
+        showTankErrorMsg = false;
+      });
+      print("Show ERROR $showPrePostErrorMsg");
+    }
+  }
+
+  //Autofill the Tank Txtbox based on the remaning value
+  void TankAutofill(){
+    int totalPrePost = int.parse(_ctrl_FertlizerDelay.text) + int.parse(_postdelayController.text);
+    int sumOfTanks = 0;
+    setState(() {
+      remaning = int.parse(_signleCtrl_FieldNo.text) - totalPrePost;
+    });
+    bool tank = false;
+    print("totalPrePost is $totalPrePost");
+    print("remaning is $remaning");
+    print("_ctrl_FieldNo 1 is ${_signleCtrl_FieldNo.text}");
+
+    print("remaning is $remaning");
+    print("_maxTanks is $_maxTanks");
+    var tankValue;
+    setState(() {
+      tankValue = (remaning / _maxTanks).toStringAsFixed(2);
+    });
+    print("tankValue is $tankValue");
+
+    for (int i = 0; i < _maxTanks; i++) {
+      if(double.parse(tankValue)>0.0 && _radioFertilizerProgrammingValue == 0){
+        setState(() {
+          _ctrl_Tank[i].text = tankValue.toString();
+          print("Tanks value is ${_ctrl_Tank[i].text}");
+        });
+      }else if(double.parse(tankValue)>0.0 && _radioFertilizerProgrammingValue == 1){
+        setState(() {
+          _ctrl_Tank[i].text = remaning.toString();
+        });
+      }else{
+        setState(() {
+          _ctrl_Tank[i].text = "0.0";
+        });
+      }
+    }
+    print("int.parse(tankValue) is ${double.parse(tankValue)}");
+    print("int.parse(tankValue)>0.0 is ${double.parse(tankValue)>0.0}");
+
   }
 
   @override
@@ -454,6 +554,19 @@ class _ValveOptionState extends State<_ValveOption> {
                         ],
                       ),
                       listOfValve(),
+                      Center(
+                        child: duplicate
+                            ? Text(
+                          "Please enter the unique Valve No.",
+                          style: TextStyle(color: Colors.red),
+                        )
+                            : SizedBox(
+                          height: 0.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
                       Container(
                         //color: Colors.indigo,
                         decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.green),
@@ -497,7 +610,7 @@ class _ValveOptionState extends State<_ValveOption> {
                 height: 1.0,
               ),
             ),
-           SizedBox(height: 30.0),
+            SizedBox(height: 30.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -579,8 +692,11 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 4,
                     child: TextFormField(
-                      maxLength: 6,
-                      decoration: InputDecoration(counterText: "", hintText: "PRE", border: OutlineInputBorder()),
+                      maxLength: irigationType == "2" ? 6 : irigationType == "0" ? 3 : null,
+                      decoration: InputDecoration(
+                          counterText: "",
+                          suffixText: irigationType == "2" ? " Ltr" : irigationType == "0" ? " Mins" : " ",
+                          hintText: "PRE", border: OutlineInputBorder()),
                       textAlign: TextAlign.center,
                       validator: (value) {
                         if (_ctrl_FertlizerDelay.text.isEmpty) {
@@ -626,16 +742,34 @@ class _ValveOptionState extends State<_ValveOption> {
                   ),
                   Expanded(
                     flex: 4,
-                    child: TextFormField(
-                      maxLength: 6,
+                    child: TextField(
+                      maxLength: irigationType == "2" ? 6 : irigationType == "0" ? 3 : null,
                       controller: _postdelayController,
-                      decoration: InputDecoration(counterText: "", hintText: "POST", border: OutlineInputBorder()),
+                      decoration: InputDecoration(
+                          counterText: "",
+                          suffixText: irigationType == "2" ? " Ltr" : irigationType == "0" ? " Mins" : " ",
+                          hintText: "POST", border: OutlineInputBorder()),
                       textAlign: TextAlign.center,
+                      /*onEditingComplete: (){
+                        TankAutofill();
+                      },*/
+                      onChanged: (val){
+                        setState(() {
+                          //ValidateTanks();
+                          TankAutofill();
+                        });
+                      },
+                      /*onSaved: (val){
+                        TankAutofill();
+                      },
+                      onFieldSubmitted: (val){
+                        TankAutofill();
+                      },
                       validator: (value) {
                         if (_postdelayController.text.isEmpty) {
                           return "Enter valid value";
                         }
-                      },
+                      },*/
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -647,8 +781,17 @@ class _ValveOptionState extends State<_ValveOption> {
                 ],
               ),
             ),
+            Center(
+                child: showPrePostErrorMsg
+                    ? Text(
+                        "PRE and POST total should not be greater then ${_signleCtrl_FieldNo.text}",
+                        style: TextStyle(color: Colors.red),
+                      )
+                    : SizedBox(
+                        width: 0.0,
+                      )),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(5.0),
               child: Divider(
                 height: 1.0,
               ),
@@ -658,6 +801,33 @@ class _ValveOptionState extends State<_ValveOption> {
                 "FERTILIZER TANK",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Center(
+              child: Container(
+                //color: Colors.indigo,
+                decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.green),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.info_outline,
+                      color: Colors.white,
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Valve No. is based on total no of minutes/liter",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             fertlizationType == "0" || fertlizationType == "1"
@@ -704,6 +874,32 @@ class _ValveOptionState extends State<_ValveOption> {
                           )
                         ],
                       ),
+                      showTankErrorMsg
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Total should not be more then $remaning",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              width: 0.0,
+                            ),
+                      remaning < 0
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Please enter 0 in tanks as you have 0 minute remaning",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              width: 0.0,
+                            ),
                       listOfTanks(),
                     ],
                   )
@@ -789,7 +985,7 @@ class _ValveOptionState extends State<_ValveOption> {
                 children: <Widget>[
                   Expanded(
                     flex: 2,
-                    child: commonButton((){
+                    child: commonButton(() {
                       if (widget.sequenceIndex < 1) {
                         Navigator.of(context).pop();
                       } else {
@@ -805,29 +1001,40 @@ class _ValveOptionState extends State<_ValveOption> {
                       }
                     }, "<"),
                   ),
-                  SizedBox(width: 5.0,),
-                  Expanded(flex: 3,child: commonButton(() {
-                    setState(() {
-                      if (valvesFormKey.currentState.validate()) {
-                        _handelValvesDataSubmit();
-                        _stringForValves().then((_){
-                          if(mounted){
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  Expanded(
+                      flex: 3,
+                      child: commonButton(() {
+                        setState(() {
+                          if (valvesFormKey.currentState.validate()) {
                             _handelValvesDataSubmit();
-                            sendSmsForAndroid(valveString, widget.controllerId);
-                            Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
-                            showPositiveToast("SMS send successfully");
+                            _stringForValves().then((_) {
+                              if (mounted) {
+                                _handelValvesDataSubmit();
+                                sendSmsForAndroid(valveString, widget.controllerId);
+                                Navigator.of(context).popUntil((route) => route is ControllerDetailsMainRoute);
+                                showPositiveToast("SMS send successfully");
+                              }
+                            });
+                          } else {
+                            showColoredToast("Please check the values");
                           }
                         });
-                      } else {
-                        showColoredToast("Please check the values");
-                      }
-                    });
-                  }, "Send")),
-                  SizedBox(width: 5.0,),
+                      }, "Send")),
+                  SizedBox(
+                    width: 5.0,
+                  ),
                   Expanded(
                     flex: 3,
-                    child: commonButton((){
-                      if (valvesFormKey.currentState.validate()) {
+                    child: commonButton(() {
+                      ValidateTanks();
+                      checkDuplicateValues();
+                      if (valvesFormKey.currentState.validate() &&
+                          (showPrePostErrorMsg == false) &&
+                          !showTankErrorMsg &&
+                          !duplicate) {
                         _handelValvesDataSubmit();
                         _oldValveModel != null
                             ? showPositiveToast("Data is updated successfully")
@@ -838,10 +1045,12 @@ class _ValveOptionState extends State<_ValveOption> {
                       }
                     }, _oldValveModel != null ? "Update" : "Save"),
                   ),
-                  SizedBox(width: 5.0,),
+                  SizedBox(
+                    width: 5.0,
+                  ),
                   Expanded(
                     flex: 2,
-                    child: commonButton((){
+                    child: commonButton(() {
                       /*if (_radioFertilizerProgrammingValue == null) {
                         showFertProgErrorMsg = true;
                       } else {
@@ -931,6 +1140,28 @@ class _ValveOptionState extends State<_ValveOption> {
     });
   }
 
+  //Check duplicate in Valves No
+  void checkDuplicateValues() {
+    List valveNo = List();
+    var set = new Set();
+
+    setState(() {
+      _ctrl_FieldNo.length = noOfValves;
+      for (int i = 0; i < noOfValves; i++) {
+        valveNo.add(_ctrl_ValveNo[i].text);
+
+        if (!set.add(valveNo[i])) {
+          duplicate = true;
+          break;
+        }else{
+          duplicate = false;
+        }
+      }
+      print("Valve No List is $valveNo");
+      print("Valve No List is $duplicate");
+    });
+  }
+
   Widget listOfValve() {
     if (noOfValves != 0) {
       return Column(
@@ -970,6 +1201,11 @@ class _ValveOptionState extends State<_ValveOption> {
                               return "";
                             }
                           }
+
+                          if(duplicate){
+                            return "";
+                          }
+
                         },
                         style: TextStyle(
                           fontSize: 20.0,
@@ -992,18 +1228,20 @@ class _ValveOptionState extends State<_ValveOption> {
                         ),
                         textAlign: TextAlign.center,
                         validator: (value) {
-                          if (_ctrl_FieldNo[index].text.isEmpty) {
+                          if (_signleCtrl_FieldNo.text.isEmpty) {
                             return "Enter valid value";
                           }
-                          if((noOfValves > 1 ?_ctrl_FieldNo[1].text != _ctrl_FieldNo[0].text:false) || (noOfValves > 2?_ctrl_FieldNo[2].text != _ctrl_FieldNo[0].text:false) || (noOfValves > 3?_ctrl_FieldNo[3].text != _ctrl_FieldNo[0].text:false)){
+                          /*if ((noOfValves > 1 ? _ctrl_FieldNo[1].text != _ctrl_FieldNo[0].text : false) ||
+                              (noOfValves > 2 ? _ctrl_FieldNo[2].text != _ctrl_FieldNo[0].text : false) ||
+                              (noOfValves > 3 ? _ctrl_FieldNo[3].text != _ctrl_FieldNo[0].text : false)) {
                             return "All value must be same";
-                          }
+                          }*/
                         },
                         style: TextStyle(
                           fontSize: 20.0,
                           color: Colors.black,
                         ),
-                        controller: _ctrl_FieldNo[index],
+                        controller: _signleCtrl_FieldNo,//_ctrl_FieldNo[index],
                         //initialValue: ctrl_FirstValveNo.toString(),
                         //enabled: false,
                         keyboardType: TextInputType.number,
@@ -1050,7 +1288,8 @@ class _ValveOptionState extends State<_ValveOption> {
                   Expanded(
                     flex: 6,
                     child: TextFormField(
-                      maxLength: fertlizationType == "0" ? 3 : 2,
+                      maxLength: fertlizationType == "0" ? 4 : 3,
+                      enabled: enableTankTextBox?true:false,
                       decoration: InputDecoration(
                         counterText: "",
                         border: OutlineInputBorder(),
@@ -1060,6 +1299,12 @@ class _ValveOptionState extends State<_ValveOption> {
                       validator: (value) {
                         if (_ctrl_Tank[index].text.isEmpty) {
                           return "Enter valid value";
+                        } else if (_radioFertilizerProgrammingValue == 1) {
+                          if ((_maxTanks > 1 ? _ctrl_Tank[1].text != _ctrl_Tank[0].text : false) ||
+                              (_maxTanks > 2 ? _ctrl_Tank[2].text != _ctrl_Tank[0].text : false) ||
+                              (_maxTanks > 3 ? _ctrl_Tank[3].text != _ctrl_Tank[0].text : false)) {
+                            return "All value must be same";
+                          }
                         }
                       },
                       style: TextStyle(

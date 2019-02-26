@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           drawer: commonDrawer(),
-          body: currentPage,
-          bottomNavigationBar: new Theme(
+          body: HeadUnit()//currentPage,
+          /*bottomNavigationBar: new Theme(
             data: Theme.of(context).copyWith(
                 // sets the background color of the `BottomNavigationBar`
                 canvasColor: Color.fromRGBO(0, 84, 179, 1.0),
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          )
+          )*/
       ),
     );
   }
